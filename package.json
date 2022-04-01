@@ -15,7 +15,7 @@
     "fitty": "^2.3.6"
   },
   "devDependencies": {
-    "nw": "^0.44.1-sdk",
+    "nw": "^0.63.0-sdk",
     "nw-builder": "^3.5.7"
   }
 }
