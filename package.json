@@ -1,0 +1,23 @@
+{
+  "name": "personal-password-manager",
+  "version": "1.0.0",
+  "description": "A password manager gui made with firebase",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nw src/",
+    "prod": "nwbuild --platforms win32,win64,osx64,linux32,linux64 --buildDir dist/ src/"
+  },
+  "author": "Roni Daou",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "crypto-js": "^4.1.1",
+    "deep-email-validator": "^0.1.21",
+    "express": "^4.17.2",
+    "firebase": "^9.6.4",
+    "fitty": "^2.3.6"
+  },
+  "devDependencies": {
+    "nw": "^0.44.1-sdk",
+    "nw-builder": "^3.5.7"
+  }
+}
