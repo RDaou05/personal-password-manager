@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nw src/",
-    "prod": "nwbuild --platforms win32,win64,osx64,linux32,linux64 --buildDir dist/ src/"
+    "prod": "nwbuild --platforms win32,win64,osx64,linux32,linux64 --buildDir dist/ src/",
+    "reinstall": "rm -rf node_modules/ && rm -rf package-lock.json && npm i"
   },
   "author": "Roni Daou",
   "dependencies": {
