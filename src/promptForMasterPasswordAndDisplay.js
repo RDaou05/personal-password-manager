@@ -184,6 +184,20 @@ try {
           //
           // WRITE
         };
+        const dimAbleToDarken = () => {
+          Array.from(
+            document.getElementById("ableToDarken").getElementsByTagName("div")
+          ).forEach((cv) => {
+            cv.style.opacity = "0.7";
+          });
+        };
+        const resetDimAbleToDarken = () => {
+          Array.from(
+            document.getElementById("ableToDarken").getElementsByTagName("div")
+          ).forEach((cv) => {
+            cv.style.opacity = "1";
+          });
+        };
         // const writeQueryToFS = async () => {
         //   const docRefForMP = await addDoc(refForPSAdder, {
         //     user: "Supposed username encrpted my hashed masspass",
@@ -642,6 +656,10 @@ try {
                                     `updateQueryScreen${rawRandomID}`
                                   ).style.animation =
                                     "pushOutUpdateTab 0.3s ease";
+                                  // document.getElementById(
+                                  //   "ableToDarken"
+                                  // ).style.animation = "fadeSlight 0.25s ease";
+                                  dimAbleToDarken();
                                 } else if (updateExists == undefined) {
                                   // Code to run when creating a new update tab
                                   // This is created when the user clicks on a query the first time to edit it
@@ -845,7 +863,7 @@ try {
                                     document
                                       .getElementById("htmlMain")
                                       .addEventListener(
-                                        "click",
+                                        "mousedown",
                                         (updateClickEvt) => {
                                           if (
                                             updateClickEvt.target.className
@@ -869,6 +887,17 @@ try {
                                               newUpdateTab.style.animation = "";
                                               newUpdateTab.style.animation =
                                                 "pullInUpdateTab 0.3s ease";
+                                              resetDimAbleToDarken();
+                                              // Array.from(
+                                              //   document
+                                              //     .getElementById(
+                                              //       "ableToDarken"
+                                              //     )
+                                              //     .getElementsByTagName("div")
+                                              // ).forEach((cv) => {
+                                              //   cv.style.animation =
+                                              //     "fadeBack 0.25s ease";
+                                              // });
                                             }
                                           }
                                         }
@@ -1324,14 +1353,15 @@ try {
                                   await showUpdateScreenIcon();
 
                                   //
-                                  Array.from(
-                                    document
-                                      .getElementById("ableToDarken")
-                                      .getElementsByTagName("div")
-                                  ).forEach((cv) => {
-                                    cv.style.animation =
-                                      "fadeSlight 0.25s ease";
-                                  });
+                                  // Array.from(
+                                  //   document
+                                  //     .getElementById("ableToDarken")
+                                  //     .getElementsByTagName("div")
+                                  // ).forEach((cv) => {
+                                  //   cv.style.animation =
+                                  //     "fadeSlight 0.25s ease";
+                                  // });
+                                  dimAbleToDarken();
                                   //
                                   const displayAllCurrentInfoUpdate =
                                     async () => {
@@ -1518,9 +1548,10 @@ try {
                               .getElementById(`mainDiv${rawRandomID}`)
                               .addEventListener("animationend", (mid) => {
                                 console.log(mid);
-                                document.getElementById(
-                                  `mainDiv${rawRandomID}`
-                                ).style.display = "none";
+                                if (mid.animationName == "fadeAway")
+                                  document.getElementById(
+                                    `mainDiv${rawRandomID}`
+                                  ).style.display = "none";
                               });
                           });
                         document
@@ -1774,6 +1805,7 @@ try {
         Array.from(
           document.getElementById("ableToDarken").getElementsByTagName("div")
         )[0].addEventListener("animationend", (anii) => {
+          console.log("fade ani trig");
           if (anii.animationName == "fadeSlight") {
             Array.from(
               document
@@ -1785,6 +1817,18 @@ try {
             document.getElementById("ableToDarken").style.pointerEvents =
               "none";
             document.getElementById("ableToDarken").style.userSelect = "none";
+          } else if (anii.animationName == "fadeBack") {
+            console.log("ITS ELSE IF!!!!!!");
+            Array.from(
+              document
+                .getElementById("ableToDarken")
+                .getElementsByTagName("div")
+            ).forEach((cv) => {
+              cv.style.opacity = "1";
+            });
+            document.getElementById("ableToDarken").style.pointerEvents =
+              "auto";
+            document.getElementById("ableToDarken").style.userSelect = "auto";
           }
         });
         // Array.from(
