@@ -316,23 +316,33 @@ try {
                     // Add settings option (end)
                     const docSnapp = await getDocs(refForPS);
                     console.log("DADOC ", docSnapp);
-                    async function startListenerToCloseUpdateTab() {
-                      document // Referencing html instead of body because the body has large margins around it (clicks won't register there)
-                        .getElementById("htmlMain")
-                        .addEventListener("click", (updateClickEvt) => {
-                          if (
-                            updateClickEvt.target.className
-                              .split(" ")
-                              .includes("uce")
-                          ) {
-                            console.log("Contains uce");
-                          } else {
-                            console.log("no contain");
-                          }
-                        });
-                      // Done with adding listener to close update tab
-                    }
-                    await startListenerToCloseUpdateTab();
+                    // async function startListenerToCloseUpdateTab() {
+                    //   document // Referencing html instead of body because the body has large margins around it (clicks won't register there)
+                    //     .getElementById("htmlMain")
+                    //     .addEventListener("click", (updateClickEvt) => {
+                    //       if (
+                    //         updateClickEvt.target.className
+                    //           .split(" ")
+                    //           .includes("uce")
+                    //       ) {
+                    //         console.log("Contains uce");
+                    //       } else {
+                    //         console.log("no contain");
+
+                    //         Array.from(
+                    //           document.getElementsByClassName(
+                    //             "updateQueryScreen"
+                    //           )
+                    //         ).forEach((existingUpdateTab) => {
+                    //           existingUpdateTab.style.animation = "";
+                    //           existingUpdateTab.style.animation =
+                    //             "pullInUpdateTab 0.3s ease";
+                    //         });
+                    //       }
+                    //     });
+                    //   // Done with adding listener to close update tab
+                    // }
+                    // await startListenerToCloseUpdateTab();
                     async function startUpShow(sourceDoc) {
                       const importedData = sourceDoc.data();
                       console.log("Secondary ", sourceDoc.data());
@@ -623,8 +633,19 @@ try {
                                 let updateExists =
                                   await checkIfUpdateScreenExists();
                                 if (updateExists == true) {
+                                  // Will run if an update tab for a query has already been created
                                   console.log("true");
+                                  document.getElementById(
+                                    `updateQueryScreen${rawRandomID}`
+                                  ).style.animation = "";
+                                  document.getElementById(
+                                    `updateQueryScreen${rawRandomID}`
+                                  ).style.animation =
+                                    "pushOutUpdateTab 0.3s ease";
                                 } else if (updateExists == undefined) {
+                                  // Code to run when creating a new update tab
+                                  // This is created when the user clicks on a query the first time to edit it
+                                  // If the user closes out of the update tab then clicks on the SAME query to edit it again, then this else if statement won't run
                                   console.log("false");
                                   const mcParent = Array.from(
                                     document.getElementsByClassName("mc")
@@ -820,59 +841,40 @@ try {
                                   // //
                                   // newUpdateChart.appendChild(queryInfoTable);
                                   // mcParent.appendChild(newUpdateChart);
-                                  const cloneEditButtons = async () => {
-                                    let editClone = Array.from(
-                                      document.getElementsByClassName(
-                                        "editButtonUpdate"
-                                      )
-                                    )[0].cloneNode(true);
+                                  setTimeout(() => {
+                                    document
+                                      .getElementById("htmlMain")
+                                      .addEventListener(
+                                        "click",
+                                        (updateClickEvt) => {
+                                          if (
+                                            updateClickEvt.target.className
+                                              .split(" ")
+                                              .includes("uce")
+                                          ) {
+                                            console.log("Contains uce");
+                                          } else {
+                                            if (
+                                              // Doesn't do the animation if update tab is already closed in and not showing
+                                              document.getElementById(
+                                                `updateQueryScreen${rawRandomID}`
+                                              ).style.width == "40%"
+                                            ) {
+                                              console.log("no contain");
 
-                                    editClone.id = `editButtonUpdate${rawRandomID}`;
+                                              let newUpdateTab =
+                                                document.getElementById(
+                                                  `updateQueryScreen${rawRandomID}`
+                                                );
+                                              newUpdateTab.style.animation = "";
+                                              newUpdateTab.style.animation =
+                                                "pullInUpdateTab 0.3s ease";
+                                            }
+                                          }
+                                        }
+                                      );
+                                  }, 200);
 
-                                    Array.from(
-                                      document.getElementsByClassName(
-                                        "editButtonUpdate"
-                                      )
-                                    )[0].replaceWith(editClone);
-                                    //
-
-                                    let saveClone = Array.from(
-                                      document.getElementsByClassName(
-                                        "saveButtonUpdate"
-                                      )
-                                    )[0].cloneNode(true);
-
-                                    saveClone.id = `saveButtonUpdate${rawRandomID}`;
-
-                                    Array.from(
-                                      document.getElementsByClassName(
-                                        "saveButtonUpdate"
-                                      )
-                                    )[0].replaceWith(saveClone);
-                                    //
-
-                                    let cancelClone = Array.from(
-                                      document.getElementsByClassName(
-                                        "cancelButtonUpdate"
-                                      )
-                                    )[0].cloneNode();
-
-                                    cancelClone.id = `cancelButtonUpdate${rawRandomID}`;
-
-                                    Array.from(
-                                      document.getElementsByClassName(
-                                        "cancelButtonUpdate"
-                                      )
-                                    )[0].replaceWith(cancelClone);
-
-                                    // document.getElementById(
-                                    //   "cancelButtonUpdate"
-                                    // ).id = `cancelButtonUpdate${rawRandomID}`;
-                                    //
-                                    // Update Listeners // (Putting here to aviod listener stacking)
-                                    console.log("Just up here");
-                                  };
-                                  // await cloneEditButtons();
                                   async function listenForEditRequest() {
                                     console.log("Up here in func");
                                     console.log(
