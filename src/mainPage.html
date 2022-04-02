@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" id="htmlMain">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="main.css" />
+    <script
+      src="https://kit.fontawesome.com/59e78c517c.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.2.0/zxcvbn.js"></script>
+    <title>Password Manager</title>
+  </head>
+  <script src="resizeMain.js"></script>
+  <script>
+    // win.setMinimumSize(0, 590)
+    // win.showDevTools(null, (w) => {
+    //   alert("SDK build of NW.js being used");
+    //   win.closeDevTools();
+    //   // console.log("open or no ", win.isDevToolsOpen(w));
+    //   // win.closeDevTools(null, (i) => {})
+    //   // nw.App.quit();
+    // });
+  </script>
+  <body>
+    <div class="mc">
+      <a href="#top" id="scrollToTop"></a>
+      <span id="ableToDarken">
+        <button class="addButton" id="addButton">Add Password</button>
+
+        <i class="fas fa-cog" id="settingsButton"></i>
+
+        <div class="queryScreen" id="queryScreen"></div>
+        <div class="settingsScreen" id="settingsScreen">
+          <i class="far fa-times-circle" id="closeSettings"></i>
+          <div class="settingsButtonsContainer">
+            <button id="SAinfoSettingsButton" class="settingsButtons">
+              Security and Account info
+            </button>
+            <button id="importSettingsButton" class="settingsButtons">
+              Import Passwords
+            </button>
+            <button id="exportSettingsButton" class="settingsButtons">
+              Export Passwords
+            </button>
+            <button id="logoutSettingsButton" class="settingsButtons">
+              Logout Of Password Manager
+            </button>
+          </div>
+        </div>
+
+        <div class="addPasswordScreen" id="addPasswordScreen">
+          <i class="far fa-times-circle" id="closeAdd"></i>
+          <i class="far fa-eye" id="eyeForAdd"></i>
+          <input
+            type="text"
+            class="nameOfQuery"
+            id="nameOfQuery"
+            placeholder="* Name"
+          />
+          <input
+            type="text"
+            class="usernameOfQuery"
+            id="usernameOfQuery"
+            placeholder="* Username/Email"
+          />
+          <input
+            type="password"
+            class="passwordOfQuery"
+            id="passwordOfQuery"
+            placeholder="* Password"
+          />
+          <input
+            type="text"
+            class="URLOfQuery"
+            id="URLOfQuery"
+            placeholder="URL (Optional)"
+          />
+
+          <button class="confirmQuery" id="confirmQuery">Confirm</button>
+        </div>
+        <div class="setupMasterPasswordScreen" id="setupMasterPasswordScreen">
+          <div class="setupMPScreenContainer">
+            <h1
+              class="createMasterPasswordHeader"
+              id="createMasterPasswordHeader"
+            >
+              Create Master Password
+            </h1>
+            <input
+              type="password"
+              class="newMasterPasswordField"
+              id="newMasterPasswordField"
+              placeholder="Master Password"
+              autofocus="autofocus"
+            />
+            <input
+              type="password"
+              class="renterMP"
+              id="renterMP"
+              placeholder="Confirm Master Password"
+            />
+            <meter
+              min="0"
+              low="1"
+              optimum="2"
+              high="3"
+              max="4"
+              id="passwordStrengthBar"
+            ></meter>
+            <button
+              class="confirmMasterPasswordButton"
+              id="confirmMasterPasswordButton"
+            >
+              Create Master Password
+            </button>
+            <div id="backContainer">
+              <a href="#" id="back">Back to main page</a>
+            </div>
+          </div>
+          <a href="appSelector.html" id="fromPMToMain"></a>
+          <a href="login.html" id="fromMainToLogin"></a>
+          <a href="account.html" id="fromMainToAccount"></a>
+        </div>
+      </span>
+    </div>
+  </body>
+  <script defer>
+    // Making password manager script (for strength bar)
+    document
+      .getElementById("newMasterPasswordField")
+      .addEventListener("keyup", (evt) => {
+        console.log(
+          "Its in normal mode because display is ",
+          document.getElementById("passwordStrengthBar").style.display
+        );
+        let enteredWantedNewMasterPassword = document.getElementById(
+          "newMasterPasswordField"
+        ).value;
+        let bar = document.getElementById("passwordStrengthBar");
+        let result = zxcvbn(enteredWantedNewMasterPassword);
+        bar.value = result.score;
+        let amountOfGuesses = result.guesses;
+        // if (
+        //   amountOfGuesses.toString().includes("e") ||
+        //   amountOfGuesses.toString().length > 10
+        // ) {
+        //   document.getElementById(
+        //     "timeToCrack"
+        //   ).textContent = `This password can be guessed in A LOT tries`;
+        // } else {
+        //   if (amountOfGuesses == 1) {
+        //     document.getElementById(
+        //       "timeToCrack"
+        //     ).textContent = `This password can be guessed in ${amountOfGuesses} try`;
+        //   } else {
+        //     document.getElementById(
+        //       "timeToCrack"
+        //     ).textContent = `This password can be guessed in ${amountOfGuesses} tries`;
+        //   }
+        // }
+        console.log(
+          "Bar val is ",
+          bar.value,
+          "Result score is ",
+          result.score,
+          "Time crack is ",
+          result.crack_time_seconds,
+          "Result guesses ",
+          result.guesses
+        );
+      });
+  </script>
+  <script
+    defer
+    src="promptForMasterPasswordAndDisplay.js"
+    type="module"
+  ></script>
+  <script defer src="signOutOfCreateScreen.js" type="module"></script>
+  <!-- <script defer src="displayQuery.js" type="module"></script> -->
+  <script src="signOutBackToAppSelector.js" type="module"></script>
+  <script defer src="insertAQuery.js" type="module"></script>
+  <script defer>
+    try {
+      const gui = require("nw.gui");
+      let win = gui.Window.get();
+      win.setResizable(true);
+    } catch (err) {
+      win.setResizable(true);
+    }
+  </script>
+  <script defer>
+    window.onload = function () {
+      document.getElementsByClassName("newMasterPasswordField")[0].focus();
+    };
+  </script>
+  <script>
+    document.getElementById("back").addEventListener("click", () => {
+      document.getElementById("fromPMToMain").click();
+    });
+  </script>
+  <!-- <script src="checkForUILimitMain.js"></script> -->
+  <!-- <script defer src="resizeEnterPMFontSize.js"></script> -->
+  <!-- <script defer src="2faGoogleSetup.js"></script> -->
+  <!-- <script defer src="2faGoogleChecker.js"></script> -->
+</html>
