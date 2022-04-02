@@ -1,0 +1,22 @@
+{
+  "name": "src",
+  "version": "1.0.0",
+  "description": "A personal password manager",
+  "main": "login.html",
+  "chromium-args": "--disable-features=nw2",
+  "window": {
+    "title": "Password Manager",
+    "resizable": true,
+    "icon": "images/lockIcon.PNG"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Roni Daou",
+  "license": "ISC",
+  "dependencies": {
+    "@types/crypto-js": "^4.1.0",
+    "crypto-js": "^4.1.1"
+  }
+}
