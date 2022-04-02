@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://kit.fontawesome.com/59e78c517c.js"
+      crossorigin="anonymous"
+    ></script>
+    <title>Personal PM</title>
+    <link rel="stylesheet" href="appSelector.css" />
+    <script>
+      win.setResizable(true);
+      win.unmaximize();
+      win.leaveFullscreen();
+      win.setResizable(false);
+    </script>
+    <script src="resizeAppSelector.js"></script>
+  </head>
+  <body>
+    <div id="container">
+      <div class="keyImage">
+        <img id="realIcon" src="images/lockIcon.png" />
+      </div>
+      <h1 id="nameHeader">Personal PM</h1>
+      <button id="takeToPMButton" class="redirectAppButtons">
+        <i class="fas fa-key" id="keyPMIcon"></i>
+        <p id="pmButtonText">Password Manager</p>
+      </button>
+      <button id="takeToLockerButton" class="redirectAppButtons">
+        <i class="fas fa-folder" id="docLockerIcon"></i>
+        <p id="lockerButtonText">Personal Locker</p>
+      </button>
+      <a href="mainPage.html" id="takeToPMLinkHidden"></a>
+      <a href="locker.html" id="takeToLockerLinkHidden"></a>
+      <a href="login.html" id="fromMainToLogin"></a>
+    </div>
+    <div id="backToLoginLinkContainer">
+      <a href="#" id="backToLoginLink">Log Out</a>
+    </div>
+    <a href="login.html" id="backToLoginLinkHidden">Back to login</a>
+  </body>
+  <script defer src="appSelector.js"></script>
+  <script
+    defer
+    src="signOutMainListenerWithBackButton.js"
+    type="module"
+  ></script>
+  <script defer src="signOutMainListener.js" type="module"></script>
+  <script defer src="changeAppSelectorProperties.js" type="module"></script>
+  <!-- <script>
+    win.setResizable(false);
+  </script> -->
+</html>
