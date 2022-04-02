@@ -845,22 +845,10 @@ try {
                                         }
                                       }
                                     );
-
-                                  // let newUpdateChart = document.createElement("div");
-                                  // newUpdateChart.id = `updateQueryScreen${rawRandomID}`;
-                                  // newUpdateChart.className = "updateQueryScreen";
-                                  // newUpdateChart.style.display = "none";
-                                  // //
-                                  // let queryInfoTable =
-                                  //   document.createElement("table");
-                                  // queryInfoTable.id = `queryInfoTable${rawRandomID}`;
-                                  // queryInfoTable.className = "queryInfoTable";
-                                  // queryInfoTable.style.display = "none";
-                                  // //
-                                  // newUpdateChart.appendChild(queryInfoTable);
-                                  // mcParent.appendChild(newUpdateChart);
+                                  // This won't excecute if the update tab has already been opened before because this runs in an else if statement that only excecutes of the update tab doesn't exist at all yet
                                   setTimeout(() => {
-                                    document
+                                    // Setting timeout because when click on query to open update tab, the click will register to open and close the tab right away because that same click will also trigger this listener to close the tab
+                                    document // Listener to close update tab by clicking out of it
                                       .getElementById("htmlMain")
                                       .addEventListener(
                                         "mousedown",
@@ -879,7 +867,28 @@ try {
                                               ).style.width == "40%"
                                             ) {
                                               console.log("no contain");
-
+                                              if (
+                                                // Checking if update tab is in edit mode while trying to close the update tab
+                                                document.getElementById(
+                                                  `cancelButtonUpdate${rawRandomID}`
+                                                ).style.display == "initial" &&
+                                                document.getElementById(
+                                                  `saveButtonUpdate${rawRandomID}`
+                                                ).style.display == "initial" &&
+                                                document.getElementById(
+                                                  `editButtonUpdate${rawRandomID}`
+                                                ).style.display == "none"
+                                              ) {
+                                                console.log(
+                                                  "Exiting edit mode..."
+                                                );
+                                                // Checking if update tab is in edit mode, send click event to cancel button to discard changes and go out of edit mode
+                                                document
+                                                  .getElementById(
+                                                    `cancelButtonUpdate${rawRandomID}`
+                                                  )
+                                                  .click();
+                                              }
                                               let newUpdateTab =
                                                 document.getElementById(
                                                   `updateQueryScreen${rawRandomID}`
