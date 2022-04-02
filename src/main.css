@@ -77,6 +77,12 @@ body {
   }
 }
 
+@keyframes fadeBack {
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes fadeAway {
   to {
     opacity: 0;
