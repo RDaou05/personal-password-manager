@@ -1,0 +1,1023 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap");
+
+*:focus {
+  outline: 0 !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #282d34;
+  margin-left: 5px;
+  margin-top: 15%;
+}
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+meter[value="1"]::-webkit-meter-optimum-value {
+  background: rgb(151, 1, 1);
+  transition: all ease-in-out 0.5s;
+}
+meter[value="2"]::-webkit-meter-optimum-value {
+  background: rgb(228, 82, 25);
+  transition: all ease-in-out 0.5s;
+}
+meter[value="3"]::-webkit-meter-optimum-value {
+  background: rgb(218, 187, 17);
+  transition: all ease-in-out 0.5s;
+}
+meter[value="4"]::-webkit-meter-optimum-value {
+  background: rgb(4, 128, 0);
+  transition: all ease-in-out 0.5s;
+}
+
+meter::-moz-meter-bar {
+  border-radius: 4vh;
+}
+
+body {
+  --addPlaceHoldersFontSize: 15px;
+  --addPlaceHoldersFontSizeWeight: 500;
+  --addPlaceHoldersFontFamily: sans-serif;
+  --addPlaceHoldersOpacity: 0.7;
+  --addPlaceHoldersFontSizeTextAlign: initial;
+  --addPlaceHoldersPaddingLeft: 2%;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: transparent;
+  border-radius: 8vh;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(71, 71, 71);
+  border-radius: 8vh;
+  margin-left: 2px;
+  opacity: 0.7;
+}
+
+/* ::placeholder {
+  font-size: 15px;
+  font-weight: 500;
+  font-family: sans-serif;
+  opacity: 0.7;
+  text-align: initial;
+  padding-left: 2%;
+} */
+
+@keyframes fadeSlight {
+  to {
+    opacity: 0.7;
+  }
+}
+
+@keyframes fadeAway {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes pushOutUpdateTab {
+  to {
+    width: 40%;
+  }
+}
+
+@keyframes pullInUpdateTab {
+  to {
+    width: 0%;
+  }
+}
+
+@keyframes updateTabToDark {
+  to {
+    background-color: #0b0b0b;
+  }
+}
+
+@keyframes updateTabToNormal {
+  to {
+    background-color: #0c1213;
+  }
+}
+
+@keyframes updateInputBoxesGlow {
+  to {
+    box-shadow: rgb(255, 255, 255) 0px 0px 12px 1px;
+  }
+}
+
+@keyframes updateInputBoxesNormal {
+  to {
+    box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+  }
+}
+
+.queryLine {
+  /* position: absolute; */
+  background-color: #434446;
+  /* background-image: linear-gradient(to right, #002327, #0b817b); */
+  color: #1557db;
+  opacity: 0.8;
+  height: 2px;
+  width: 100%;
+  font-family: sans-serif;
+  right: 13%;
+  /* margin-left: -5%; This will cause the grey hovering thing to extend past line */
+  border-radius: 40vh;
+}
+
+.queryScreen {
+  margin-left: 12.5%;
+  margin-right: 12.5%;
+}
+
+.mainDivClass {
+  padding-top: 2%;
+}
+
+.mainDivClass:hover {
+  background-color: #2f353d;
+  transition: all ease-in-out 0.1s;
+}
+
+.linkIcons {
+  width: auto;
+  height: 35px;
+  /* background-color: #122640; */
+  border-radius: 1vh;
+  object-fit: cover;
+  object-position: 50% 50%;
+  /* position: absolute; */
+}
+
+.letterLinkIcons {
+  width: 34px;
+  height: 34px;
+  border-radius: 1vh;
+  object-fit: cover;
+  /* margin-bottom: -3%; */
+  display: inline-block;
+}
+
+.infoDiv {
+  margin-bottom: 2%;
+  font-family: "Montserrat", sans-serif;
+  padding-left: 3%;
+  padding-right: 3%;
+}
+
+.letterBoxLetter {
+  color: white;
+  padding-top: 24%;
+  padding-left: 35%;
+  margin: 0;
+}
+
+.shownAppName {
+  border: none;
+  outline: none;
+  user-select: none;
+  left: 51.5%;
+  /* margin-top: -3%; */
+  margin-left: 6%;
+  background: transparent;
+  color: white;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.shownEmail {
+  border: none;
+  outline: none;
+  user-select: none;
+  left: 51.5%;
+  /* margin-top: -3%; */
+  margin-left: 6%;
+  background: transparent;
+  color: white;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hiddenPasswordInputBox {
+  border: none;
+  outline: none;
+  user-select: none;
+  left: 51.5%;
+  margin-top: -3%;
+  margin-left: 6%;
+  background: transparent;
+  color: white;
+  display: inline-block;
+}
+.editContainer {
+  background-color: #b3b3b3;
+  opacity: 0.5;
+  width: 30px;
+  height: 30px;
+  border-radius: 4vh;
+  left: 75%;
+  display: inline-block;
+}
+
+.editContainer:hover {
+  opacity: 1;
+  box-shadow: 0 0 10px rgb(149, 151, 151);
+  transition: all ease-in-out 0.1s;
+}
+
+.editClass {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.eyeContainer {
+  background-color: #b3b3b3;
+  opacity: 0.5;
+  width: 30px;
+  height: 30px;
+  border-radius: 4vh;
+  left: 75%;
+  display: inline-block;
+}
+
+.eyeContainer:hover {
+  opacity: 1;
+  box-shadow: 0 0 10px rgb(149, 151, 151);
+  transition: all ease-in-out 0.1s;
+}
+
+.eyeClass {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.copyContainer {
+  background-color: #b3b3b3;
+  opacity: 0.5;
+  width: 30px;
+  left: 78%;
+  height: 30px;
+  border-radius: 4vh;
+  margin-left: 12%;
+  display: inline-block;
+  margin-left: 13%;
+}
+
+.copyContainer:hover {
+  opacity: 1;
+  box-shadow: 0 0 10px rgb(149, 151, 151);
+  transition: all ease-in-out 0.1s;
+}
+
+.copyClass {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.trashContainer {
+  background-color: #b3b3b3;
+  opacity: 0.5;
+  width: 30px;
+  height: 30px;
+  border-radius: 4vh;
+  left: 81%;
+  display: inline-block;
+}
+
+.trashContainer:hover {
+  opacity: 1;
+  box-shadow: 0 0 10px rgb(149, 151, 151);
+  transition: all ease-in-out 0.1s;
+}
+
+.trashClass {
+  position: relative;
+  top: 48%;
+  left: 48%;
+  transform: translate(-50%, -50%);
+}
+
+.addButton {
+  border-radius: 4vh;
+  color: white;
+  background-color: #0b817b;
+  border: none;
+  outline: none;
+  opacity: 0.7;
+  padding: 1%;
+  padding-right: 2%;
+  padding-left: 2%;
+  position: absolute;
+  left: 80%;
+  bottom: 90%;
+  font-family: "Montserrat", sans-serif;
+}
+
+.addButton:hover {
+  opacity: 1;
+  transition: all ease-in-out 0.1s;
+  box-shadow: 0 0 10px rgb(1, 255, 242);
+}
+
+#settingsButton {
+  font-size: 27px;
+  border-radius: 4vh;
+  color: #0b817b;
+  border: none;
+  outline: none;
+  /* opacity: 0.7; */
+  padding: 1%;
+  position: absolute;
+  right: 89%;
+  bottom: 90%;
+}
+
+#settingsButton:hover {
+  opacity: 1;
+  background-color: #2f353d;
+  box-shadow: 0 0 10px rgb(1, 255, 242);
+  transition: all ease-in-out 0.1s;
+}
+
+#settingsButton:hover {
+  transform: rotate(180deg);
+  transition: all ease-in-out 0.5s;
+}
+
+.addPasswordScreen {
+  display: none;
+  background-color: #383636;
+  border-radius: 1.5vh;
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 10px;
+}
+
+.nameOfQuery {
+  background-color: #000000;
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+  border-radius: 1vh;
+  outline: none;
+  border: none;
+  margin-top: 8%;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: "Montserrat", sans-serif;
+  padding: 2.5%;
+  margin-left: 8%;
+  height: 8%;
+  text-align: center;
+  padding-left: 14%;
+  padding-right: 14%;
+  width: 55%;
+}
+
+.nameOfQuery:focus {
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+}
+.nameOfQuery:hover {
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+}
+.nameOfQuery::placeholder {
+  font-size: var(--addPlaceHoldersFontSize);
+  font-weight: var(--addPlaceHoldersFontSizeWeight);
+  font-family: var(--addPlaceHoldersFontFamily);
+  opacity: var(--addPlaceHoldersOpacity);
+  text-align: var(--addPlaceHoldersFontSizeTextAlign);
+  padding-left: var(--addPlaceHoldersPaddingLeft);
+}
+
+/* */
+
+.usernameOfQuery {
+  background-color: #000000;
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+  border-radius: 1vh;
+  outline: none;
+  border: none;
+  margin-top: 8%;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: "Montserrat", sans-serif;
+  padding: 2.5%;
+  margin-left: 8%;
+  height: 8%;
+  text-align: center;
+  padding-left: 14%;
+  padding-right: 14%;
+  width: 55%;
+}
+
+.usernameOfQuery:focus {
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+}
+.usernameOfQuery:hover {
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+}
+.usernameOfQuery::placeholder {
+  font-size: var(--addPlaceHoldersFontSize);
+  font-weight: var(--addPlaceHoldersFontSizeWeight);
+  font-family: var(--addPlaceHoldersFontFamily);
+  opacity: var(--addPlaceHoldersOpacity);
+  text-align: var(--addPlaceHoldersFontSizeTextAlign);
+  padding-left: var(--addPlaceHoldersPaddingLeft);
+}
+
+/* */
+
+.passwordOfQuery {
+  background-color: #000000;
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+  border-radius: 1vh;
+  outline: none;
+  border: none;
+  margin-top: 8%;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: "Montserrat", sans-serif;
+  padding: 2.5%;
+  margin-left: 8%;
+  height: 8%;
+  text-align: center;
+  padding-left: 14%;
+  padding-right: 14%;
+  width: 55%;
+}
+
+.passwordOfQuery:focus {
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+}
+.passwordOfQuery:hover {
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+}
+.passwordOfQuery::placeholder {
+  font-size: var(--addPlaceHoldersFontSize);
+  font-weight: var(--addPlaceHoldersFontSizeWeight);
+  font-family: var(--addPlaceHoldersFontFamily);
+  opacity: var(--addPlaceHoldersOpacity);
+  text-align: var(--addPlaceHoldersFontSizeTextAlign);
+  padding-left: var(--addPlaceHoldersPaddingLeft);
+}
+
+.URLOfQuery {
+  background-color: #000000;
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+  border-radius: 1vh;
+  outline: none;
+  border: none;
+  margin-top: 8%;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: "Montserrat", sans-serif;
+  padding: 2.5%;
+  margin-left: 8%;
+  height: 8%;
+  text-align: center;
+  padding-left: 14%;
+  padding-right: 14%;
+  width: 55%;
+}
+
+.URLOfQuery:focus {
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+}
+.URLOfQuery:hover {
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+}
+.URLOfQuery::placeholder {
+  font-size: var(--addPlaceHoldersFontSize);
+  font-weight: var(--addPlaceHoldersFontSizeWeight);
+  font-family: var(--addPlaceHoldersFontFamily);
+  opacity: var(--addPlaceHoldersOpacity);
+  text-align: var(--addPlaceHoldersFontSizeTextAlign);
+  padding-left: var(--addPlaceHoldersPaddingLeft);
+}
+/* here */
+.confirmQuery {
+  width: 83%;
+  height: 9%;
+  color: white;
+  cursor: pointer;
+  background-color: #13817c;
+  border-radius: 3vh;
+  border: none;
+  padding: 2%;
+  opacity: 0.8;
+  font-size: 19px;
+  font-family: "Montserrat", sans-serif;
+  margin-top: 8%;
+  margin-left: 8%;
+  font-weight: 600;
+  margin-bottom: 3%;
+}
+
+.confirmQuery:hover {
+  box-shadow: 0 0 15px rgb(1 255 242);
+  opacity: 1;
+  transition: all ease-in-out 0.1s;
+}
+
+#eyeForAdd {
+  position: absolute;
+  color: #13817c;
+  right: 19%;
+  bottom: 45.5%;
+  font-size: 17px;
+}
+
+#closeAdd {
+  color: #00fff3;
+  font-size: 30px;
+  text-align: center;
+  float: right;
+  cursor: pointer;
+}
+
+#closeAdd:hover {
+  filter: drop-shadow(0 30px 30px #000000);
+  transition: all ease-in-out 0.1s;
+}
+
+#closeSettings {
+  color: #00fff3;
+  font-size: 30px;
+  text-align: center;
+  float: right;
+  cursor: pointer;
+}
+
+#closeSettings:hover {
+  filter: drop-shadow(0 30px 30px #000000);
+  transition: all ease-in-out 0.1s;
+}
+
+.settingsScreen {
+  display: none;
+  background-color: #383636;
+  border-radius: 1.5vh;
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 10px;
+}
+
+#fromMainToLogin {
+  display: none;
+}
+
+.setupMasterPasswordScreen {
+  display: none;
+  background-color: #383636;
+  border-radius: 1.5vh;
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 10px;
+}
+
+.createMasterPasswordHeader {
+  color: white;
+  font-weight: 700;
+  font-size: 1.65rem;
+  text-align: center;
+  margin-top: 9%;
+  font-family: "Montserrat", sans-serif;
+}
+
+.newMasterPasswordField {
+  background-color: #000000;
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+  border-radius: 1vh;
+  outline: none;
+  border: none;
+  margin-top: 8%;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: "Montserrat", sans-serif;
+  padding: 4.5%;
+  margin-left: 8%;
+  height: 8%;
+  text-align: center;
+  padding-left: 14%;
+  padding-right: 14%;
+  width: 55%;
+}
+
+.newMasterPasswordField:focus {
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+  border: 3px solid rgb(1 255 242);
+  transition: all ease-in-out 0.2s;
+}
+.newMasterPasswordField:hover {
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+  border: 3px solid rgb(1 255 242);
+  transition: all ease-in-out 0.2s;
+}
+
+.renterMP {
+  background-color: #000000;
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+  border-radius: 1vh;
+  outline: none;
+  border: none;
+  margin-top: 4%;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: "Montserrat", sans-serif;
+  padding: 4.5%;
+  margin-left: 8%;
+  height: 8%;
+  text-align: center;
+  padding-left: 14%;
+  padding-right: 14%;
+  width: 55%;
+}
+
+.renterMP:focus {
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+  border: 3px solid rgb(1 255 242);
+  transition: all ease-in-out 0.2s;
+}
+.renterMP:hover {
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+  border: 3px solid rgb(1 255 242);
+  transition: all ease-in-out 0.2s;
+}
+
+/* timeToCrack is for the Create MP */
+#timeToCrack {
+  text-align: center;
+  color: #00ffd0;
+  font-family: "Montserrat", sans-serif;
+  font-size: 16.5px;
+  font-weight: bold;
+}
+
+/* timeToCrackEnter is for the Create MP */
+#timeToCrackEnter {
+  text-align: center;
+  color: #00ffd0;
+  font-family: "Montserrat", sans-serif;
+  font-size: 16.5px;
+  font-weight: bold;
+  position: absolute;
+  left: 5.5%;
+}
+
+#passwordStrengthBar {
+  margin-left: 8.25%;
+  height: 6px;
+  margin-top: 4%;
+  overflow: hidden;
+  width: 83%;
+  border-radius: 1vh;
+}
+
+.confirmMasterPasswordButton {
+  width: 82%;
+  padding: 3%;
+  color: white;
+  font-size: 17px;
+  cursor: pointer;
+  text-align: center;
+  background-color: #13817c;
+  border-radius: 0.2vh;
+  opacity: 0.8;
+  margin-top: 14%;
+  margin-bottom: 6%;
+  margin-left: 9%;
+  border: none;
+  box-shadow: 0 0 10px rgb(1, 255, 242);
+  padding: 3%;
+}
+
+.confirmMasterPasswordButton:hover {
+  opacity: 1;
+  transition: ease-in-out 0.1s;
+}
+
+.setupMPScreenContainer {
+  padding-bottom: 7%;
+}
+
+#back {
+  color: #00ffd0;
+  text-decoration: none;
+  font-weight: 700;
+  font-family: "Montserrat", sans-serif;
+  font-size: 17px;
+}
+
+#back:hover {
+  opacity: 0.7;
+  margin-top: 0.5%;
+  transition: all ease-in-out 0.2s;
+}
+
+.settingsButtons {
+  text-align: center;
+  background-color: #13817c;
+  outline: none;
+  border: none;
+  border-radius: 2vh;
+  padding: 4%;
+  width: 95%;
+  height: 11%;
+  font-size: 105%;
+  margin-top: 8%;
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  font-weight: bolder;
+  cursor: pointer;
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+}
+
+.settingsButtonsContainer {
+  margin-top: 4%;
+  margin-left: 5%;
+}
+
+#SAinfoSettingsButton:hover {
+  border: 2px solid rgb(1 255 242);
+  transition: all ease-in-out 0.1s;
+}
+
+#importSettingsButton:hover {
+  border: 2px solid rgb(1 255 242);
+  transition: all ease-in-out 0.1s;
+}
+
+#exportSettingsButton:hover {
+  border: 2px solid rgb(1 255 242);
+  transition: all ease-in-out 0.1s;
+}
+
+#logoutSettingsButton:hover {
+  border: 2px solid rgb(107, 7, 7);
+  transition: all ease-in-out 0.1s;
+}
+
+#logoutSettingsButton {
+  margin-top: 13%;
+  background-color: #a50b0b;
+  margin-bottom: 3%;
+}
+
+#backContainer {
+  text-align: center;
+}
+
+.toggler {
+  margin-left: 10%;
+}
+
+.tholder {
+  left: 71%;
+  display: inline-block;
+  position: absolute;
+  white-space: nowrap;
+}
+
+.updateQueryScreen {
+  z-index: 4;
+  display: none;
+  /* background-image: linear-gradient(to bottom right, #053f45, #0b817b); */
+  background-color: #0c1213;
+
+  width: 0%;
+  height: 100vh;
+  position: absolute;
+  right: 0%;
+  top: 0%;
+  box-shadow: 0 20px 25px rgb(0 0 0 / 80%);
+}
+
+#updateScreenIcon {
+  border-radius: 1vh;
+}
+
+.queryInfoTable {
+  margin: auto;
+  margin-top: 16%;
+  border-collapse: collapse;
+  width: 82%;
+}
+
+.queryInfoTable tbody:before {
+  line-height: 4em;
+  content: ".";
+}
+
+.queryInfoTable tbody {
+  line-height: 2rem;
+}
+
+.queryInfoTable thead tr td {
+  text-align: center;
+  width: 100%;
+}
+
+.smallUpdateDisplayText {
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  opacity: 0.7;
+  margin-right: 1%;
+  float: right;
+  font-size: 99%;
+}
+
+.strongUpdateDisplayText {
+  background-color: #151922;
+  border-radius: 0.5vh;
+  padding: 4%;
+  margin-top: 1%;
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  margin-right: 0;
+  width: -webkit-fill-available;
+  text-overflow: ellipsis;
+  outline: none;
+  border: none;
+  font-size: 15px;
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+}
+
+.updateQueryScreen {
+  overflow-y: scroll;
+}
+
+.updateScreenQueryNameHeader {
+  font-family: "Montserrat", sans-serif;
+  color: white;
+}
+
+.strongUpdateDisplayText:hover {
+  background-color: #2f353d;
+  transition: all ease-in-out 0.2s;
+}
+
+/* #togglePasswordUpdateDisplay {
+  font-family: "Font Awesome 5 Free";
+  color: white;
+  margin-left: -10%;
+  margin-top: 5%;
+}
+
+#togglePasswordUpdateDisplayContainer {
+  background-color: #2f353d;
+  opacity: 0.5;
+  width: 30px;
+  height: 30px;
+  border-radius: 4vh;
+  display: none;
+} */
+
+.queryInfoTable tfoot tr td {
+  text-align: center;
+}
+
+.queryInfoTable tfoot tr {
+  text-align: center;
+  line-height: 76px;
+}
+
+tfoot:before {
+  line-height: 1em;
+  content: ".";
+}
+
+.editButtonUpdate {
+  background-color: #2f353d;
+  border: 2px black solid;
+  border-radius: 0.5vh;
+  font-family: "Montserrat", sans-serif;
+  font-size: 25px;
+  width: -webkit-fill-available;
+  text-overflow: ellipsis;
+  color: white;
+  padding: 2%;
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+}
+
+.editButtonUpdate:hover {
+  cursor: pointer;
+  opacity: 0.8;
+  transition: all ease 0.3s;
+}
+
+.saveButtonUpdate {
+  background-color: #036875;
+  border: 2px black solid;
+  border-radius: 0.5vh;
+  font-family: "Montserrat", sans-serif;
+  font-size: 25px;
+  width: -webkit-fill-available;
+  text-overflow: ellipsis;
+  color: white;
+  padding: 2%;
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+  display: none;
+}
+
+.saveButtonUpdate:hover {
+  cursor: pointer;
+  opacity: 0.8;
+  transition: all ease 0.3s;
+}
+
+.cancelButtonUpdate {
+  background-color: #2f353d;
+  border: 2px black solid;
+  border-radius: 0.5vh;
+  font-family: "Montserrat", sans-serif;
+  font-size: 25px;
+  width: -webkit-fill-available;
+  text-overflow: ellipsis;
+  color: white;
+  padding: 2%;
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+  display: none;
+}
+
+.cancelButtonUpdate:hover {
+  cursor: pointer;
+  opacity: 0.8;
+  transition: all ease 0.3s;
+}
+
+/* @media screen and (min-width: 635px) {
+  .tholder {
+    margin-top: 2.5%;
+  }
+}
+
+@media screen and (min-width: 800px) {
+  .tholder {
+    margin-top: 2%;
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .tholder {
+    margin-top: 1.5%;
+  }
+} */
+
+@media screen and (min-width: 1000px) {
+  body {
+    margin-top: 13%;
+  }
+}
+
+@media screen and (min-width: 1080px) {
+  body {
+    margin-top: 12%;
+  }
+}
+
+@media screen and (min-width: 1400px) {
+  body {
+    margin-top: 11%;
+  }
+}
+
+/* @media screen and (min-width: 1440px) {
+  .tholder {
+    margin-top: 1.3%;
+  }
+}
+
+@media screen and (min-width: 1554px) {
+  .tholder {
+    margin-top: 1.2%;
+  }
+} */
