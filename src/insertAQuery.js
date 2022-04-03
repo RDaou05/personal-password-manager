@@ -149,6 +149,20 @@ async function mainInit() {
             console.log(err);
           });
       };
+      const dimAbleToDarken = () => {
+        Array.from(
+          document.getElementById("ableToDarken").getElementsByTagName("div")
+        ).forEach((cv) => {
+          cv.style.opacity = "0.7";
+        });
+      };
+      const resetDimAbleToDarken = () => {
+        Array.from(
+          document.getElementById("ableToDarken").getElementsByTagName("div")
+        ).forEach((cv) => {
+          cv.style.opacity = "1";
+        });
+      };
 
       // const analytics = getAnalytics(app);
       document.getElementById("addButton").addEventListener("click", () => {
@@ -530,7 +544,7 @@ async function mainInit() {
                       //
                       async function showNewUpdateScreen() {
                         let updateExists = await checkIfUpdateScreenExists();
-                        if (updateExists == true) {
+                        if (updateExists) {
                           // Will run if an update tab for a query has already been created
                           console.log("true");
                           document.getElementById(
@@ -1213,13 +1227,7 @@ async function mainInit() {
                           await showUpdateScreenIcon();
 
                           //
-                          Array.from(
-                            document
-                              .getElementById("ableToDarken")
-                              .getElementsByTagName("div")
-                          ).forEach((cv) => {
-                            cv.style.animation = "fadeSlight 0.25s ease";
-                          });
+                          dimAbleToDarken();
                           //
                           const displayAllCurrentInfoUpdate = async () => {
                             let displayNameForUpdateIcon = await decryptWithMP(
