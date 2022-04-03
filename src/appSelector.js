@@ -7,5 +7,5 @@ document.getElementById("takeToPMButton").addEventListener("click", () => {
 document.getElementById("takeToLockerButton").addEventListener("click", () => {
   setTimeout(() => {
     document.getElementById("takeToLockerLinkHidden").click();
-  }, 800);
+  }, 1800);
 });
