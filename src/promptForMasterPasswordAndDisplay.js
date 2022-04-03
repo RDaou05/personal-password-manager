@@ -638,6 +638,8 @@ try {
                                     )
                                   ) {
                                     return true;
+                                  } else {
+                                    return false;
                                   }
                                 }
                                 await createAndAddUpdatesCheckList();
@@ -656,11 +658,16 @@ try {
                                     `updateQueryScreen${rawRandomID}`
                                   ).style.animation =
                                     "pushOutUpdateTab 0.3s ease";
+                                  document
+                                    .getElementById(
+                                      `updateQueryScreen${rawRandomID}`
+                                    )
+                                    .classList.remove("prototype"); // Removing this class indicates that the update tab has been opened before
                                   // document.getElementById(
                                   //   "ableToDarken"
                                   // ).style.animation = "fadeSlight 0.25s ease";
                                   dimAbleToDarken();
-                                } else if (updateExists == undefined) {
+                                } else if (updateExists == false) {
                                   // Code to run when creating a new update tab
                                   // This is created when the user clicks on a query the first time to edit it
                                   // If the user closes out of the update tab then clicks on the SAME query to edit it again, then this else if statement won't run
@@ -668,8 +675,16 @@ try {
                                   const mcParent = Array.from(
                                     document.getElementsByClassName("mc")
                                   )[0];
+
+                                  // Adding html of new update tab
+                                  // Added the prototype class to the first line of the html below
+                                  // Use this class to tell when the first time the update tab is being opened
+                                  // This is useful when we add the click event listener for the save and cancel buttons
+                                  // Will get rid of prototype class in the if statement above (when we open the update tab and it has already been opened before)
+
+                                  // The prototype class is also added to the edit button when it is clicked the first time
                                   let htmlOfNewUpdateScreen = `
-                                <div id="updateQueryScreen${rawRandomID}" class="updateQueryScreen uce">
+                                <div id="updateQueryScreen${rawRandomID}" class="updateQueryScreen prototype uce">
                                   <table id="queryInfoTable${rawRandomID}" class="queryInfoTable uce">
                                     <thead class="uce">
                                       <tr class="uce">
@@ -732,7 +747,7 @@ try {
                                     <tfoot class="uce">
                                       <tr id="editRow${rawRandomID}" class="editRow uce">
                                         <td class="uce">
-                                          <button id="editButtonUpdate${rawRandomID}" class="editButtonUpdate uce">Edit</button>
+                                          <button id="editButtonUpdate${rawRandomID}" class="editButtonUpdate prototype uce">Edit</button>
                                         </td>
                                       </tr>
                                       <tr id="saveRow${rawRandomID}" class="saveRow uce">
@@ -856,7 +871,7 @@ try {
                                           if (
                                             updateClickEvt.target.className
                                               .split(" ")
-                                              .includes("uce")
+                                              .includes("uce") //If an element is in the update tab box, it contains a class of "uce"
                                           ) {
                                             console.log("Contains uce");
                                           } else {
@@ -926,7 +941,22 @@ try {
                                         `editButtonUpdate${rawRandomID}`
                                       )
                                       .addEventListener("click", () => {
-                                        //
+                                        // Checking if its the first time this edit button has been clicked
+                                        let editButtonClickedFirstTime;
+                                        if (
+                                          Array.from(
+                                            document.getElementById(
+                                              `editButtonUpdate${rawRandomID}`
+                                            ).classList
+                                          ).includes("prototype")
+                                        ) {
+                                          console.log("first time?");
+                                          editButtonClickedFirstTime = true;
+                                        } else {
+                                          console.log("NOT FIRST TIME");
+                                          editButtonClickedFirstTime = false;
+                                        }
+
                                         console.log(
                                           "DA NAME... ",
                                           document.getElementById(
@@ -1005,275 +1035,298 @@ try {
                                         });
                                         // Bug fix //
                                         saveButton.style.display = "initial";
-                                        cancelButton.addEventListener(
-                                          "click",
-                                          () => {
-                                            document.getElementById(
-                                              `strongUpdateDisplayTextName${rawRandomID}`
-                                            ).value =
-                                              originalUpdateInputFields.ogName;
-                                            document.getElementById(
-                                              `strongUpdateDisplayTextEmail${rawRandomID}`
-                                            ).value =
-                                              originalUpdateInputFields.ogEmail;
-                                            document.getElementById(
-                                              `strongUpdateDisplayTextPassword${rawRandomID}`
-                                            ).value =
-                                              originalUpdateInputFields.ogPass;
-                                            document.getElementById(
-                                              `strongUpdateDisplayTextURL${rawRandomID}`
-                                            ).value =
-                                              originalUpdateInputFields.ogLink;
 
-                                            // Making input fields NON editable
-                                            document.getElementById(
-                                              `strongUpdateDisplayTextName${rawRandomID}`
-                                            ).readOnly = true;
-                                            document.getElementById(
-                                              `strongUpdateDisplayTextEmail${rawRandomID}`
-                                            ).readOnly = true;
-                                            document.getElementById(
-                                              `strongUpdateDisplayTextPassword${rawRandomID}`
-                                            ).readOnly = true;
-                                            document.getElementById(
-                                              `strongUpdateDisplayTextURL${rawRandomID}`
-                                            ).readOnly = true;
-                                            // Making input fields NON editable
-
-                                            // Reset visual properties
-                                            document.getElementById(
-                                              `updateQueryScreen${rawRandomID}`
-                                            ).style.animation =
-                                              "updateTabToNormal 0.4s ease";
-                                            updateInputFields.forEach(
-                                              (displayTextInputEle) => {
-                                                displayTextInputEle.style.animation =
-                                                  "updateInputBoxesNormal 0.4s ease";
-                                              }
-                                            );
-                                            document.getElementById(
-                                              `saveButtonUpdate${rawRandomID}`
-                                            ).style.display = "none";
-                                            document.getElementById(
-                                              `cancelButtonUpdate${rawRandomID}`
-                                            ).style.display = "none";
-                                            document.getElementById(
-                                              `editButtonUpdate${rawRandomID}`
-                                            ).style.display = "initial";
-                                            // Reset visual properties
-                                          }
-                                        );
-                                        saveButton.addEventListener(
-                                          "click",
-                                          () => {
-                                            // Making input fields NON editable
-                                            console.log("hh has happened save");
-                                            document.getElementById(
-                                              `strongUpdateDisplayTextName${rawRandomID}`
-                                            ).readOnly = true;
-                                            document.getElementById(
-                                              `strongUpdateDisplayTextEmail${rawRandomID}`
-                                            ).readOnly = true;
-                                            document.getElementById(
-                                              `strongUpdateDisplayTextPassword${rawRandomID}`
-                                            ).readOnly = true;
-                                            document.getElementById(
-                                              `strongUpdateDisplayTextURL${rawRandomID}`
-                                            ).readOnly = true;
-                                            // Making input fields NON editable
-
-                                            let nameIsTheSame;
-                                            let emailIsTheSame;
-                                            let passIsTheSame;
-                                            let linkIsTheSame;
-
-                                            if (
-                                              originalUpdateInputFields.ogName ==
+                                        if (
+                                          editButtonClickedFirstTime == true
+                                        ) {
+                                          // This is why the prototype class was added
+                                          // Checks if this is the first time the update tab is being created
+                                          // If this was just ran everytime the update tab was opened, the cancel button and save button click event listeners would stack and would get created multiple times
+                                          // This could cause too many writes to the database
+                                          console.log(
+                                            "STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN ....1"
+                                          );
+                                          cancelButton.addEventListener(
+                                            "click",
+                                            () => {
+                                              console.log(
+                                                "Should show once cancel"
+                                              );
                                               document.getElementById(
                                                 `strongUpdateDisplayTextName${rawRandomID}`
-                                              ).value
-                                            ) {
-                                              nameIsTheSame = true;
-                                            } else {
-                                              nameIsTheSame = false;
-                                            }
-                                            if (
-                                              originalUpdateInputFields.ogEmail ==
+                                              ).value =
+                                                originalUpdateInputFields.ogName;
                                               document.getElementById(
                                                 `strongUpdateDisplayTextEmail${rawRandomID}`
-                                              ).value
-                                            ) {
-                                              emailIsTheSame = true;
-                                            } else {
-                                              emailIsTheSame = false;
-                                            }
-                                            if (
-                                              originalUpdateInputFields.ogPass ==
+                                              ).value =
+                                                originalUpdateInputFields.ogEmail;
                                               document.getElementById(
                                                 `strongUpdateDisplayTextPassword${rawRandomID}`
-                                              ).value
-                                            ) {
-                                              passIsTheSame = true;
-                                            } else {
-                                              passIsTheSame = false;
-                                            }
-                                            if (
-                                              originalUpdateInputFields.ogLink ==
-                                              document
-                                                .getElementById(
-                                                  `strongUpdateDisplayTextURL${rawRandomID}`
-                                                )
-                                                .value.trim()
-                                            ) {
-                                              linkIsTheSame = true;
-                                            } else {
-                                              linkIsTheSame = false;
-                                            }
-                                            // setTimeout(() => {
-                                            if (
-                                              nameIsTheSame &&
-                                              emailIsTheSame &&
-                                              passIsTheSame &&
-                                              linkIsTheSame
-                                            ) {
-                                              console.log(
-                                                "Will not update query"
+                                              ).value =
+                                                originalUpdateInputFields.ogPass;
+                                              document.getElementById(
+                                                `strongUpdateDisplayTextURL${rawRandomID}`
+                                              ).value =
+                                                originalUpdateInputFields.ogLink;
+
+                                              // Making input fields NON editable
+                                              document.getElementById(
+                                                `strongUpdateDisplayTextName${rawRandomID}`
+                                              ).readOnly = true;
+                                              document.getElementById(
+                                                `strongUpdateDisplayTextEmail${rawRandomID}`
+                                              ).readOnly = true;
+                                              document.getElementById(
+                                                `strongUpdateDisplayTextPassword${rawRandomID}`
+                                              ).readOnly = true;
+                                              document.getElementById(
+                                                `strongUpdateDisplayTextURL${rawRandomID}`
+                                              ).readOnly = true;
+                                              // Making input fields NON editable
+
+                                              // Reset visual properties
+                                              document.getElementById(
+                                                `updateQueryScreen${rawRandomID}`
+                                              ).style.animation =
+                                                "updateTabToNormal 0.4s ease";
+                                              updateInputFields.forEach(
+                                                (displayTextInputEle) => {
+                                                  displayTextInputEle.style.animation =
+                                                    "updateInputBoxesNormal 0.4s ease";
+                                                }
                                               );
-                                            } else {
-                                              // Code to update values
-                                              console.log("will update query");
-                                              async function toUpdatingTimestamp() {
-                                                updateDoc(sourceDoc.ref, {
-                                                  nummy: serverTimestamp(),
-                                                });
-                                                console.log(
-                                                  "nummy has been updated"
-                                                );
-                                              }
-                                              toUpdatingTimestamp();
-                                              if (nameIsTheSame == false) {
-                                                async function toUpdatingName() {
-                                                  let newName =
-                                                    await encryptWithMP(
-                                                      document.getElementById(
-                                                        `strongUpdateDisplayTextName${rawRandomID}`
-                                                      ).value
-                                                    );
-                                                  // docSnapToUpdate.forEach((docToUD) => {
-                                                  updateDoc(sourceDoc.ref, {
-                                                    website: newName,
-                                                  });
-                                                  console.log(
-                                                    "website/name has been updated"
-                                                  );
-                                                }
-                                                toUpdatingName();
-                                              }
-                                              if (emailIsTheSame == false) {
-                                                async function toUpdatingEmail() {
-                                                  let newEmail =
-                                                    await encryptWithMP(
-                                                      document.getElementById(
-                                                        `strongUpdateDisplayTextEmail${rawRandomID}`
-                                                      ).value
-                                                    );
-                                                  // docSnapToUpdate.forEach((docToUD) => {
-                                                  updateDoc(sourceDoc.ref, {
-                                                    user: newEmail,
-                                                  });
-                                                  console.log(
-                                                    "email has been updated"
-                                                  );
-                                                }
-                                                toUpdatingEmail();
-                                              }
-                                              if (passIsTheSame == false) {
-                                                async function toUpdatingPass() {
-                                                  let newPass =
-                                                    await encryptWithMP(
-                                                      document.getElementById(
-                                                        `strongUpdateDisplayTextPassword${rawRandomID}`
-                                                      ).value
-                                                    );
-                                                  updateDoc(sourceDoc.ref, {
-                                                    pass: newPass,
-                                                  });
-                                                  console.log(
-                                                    "pass has been updated"
-                                                  );
-                                                }
-                                                toUpdatingPass();
-                                              }
-                                              if (linkIsTheSame == false) {
-                                                async function toUpdatingLink() {
-                                                  if (
-                                                    originalUpdateInputFields.ogLink.trim()
-                                                      .length == 0 &&
-                                                    document
-                                                      .getElementById(
-                                                        `strongUpdateDisplayTextURL${rawRandomID}`
-                                                      )
-                                                      .value.trim() != 0
-                                                  ) {
-                                                    updateDoc(sourceDoc.ref, {
-                                                      isLink: "true",
-                                                    });
-                                                  } else if (
-                                                    originalUpdateInputFields.ogLink.trim()
-                                                      .length != 0 &&
-                                                    document
-                                                      .getElementById(
-                                                        `strongUpdateDisplayTextURL${rawRandomID}`
-                                                      )
-                                                      .value.trim() == 0
-                                                  ) {
-                                                    updateDoc(sourceDoc.ref, {
-                                                      isLink: "false",
-                                                    });
-                                                  }
-
-                                                  let newLink =
-                                                    await encryptWithMP(
-                                                      document.getElementById(
-                                                        `strongUpdateDisplayTextURL${rawRandomID}`
-                                                      ).value
-                                                    );
-                                                  updateDoc(sourceDoc.ref, {
-                                                    directLink: newLink,
-                                                  });
-                                                  console.log(
-                                                    "direct link has been updated"
-                                                  );
-                                                }
-                                                toUpdatingLink();
-                                              }
+                                              document.getElementById(
+                                                `saveButtonUpdate${rawRandomID}`
+                                              ).style.display = "none";
+                                              document.getElementById(
+                                                `cancelButtonUpdate${rawRandomID}`
+                                              ).style.display = "none";
+                                              document.getElementById(
+                                                `editButtonUpdate${rawRandomID}`
+                                              ).style.display = "initial";
+                                              // Reset visual properties
                                             }
+                                          );
+                                          saveButton.addEventListener(
+                                            "click",
+                                            () => {
+                                              // Making input fields NON editable
+                                              console.log(
+                                                "Save button has been clicked (should only show once)"
+                                              );
+                                              console.log(
+                                                "hh has happened save"
+                                              );
+                                              document.getElementById(
+                                                `strongUpdateDisplayTextName${rawRandomID}`
+                                              ).readOnly = true;
+                                              document.getElementById(
+                                                `strongUpdateDisplayTextEmail${rawRandomID}`
+                                              ).readOnly = true;
+                                              document.getElementById(
+                                                `strongUpdateDisplayTextPassword${rawRandomID}`
+                                              ).readOnly = true;
+                                              document.getElementById(
+                                                `strongUpdateDisplayTextURL${rawRandomID}`
+                                              ).readOnly = true;
+                                              // Making input fields NON editable
 
-                                            // Reset visual properties
-                                            document.getElementById(
-                                              `updateQueryScreen${rawRandomID}`
-                                            ).style.animation =
-                                              "updateTabToNormal 0.4s ease";
-                                            updateInputFields.forEach(
-                                              (displayTextInputEle) => {
-                                                displayTextInputEle.style.animation =
-                                                  "updateInputBoxesNormal 0.4s ease";
+                                              let nameIsTheSame;
+                                              let emailIsTheSame;
+                                              let passIsTheSame;
+                                              let linkIsTheSame;
+
+                                              if (
+                                                originalUpdateInputFields.ogName ==
+                                                document.getElementById(
+                                                  `strongUpdateDisplayTextName${rawRandomID}`
+                                                ).value
+                                              ) {
+                                                nameIsTheSame = true;
+                                              } else {
+                                                nameIsTheSame = false;
                                               }
-                                            );
-                                            document.getElementById(
-                                              `saveButtonUpdate${rawRandomID}`
-                                            ).style.display = "none";
-                                            document.getElementById(
-                                              `cancelButtonUpdate${rawRandomID}`
-                                            ).style.display = "none";
-                                            document.getElementById(
-                                              `editButtonUpdate${rawRandomID}`
-                                            ).style.display = "initial";
-                                            // Reset visual properties
+                                              if (
+                                                originalUpdateInputFields.ogEmail ==
+                                                document.getElementById(
+                                                  `strongUpdateDisplayTextEmail${rawRandomID}`
+                                                ).value
+                                              ) {
+                                                emailIsTheSame = true;
+                                              } else {
+                                                emailIsTheSame = false;
+                                              }
+                                              if (
+                                                originalUpdateInputFields.ogPass ==
+                                                document.getElementById(
+                                                  `strongUpdateDisplayTextPassword${rawRandomID}`
+                                                ).value
+                                              ) {
+                                                passIsTheSame = true;
+                                              } else {
+                                                passIsTheSame = false;
+                                              }
+                                              if (
+                                                originalUpdateInputFields.ogLink ==
+                                                document
+                                                  .getElementById(
+                                                    `strongUpdateDisplayTextURL${rawRandomID}`
+                                                  )
+                                                  .value.trim()
+                                              ) {
+                                                linkIsTheSame = true;
+                                              } else {
+                                                linkIsTheSame = false;
+                                              }
+                                              // setTimeout(() => {
+                                              if (
+                                                nameIsTheSame &&
+                                                emailIsTheSame &&
+                                                passIsTheSame &&
+                                                linkIsTheSame
+                                              ) {
+                                                console.log(
+                                                  "Will not update query"
+                                                );
+                                              } else {
+                                                // Code to update values
+                                                console.log(
+                                                  "will update query"
+                                                );
+                                                async function toUpdatingTimestamp() {
+                                                  updateDoc(sourceDoc.ref, {
+                                                    nummy: serverTimestamp(),
+                                                  });
+                                                  console.log(
+                                                    "nummy has been updated"
+                                                  );
+                                                }
+                                                toUpdatingTimestamp();
+                                                if (nameIsTheSame == false) {
+                                                  async function toUpdatingName() {
+                                                    let newName =
+                                                      await encryptWithMP(
+                                                        document.getElementById(
+                                                          `strongUpdateDisplayTextName${rawRandomID}`
+                                                        ).value
+                                                      );
+                                                    // docSnapToUpdate.forEach((docToUD) => {
+                                                    updateDoc(sourceDoc.ref, {
+                                                      website: newName,
+                                                    });
+                                                    console.log(
+                                                      "website/name has been updated"
+                                                    );
+                                                  }
+                                                  toUpdatingName();
+                                                }
+                                                if (emailIsTheSame == false) {
+                                                  async function toUpdatingEmail() {
+                                                    let newEmail =
+                                                      await encryptWithMP(
+                                                        document.getElementById(
+                                                          `strongUpdateDisplayTextEmail${rawRandomID}`
+                                                        ).value
+                                                      );
+                                                    // docSnapToUpdate.forEach((docToUD) => {
+                                                    updateDoc(sourceDoc.ref, {
+                                                      user: newEmail,
+                                                    });
+                                                    console.log(
+                                                      "email has been updated"
+                                                    );
+                                                  }
+                                                  toUpdatingEmail();
+                                                }
+                                                if (passIsTheSame == false) {
+                                                  async function toUpdatingPass() {
+                                                    let newPass =
+                                                      await encryptWithMP(
+                                                        document.getElementById(
+                                                          `strongUpdateDisplayTextPassword${rawRandomID}`
+                                                        ).value
+                                                      );
+                                                    updateDoc(sourceDoc.ref, {
+                                                      pass: newPass,
+                                                    });
+                                                    console.log(
+                                                      "pass has been updated"
+                                                    );
+                                                  }
+                                                  toUpdatingPass();
+                                                }
+                                                if (linkIsTheSame == false) {
+                                                  async function toUpdatingLink() {
+                                                    if (
+                                                      originalUpdateInputFields.ogLink.trim()
+                                                        .length == 0 &&
+                                                      document
+                                                        .getElementById(
+                                                          `strongUpdateDisplayTextURL${rawRandomID}`
+                                                        )
+                                                        .value.trim() != 0
+                                                    ) {
+                                                      updateDoc(sourceDoc.ref, {
+                                                        isLink: "true",
+                                                      });
+                                                    } else if (
+                                                      originalUpdateInputFields.ogLink.trim()
+                                                        .length != 0 &&
+                                                      document
+                                                        .getElementById(
+                                                          `strongUpdateDisplayTextURL${rawRandomID}`
+                                                        )
+                                                        .value.trim() == 0
+                                                    ) {
+                                                      updateDoc(sourceDoc.ref, {
+                                                        isLink: "false",
+                                                      });
+                                                    }
 
-                                            // }, 2000);
-                                          }
-                                        );
+                                                    let newLink =
+                                                      await encryptWithMP(
+                                                        document.getElementById(
+                                                          `strongUpdateDisplayTextURL${rawRandomID}`
+                                                        ).value
+                                                      );
+                                                    updateDoc(sourceDoc.ref, {
+                                                      directLink: newLink,
+                                                    });
+                                                    console.log(
+                                                      "direct link has been updated"
+                                                    );
+                                                  }
+                                                  toUpdatingLink();
+                                                }
+                                              }
+
+                                              // Reset visual properties
+                                              document.getElementById(
+                                                `updateQueryScreen${rawRandomID}`
+                                              ).style.animation =
+                                                "updateTabToNormal 0.4s ease";
+                                              updateInputFields.forEach(
+                                                (displayTextInputEle) => {
+                                                  displayTextInputEle.style.animation =
+                                                    "updateInputBoxesNormal 0.4s ease";
+                                                }
+                                              );
+                                              document.getElementById(
+                                                `saveButtonUpdate${rawRandomID}`
+                                              ).style.display = "none";
+                                              document.getElementById(
+                                                `cancelButtonUpdate${rawRandomID}`
+                                              ).style.display = "none";
+                                              document.getElementById(
+                                                `editButtonUpdate${rawRandomID}`
+                                              ).style.display = "initial";
+                                              // Reset visual properties
+
+                                              // }, 2000);
+                                            }
+                                          );
+                                        }
+
                                         updateInputFields.forEach(
                                           (displayTextInputEle) => {
                                             displayTextInputEle.style.animation =
@@ -1284,6 +1337,11 @@ try {
                                           `updateQueryScreen${rawRandomID}`
                                         ).style.animation =
                                           "updateTabToDark 0.4s ease";
+                                        document
+                                          .getElementById(
+                                            `editButtonUpdate${rawRandomID}`
+                                          )
+                                          .classList.remove("prototype"); // Removing this class indicates that the edit button has been clicked before
                                       });
                                   }
                                   await listenForEditRequest();
