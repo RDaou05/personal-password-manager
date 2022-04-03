@@ -648,7 +648,7 @@ try {
                               async function showNewUpdateScreen() {
                                 let updateExists =
                                   await checkIfUpdateScreenExists();
-                                if (updateExists == true) {
+                                if (updateExists) {
                                   // Will run if an update tab for a query has already been created
                                   console.log("true");
                                   document.getElementById(
@@ -1010,6 +1010,46 @@ try {
                                             `strongUpdateDisplayTextURL${rawRandomID}`
                                           ),
                                         ];
+
+                                        // Listener adds light blue glow if any of the fields become different from the original values
+                                        if (editButtonClickedFirstTime) {
+                                          updateInputFields.forEach(
+                                            (
+                                              updateQueryField,
+                                              queryFieldIndexIndentifer
+                                            ) => {
+                                              updateQueryField.addEventListener(
+                                                "keyup",
+                                                () => {
+                                                  // The order of "originalUpdateInputFields" and "updateInputFields" are both the same
+                                                  // The are both name of query, email of query, password of query, URL of query
+                                                  let ogValue = Object.values(
+                                                    originalUpdateInputFields
+                                                  )[queryFieldIndexIndentifer];
+                                                  if (
+                                                    // Checking if value of query field input box has changed
+                                                    ogValue.trim() !=
+                                                    updateQueryField.value
+                                                  ) {
+                                                    console.log("NOT EQUAL!!", {
+                                                      og: ogValue,
+                                                      current:
+                                                        updateQueryField.value,
+                                                    });
+                                                    // Light blue box shadow
+                                                    updateQueryField.style.boxShadow =
+                                                      "rgb(0 218 201) 0px 0px 12px 1px";
+                                                  } else {
+                                                    // Regular white glow box shadow
+                                                    updateQueryField.style.boxShadow =
+                                                      "rgb(255 255 255) 0px 0px 12px 1px";
+                                                  }
+                                                }
+                                              );
+                                            }
+                                          );
+                                        }
+
                                         //
                                         let saveButton =
                                           document.getElementById(
@@ -1036,9 +1076,7 @@ try {
                                         // Bug fix //
                                         saveButton.style.display = "initial";
 
-                                        if (
-                                          editButtonClickedFirstTime == true
-                                        ) {
+                                        if (editButtonClickedFirstTime) {
                                           // This is why the prototype class was added
                                           // Checks if this is the first time the update tab is being created
                                           // If this was just ran everytime the update tab was opened, the cancel button and save button click event listeners would stack and would get created multiple times
