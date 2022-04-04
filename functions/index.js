@@ -65,8 +65,13 @@ exports.givePRole = functions.https.onCall((data, context) => {
     });
 });
 
-exports.giveRoleInFS = functions.auth.user().onCreate((user) => {
-  const newUsersUID = user.uid;
+exports.giveFTRoleInFS = functions.auth.user().onCreate((user) => {
+  const usersUID = user.uid;
   const db = admin.firestore();
-  return db.collection("hey").doc("hello").set({ testMessage: "this is set" });
+  return db
+    .collection("users")
+    .doc("filler")
+    .collection(usersUID)
+    .doc("r")
+    .set({ memb: "ft" });
 });
