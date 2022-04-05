@@ -600,12 +600,9 @@ body {
   display: none;
   background-color: #383636;
   border-radius: 1.5vh;
-  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
-  position: absolute;
-  left: 47%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  padding: 10px;
+  box-shadow: 0px 3px 14px 5px rgb(0 0 0);
+  width: 48%;
+  margin-right: 6%;
 }
 
 .createMasterPasswordHeader {
@@ -620,7 +617,7 @@ body {
 .newMasterPasswordField {
   background-color: #000000;
   box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
-  border-radius: 1vh;
+  border-radius: 0.5vh;
   outline: none;
   border: none;
   margin-top: 8%;
@@ -639,12 +636,12 @@ body {
 
 .newMasterPasswordField:focus {
   box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
-  border: 3px solid rgb(1 255 242);
+  /* border: 3px solid rgb(1 255 242); */
   transition: all ease-in-out 0.2s;
 }
 .newMasterPasswordField:hover {
   box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
-  border: 3px solid rgb(1 255 242);
+  /* border: 3px solid rgb(1 255 242); */
   transition: all ease-in-out 0.2s;
 }
 
@@ -716,13 +713,13 @@ body {
   cursor: pointer;
   text-align: center;
   background-color: #13817c;
-  border-radius: 0.2vh;
+  border-radius: 10vh;
   opacity: 0.8;
   margin-top: 14%;
   margin-bottom: 6%;
   margin-left: 9%;
   border: none;
-  box-shadow: 0 0 10px rgb(1, 255, 242);
+  /* box-shadow: 0 0 10px rgb(1, 255, 242); */
   padding: 3%;
 }
 
@@ -733,6 +730,8 @@ body {
 
 .setupMPScreenContainer {
   padding-bottom: 7%;
+  display: flex;
+  flex-direction: column;
 }
 
 #back {
@@ -770,6 +769,11 @@ body {
 .settingsButtonsContainer {
   margin-top: 4%;
   margin-left: 5%;
+}
+
+.setupMasterPasswordScreenFlexContainer {
+  display: flex;
+  justify-content: center;
 }
 
 #SAinfoSettingsButton:hover {
@@ -990,7 +994,9 @@ tfoot:before {
 
 #titleHeader {
   font-size: 38px;
-  color: white;
+  background: linear-gradient(to right, #fedb37 0%, #fdb931 8%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   font-family: "Montserrat", sans-serif;
 }
 
