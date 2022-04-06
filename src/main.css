@@ -994,9 +994,7 @@ tfoot:before {
 
 #titleHeader {
   font-size: 38px;
-  background: linear-gradient(to right, #fedb37 0%, #fdb931 8%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: white;
   font-family: "Montserrat", sans-serif;
 }
 
