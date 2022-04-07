@@ -122,7 +122,7 @@ async function mainInit() {
             Math.floor(Math.random() * charactersLength)
           );
         }
-        return result;
+        return result; // Returns a VERY long unique random id
       }
       const writeQueryToFS = async (
         userToAdd,
@@ -133,13 +133,13 @@ async function mainInit() {
         randomID
       ) => {
         const docRefForMP = await addDoc(refForPS, {
-          user: userToAdd,
-          pass: passToAdd,
-          website: websiteToAdd,
-          isLink: isLinkToAdd,
-          directLink: directLinkToAdd,
-          random: randomID,
-          nummy: serverTimestamp(),
+          user: userToAdd, // Username/email of query
+          pass: passToAdd, // Password of query
+          website: websiteToAdd, // Name of query
+          isLink: isLinkToAdd, // Boolean that tells if the user added a url or not
+          directLink: directLinkToAdd, // The url the user added (Will be blank if no url was added)
+          random: randomID, // Randomly generated id that will be used for identifying the query for things like updating and deleting it
+          nummy: serverTimestamp(), // Time stamp of creation
         })
           .then(() => {
             alert("Data added successfully");
@@ -166,6 +166,7 @@ async function mainInit() {
 
       // const analytics = getAnalytics(app);
       document.getElementById("addButton").addEventListener("click", () => {
+        // Dimming background and not allowing clicks outside the popup until it is closed
         document.body.style.pointerEvents = "none";
         document.body.style.opacity = ".5";
         document.getElementById("addPasswordScreen").style.display = "initial";
@@ -179,6 +180,7 @@ async function mainInit() {
 
       //   // Close Adder //
       document.getElementById("closeAdd").addEventListener("click", () => {
+        // Setting opacity to normal values and allowing clicks again
         document.body.style.pointerEvents = "auto";
         document.body.style.opacity = "1";
         document.body.style.userSelect = "auto";
@@ -193,7 +195,7 @@ async function mainInit() {
       });
       //   // Close Adder //
 
-      //   // Password Shower //
+      // Password Shower //
       const togglePassword = document.querySelector("#eyeForAdd");
       const password = document.querySelector("#passwordOfQuery");
 
@@ -205,7 +207,8 @@ async function mainInit() {
         // toggle the eye slash icon
         document.querySelector("#eyeForAdd").classList.toggle("fa-eye-slash");
       });
-      //   // Password Shower //
+      //
+
       document.getElementById("confirmQuery").addEventListener("click", () => {
         async function confirmQueryButtonEventFuntion() {
           let enteredNameOfQuery = document
@@ -268,6 +271,7 @@ async function mainInit() {
                 encryptedEnteredURLOfQuery
               );
               if (linkIsThere == "false") {
+                // Leaving url field blank if the user didn't provide one
                 writeQueryToFS(
                   encryptedEnteredUsernameOfQuery,
                   encryptedEnteredPasswordOfQuery,
@@ -286,6 +290,7 @@ async function mainInit() {
                 mostRecentEncryptedEnteredURLOfQuery = " ";
                 mostRecentID = id;
               } else if (linkIsThere == "true") {
+                // Will run this if the user provided a url
                 writeQueryToFS(
                   encryptedEnteredUsernameOfQuery,
                   encryptedEnteredPasswordOfQuery,
@@ -314,6 +319,7 @@ async function mainInit() {
               suppliedEncryptedEnteredURLOfQuery,
               suppliedID
             ) {
+              // Credentials to add to the screen
               const importedData = {
                 directLink: suppliedEncryptedEnteredURLOfQuery,
                 random: suppliedID,
@@ -326,7 +332,7 @@ async function mainInit() {
               function getDecryptedID() {
                 rawRandomID = importedData.random;
               }
-              getDecryptedID();
+              getDecryptedID(); // Setting the identifier for the added query
 
               let mainDiv = document.createElement("div");
               mainDiv.setAttribute("id", `mainDiv${rawRandomID}`);
