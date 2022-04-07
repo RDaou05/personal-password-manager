@@ -155,13 +155,9 @@ body {
 }
 
 .showPUIButton {
-  background-image: linear-gradient(
-    to right,
-    #007991 0%,
-    #78ffd6 51%,
-    #007991 100%
-  );
+  background-image: linear-gradient(to left, #8e2de2, #4a00e0);
 }
+
 .showPUIButton {
   text-transform: uppercase;
   transition: 0.5s;
@@ -169,44 +165,6 @@ body {
 }
 
 .showPUIButton:hover {
-  background-position: right center; /* change the direction of the change here */
-}
-
-/* 
-
- */
-
-.showFTUIButton {
-  margin: 10px;
-  padding: 15px 45px;
-  cursor: pointer;
-  font-family: "Montserrat", sans-serif;
-  color: white;
-  font-weight: bold;
-  border: none;
-  border-radius: 10vh;
-  box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px;
-}
-
-.showFTUIButtonContainer {
-  position: absolute;
-  top: 0%;
-  right: 0%;
-  margin: 2% 1% 0 0;
-  display: none;
-}
-
-.showFTUIButton {
-  background-image: linear-gradient(to right, #8e2de2, #4a00e0);
-}
-
-.showFTUIButton {
-  text-transform: uppercase;
-  transition: 0.5s;
-  background-size: 200% auto;
-}
-
-.showFTUIButton:hover {
   background-position: right center; /* change the direction of the change here */
 }
 
@@ -227,7 +185,7 @@ body {
 .themeSelectorContainer {
   background-color: #282d34;
   border-radius: 1vh;
-  padding: 5%;
+  padding: 4%;
   box-shadow: 0 14px 20px rgb(0 0 0 / 80%);
   text-align: center;
   z-index: 2;
@@ -309,7 +267,7 @@ body {
   position: absolute;
   top: 0%;
   left: 0%;
-  margin: 2% 1% 0 0;
+  margin: 2% 1% 0 1%;
 }
 
 .upgradeToP {
@@ -340,14 +298,27 @@ body {
 }
 
 #lockIconUpgrade {
-  font-size: 23px;
+  font-size: 18.5px;
   left: 10%;
   position: absolute;
-  top: 23%;
+  top: 28%;
 }
 
 #upgradeButtonText {
   margin: 0;
-  margin-right: -14%;
+  margin-right: -8%;
   font-weight: bold;
+  font-size: 13px;
+}
+
+#crownIcon {
+  position: absolute;
+  font-size: 18.5px;
+  left: 9%;
+  top: 26%;
+}
+
+#showLayoutsText {
+  margin: 0;
+  margin-right: -8%;
 }
