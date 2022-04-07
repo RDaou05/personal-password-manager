@@ -10,8 +10,7 @@ body {
   margin: 0;
   max-width: 38rem;
   padding: 2rem;
-  /* background-color: #282d34; */
-  background-image: linear-gradient(to bottom right, #053f45, #0b817b);
+  background-color: #282d34;
   overflow: hidden;
 }
 
