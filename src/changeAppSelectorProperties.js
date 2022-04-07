@@ -80,10 +80,7 @@ onAuthStateChanged(auth, (user) => {
           document.getElementsByClassName("themeSelectorContainer")
         )[0].style.display = "initial";
         //
-        document.getElementById("container").style.pointerEvents = "none";
-        document.getElementById(
-          "backToLoginLinkContainer"
-        ).style.pointerEvents = "none";
+
         // Dimming opacity of other elements
         document.getElementById("backToLoginLinkContainer").style.opacity =
           ".5";
@@ -149,6 +146,12 @@ onAuthStateChanged(auth, (user) => {
             premiumStyleSheet.textContent = premiumStyles;
             document.head.appendChild(premiumStyleSheet);
             if (!hasPrivileges) {
+              // Not allowing clicks since the user is in free trial preview
+              document.getElementById("container").style.pointerEvents = "none";
+              document.getElementById(
+                "backToLoginLinkContainer"
+              ).style.pointerEvents = "none";
+
               exitPreviewButton.style.display = "initial";
               upgradeButtonContainer.style.display = "none"; // Hiding upgrade button since exit button is taking up space
             }
