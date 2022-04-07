@@ -16,8 +16,11 @@ body {
 }
 
 #container {
-  display: grid;
-  margin-top: 10%;
+  display: flex;
+  margin-top: 13%;
+  flex-direction: column;
+  width: 100%;
+  padding-right: 47%;
 }
 
 #realIcon {
@@ -59,7 +62,7 @@ body {
   outline: none;
   text-align: center;
   margin-top: 4%;
-  box-shadow: 0 20px 20px rgb(0 0 0 / 33%);
+  box-shadow: 0 8px 15px rgb(0 0 0 / 33%);
 }
 
 #takeToLockerLinkHidden {
@@ -130,4 +133,221 @@ body {
   font-family: "Montserrat", sans-serif;
   margin-left: 34%;
   margin-top: 0;
+}
+
+.showPUIButton {
+  margin: 10px;
+  padding: 15px 45px;
+  cursor: pointer;
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 10vh;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px;
+}
+
+.showPUIButtonContainer {
+  position: absolute;
+  top: 0%;
+  right: 0%;
+  margin: 2% 1% 0 0;
+}
+
+.showPUIButton {
+  background-image: linear-gradient(
+    to right,
+    #007991 0%,
+    #78ffd6 51%,
+    #007991 100%
+  );
+}
+.showPUIButton {
+  text-transform: uppercase;
+  transition: 0.5s;
+  background-size: 200% auto;
+}
+
+.showPUIButton:hover {
+  background-position: right center; /* change the direction of the change here */
+}
+
+/* 
+
+ */
+
+.showFTUIButton {
+  margin: 10px;
+  padding: 15px 45px;
+  cursor: pointer;
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 10vh;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px;
+}
+
+.showFTUIButtonContainer {
+  position: absolute;
+  top: 0%;
+  right: 0%;
+  margin: 2% 1% 0 0;
+  display: none;
+}
+
+.showFTUIButton {
+  background-image: linear-gradient(to right, #8e2de2, #4a00e0);
+}
+
+.showFTUIButton {
+  text-transform: uppercase;
+  transition: 0.5s;
+  background-size: 200% auto;
+}
+
+.showFTUIButton:hover {
+  background-position: right center; /* change the direction of the change here */
+}
+
+/* */
+/* */
+/* */
+
+.backgroundGridContainer {
+  box-sizing: border-box;
+  padding: 5%;
+  align-items: stretch;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 3%;
+  row-gap: 17%;
+}
+
+.themeSelectorContainer {
+  background-color: #282d34;
+  border-radius: 1vh;
+  padding: 5%;
+  box-shadow: 0 14px 20px rgb(0 0 0 / 80%);
+  text-align: center;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  margin-right: 19%;
+  display: none;
+}
+
+.backgroundGridItem {
+  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  box-shadow: 0 8px 17px rgb(0 0 0 / 80%);
+  height: auto;
+  cursor: pointer;
+}
+
+#themeSelectorHeader {
+  text-align: center;
+  font-family: "Montserrat", sans-serif;
+  color: white;
+}
+
+#closeThemeSelector {
+  position: absolute;
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  right: 0;
+  bottom: 78%;
+  padding: 3%;
+  cursor: pointer;
+}
+
+.exitPreviewContainer {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  margin: 2% 1% 0 0;
+}
+
+.exitPreview {
+  margin: 10px;
+  padding: 15px 45px;
+  cursor: pointer;
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 10vh;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px;
+}
+
+.exitPreview {
+  background-image: linear-gradient(
+    to right,
+    #007991 0%,
+    #78ffd6 51%,
+    #007991 100%
+  );
+}
+.exitPreview {
+  text-transform: uppercase;
+  transition: 0.5s;
+  background-size: 200% auto;
+  cursor: pointer;
+  display: none;
+}
+
+.exitPreview:hover {
+  background-position: right center; /* change the direction of the change here */
+}
+
+/*  */
+/*  */
+
+.upgradeToPContainer {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  margin: 2% 1% 0 0;
+}
+
+.upgradeToP {
+  margin: 10px;
+  padding: 15px 45px;
+  cursor: pointer;
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 10vh;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px;
+}
+
+.upgradeToP {
+  background-image: linear-gradient(to left, #8e2de2, #4a00e0);
+}
+.upgradeToP {
+  text-transform: uppercase;
+  transition: 0.5s;
+  background-size: 200% auto;
+  cursor: pointer;
+  /* display: none; */
+}
+
+.upgradeToP:hover {
+  background-position: right center; /* change the direction of the change here */
+}
+
+#lockIconUpgrade {
+  font-size: 23px;
+  left: 10%;
+  position: absolute;
+  top: 23%;
+}
+
+#upgradeButtonText {
+  margin: 0;
+  margin-right: -14%;
+  font-weight: bold;
 }
