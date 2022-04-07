@@ -56,8 +56,14 @@ onAuthStateChanged(auth, (user) => {
       const exitPreviewButton = Array.from(
         document.getElementsByClassName("exitPreview")
       )[0];
+      const upgradeButtonContainer = Array.from(
+        document.getElementsByClassName("upgradeToPContainer")
+      )[0];
       exitPreviewButton.style.pointerEvents = "auto";
       // Keeping the exit preview always clickable is needed to allow the user to exit the preview whenever they want
+
+      // Making sure upgrade button is visible
+      upgradeButtonContainer.style.display = "initial";
 
       //
       const showPremiumUIButton = Array.from(
@@ -144,6 +150,7 @@ onAuthStateChanged(auth, (user) => {
             document.head.appendChild(premiumStyleSheet);
             if (!hasPrivileges) {
               exitPreviewButton.style.display = "initial";
+              upgradeButtonContainer.style.display = "none"; // Hiding upgrade button since exit button is taking up space
             }
 
             // Automatically close theme window after select theme
@@ -211,6 +218,9 @@ onAuthStateChanged(auth, (user) => {
         Array.from(
           document.getElementsByClassName("exitPreview")
         )[0].style.display = "none";
+
+        // Reshowing upgrade button since exit preview button is gone now
+        upgradeButtonContainer.style.display = "initial";
       });
     });
     document.getElementById(
