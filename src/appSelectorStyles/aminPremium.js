@@ -12,7 +12,7 @@ body {
     max-width: 38rem;
     padding-bottom: 14rem;
     background-color: #282d34;
-    background-image: linear-gradient(to right, #8e2de2, #4a00e0);
+    background-image: linear-gradient(to left, #8e2de2, #4a00e0);
     overflow: hidden;
 }
 
@@ -252,11 +252,11 @@ button#takeToPMButton {
 }
 
 .showPUIButton {
-    background-image: linear-gradient(to right, #8e2de2, #4a00e0);
+    background-image: linear-gradient(to left, #8e2de2, #4a00e0);
 }
 
 .exitPreview {
-    background-image: linear-gradient(to left, #8e2de2, #4a00e0);
+    background-image: linear-gradient(to right, #8e2de2, #4a00e0);
 }
 
 `;
