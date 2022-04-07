@@ -194,6 +194,14 @@ try {
                 cv.style.opacity = "1";
               });
             };
+
+            // Testing security rules here
+
+            // getDoc(
+            //   doc(db, "users", "filler", "RNxt4drrCLg2QSVA8KbQhcCuvLp1", "r")
+            // ).then((tempSnap) => {
+            //   console.log("YOHOHOHOH ", tempSnap);
+            // });
             const checkIfUIDExistsInFS = async () => {
               getDoc(refForMainUID)
                 .then((tempSnap) => {
