@@ -65,6 +65,10 @@ try {
           initiated = true; // Setting this to true makes it so this wont run again when the reauth happens
           // Checks if user is signed in
           const mainUser = auth.currentUser;
+          let hashedSetMasterPassValue =
+            ""; /* We have this as a variable so we 
+          don't have to make a read everytime we want to decrypt 
+          something with the master password */
           mainUser.getIdTokenResult().then((res) => {
             // Checking if user a free trial, premium, or admin
             console.log("Res is: ", res);
@@ -112,10 +116,18 @@ try {
 
             const encryptWithMP = async (unencryptedText) => {
               let receivedMPH;
-              const docSnap = await getDocs(refForMS);
-              docSnap.forEach((doc) => {
-                receivedMPH = doc.data().mph;
-              });
+              if (hashedSetMasterPassValue.trim() == "") {
+                const docSnap = await getDocs(refForMS);
+                console.log("get Docs line 115 ", hashedSetMasterPassValue);
+                docSnap.forEach((doc) => {
+                  receivedMPH = doc.data().mph;
+                });
+                hashedSetMasterPassValue = receivedMPH;
+              } else {
+                receivedMPH = hashedSetMasterPassValue;
+                console.log("encrypt ELSE", hashedSetMasterPassValue);
+              }
+
               return encryptFunction(unencryptedText, receivedMPH);
             };
             function decryptFunction(textToBeDecrypted, finalKey) {
@@ -125,22 +137,30 @@ try {
 
               return decr;
             }
+
             const decryptWithMP = async (encryptedText) => {
               let receivedMPH;
-              const docSnap = await getDocs(refForMS);
+              if (hashedSetMasterPassValue.trim() == "") {
+                const docSnap = await getDocs(refForMS);
+                console.log("get Docs line 133 ", hashedSetMasterPassValue);
+                docSnap.forEach((doc) => {
+                  receivedMPH = doc.data().mph;
+                });
+                hashedSetMasterPassValue = receivedMPH;
+              } else {
+                receivedMPH = hashedSetMasterPassValue;
+                console.log("decrypt ELSE", hashedSetMasterPassValue);
+              }
 
-              docSnap.forEach((doc) => {
-                receivedMPH = doc.data().mph;
-              });
               return decryptFunction(encryptedText, receivedMPH);
             };
             async function getCorrectHash() {
               let receivedMPH;
               const docSnapGetHash = await getDocs(refForMS);
-
               docSnapGetHash.forEach((doc) => {
                 receivedMPH = doc.data().mph;
               });
+              console.log("get Docs line 144");
               return receivedMPH;
             }
 
@@ -151,6 +171,7 @@ try {
                 fillData: "--",
               })
                 .then(() => {
+                  console.log("set Doc line 160");
                   alert("Data added successfully");
                 })
                 .catch((err) => {
@@ -166,6 +187,7 @@ try {
                 mph: hashedMP,
               })
                 .then(() => {
+                  console.log("add Doc line 176");
                   alert("Data added successfully");
                 })
                 .catch((err) => {
@@ -205,6 +227,7 @@ try {
             const checkIfUIDExistsInFS = async () => {
               getDoc(refForMainUID)
                 .then((tempSnap) => {
+                  console.log("get Doc line 214");
                   console.log("temp is ", tempSnap);
                   console.log("If snap exists or not is ", tempSnap.exists());
                   if (tempSnap.exists()) {
@@ -303,8 +326,17 @@ try {
                         }
                         ieSettingsFunction();
                         // Add settings option (end)
-                        const docSnapp = await getDocs(refForPS);
-                        console.log("DADOC ", docSnapp);
+                        await getDocs(refForPS).then((docSnapp) => {
+                          console.log("get Docs line 314");
+                          console.log("DADOC ", docSnapp);
+                          docSnapp.forEach((doc) => {
+                            async function runShow(docToRun) {
+                              await startUpShow(docToRun);
+                            }
+                            runShow(doc);
+                          });
+                        });
+
                         async function startUpShow(sourceDoc) {
                           const importedData = sourceDoc.data();
                           console.log("Secondary ", sourceDoc.data());
@@ -1205,9 +1237,14 @@ try {
                                                       "will update query"
                                                     );
                                                     async function toUpdatingTimestamp() {
+                                                      // Updating timestamp so the updated query will be at the top of the page
                                                       updateDoc(sourceDoc.ref, {
                                                         nummy:
                                                           serverTimestamp(),
+                                                      }).then(() => {
+                                                        console.log(
+                                                          "update Doc line 1224"
+                                                        );
                                                       });
                                                       console.log(
                                                         "nummy has been updated"
@@ -1230,7 +1267,11 @@ try {
                                                           {
                                                             website: newName,
                                                           }
-                                                        );
+                                                        ).then(() => {
+                                                          console.log(
+                                                            "update Doc line 1250"
+                                                          );
+                                                        });
                                                         console.log(
                                                           "website/name has been updated"
                                                         );
@@ -1253,7 +1294,11 @@ try {
                                                           {
                                                             user: newEmail,
                                                           }
-                                                        );
+                                                        ).then(() => {
+                                                          console.log(
+                                                            "update doc line 1276"
+                                                          );
+                                                        });
                                                         console.log(
                                                           "email has been updated"
                                                         );
@@ -1275,7 +1320,11 @@ try {
                                                           {
                                                             pass: newPass,
                                                           }
-                                                        );
+                                                        ).then(() => {
+                                                          console.log(
+                                                            "update Doc line 1302"
+                                                          );
+                                                        });
                                                         console.log(
                                                           "pass has been updated"
                                                         );
@@ -1300,7 +1349,11 @@ try {
                                                             {
                                                               isLink: "true",
                                                             }
-                                                          );
+                                                          ).then(() => {
+                                                            console.log(
+                                                              "update Doc line 1329"
+                                                            );
+                                                          });
                                                         } else if (
                                                           originalUpdateInputFields.ogLink.trim()
                                                             .length != 0 &&
@@ -1315,7 +1368,11 @@ try {
                                                             {
                                                               isLink: "false",
                                                             }
-                                                          );
+                                                          ).then(() => {
+                                                            console.log(
+                                                              "update doc line 1348"
+                                                            );
+                                                          });
                                                         }
 
                                                         let newLink =
@@ -1329,7 +1386,11 @@ try {
                                                           {
                                                             directLink: newLink,
                                                           }
-                                                        );
+                                                        ).then(() => {
+                                                          console.log(
+                                                            "update doc line 1366"
+                                                          );
+                                                        });
                                                         console.log(
                                                           "direct link has been updated"
                                                         );
@@ -1642,13 +1703,17 @@ try {
                                       ),
                                       where("random", "==", rawRandomID)
                                     )
-                                  );
+                                  ).then(() => {
+                                    console.log("get Docs line 1655");
+                                  });
                                   // console.log("snap is ", docSnapToDelete);
                                   // );
                                   docSnapToDelete.forEach((doc) => {
                                     console.log(sourceDoc.data());
                                     console.log("The ref ", sourceDoc.ref);
-                                    deleteDoc(sourceDoc.ref);
+                                    deleteDoc(sourceDoc.ref).then(() => {
+                                      console.log("Delete doc line 1693");
+                                    });
                                   });
                                   // console.log("plain ", docRefToDelete);
                                   // console.log("plainData ", docRefToDelete.data());
@@ -1758,23 +1823,14 @@ try {
                           }
                           activate();
                         }
-                        docSnapp.forEach((doc) => {
-                          async function runShow(docToRun) {
-                            await startUpShow(docToRun);
-                          }
-                          runShow(doc);
-                        });
                       } else {
+                        // document.getElementById(
+                        //   "newAndEnterMasterPasswordField"
+                        // ).style.backgroundColor = "#3d333c";
                         document.getElementById(
                           "newAndEnterMasterPasswordField"
-                        ).style.backgroundColor = "#3d333c";
-                        document.getElementById(
-                          "newAndEnterMasterPasswordField"
-                        ).style.border = "2px solid #844242";
-                        console.log(
-                          "NOPE, correct hash is, ",
-                          await getCorrectHash()
-                        );
+                        ).style.borderBottom = "1px solid rgb(132, 66, 66)";
+                        console.log("NOPE, correct hash is, ", correctH);
                       }
                     }
                     //
@@ -1814,12 +1870,6 @@ try {
 
                     //----------------------Check if master password is correct----------------------//
                   } else {
-                    document.getElementById(
-                      "setupMasterPasswordScreen"
-                    ).style.width = "378px";
-                    document.getElementById(
-                      "setupMasterPasswordScreen"
-                    ).style.height = "415px";
                     document.getElementById("renterMP").style.display =
                       "initial";
                     console.log(tempSnap.data(), " doesn't exist :(");
