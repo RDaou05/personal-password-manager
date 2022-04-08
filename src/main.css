@@ -12,6 +12,8 @@ body {
   background-color: #282d34;
   margin-left: 5px;
   margin-top: 15%;
+  display: flex;
+  flex-direction: column;
 }
 /* width */
 ::-webkit-scrollbar {
@@ -521,14 +523,24 @@ body {
   text-align: var(--addPlaceHoldersFontSizeTextAlign);
   padding-left: var(--addPlaceHoldersPaddingLeft);
 }
-/* here */
+
+.addPasswordScreen input {
+  border: 2px solid #0c7a75;
+  /* transition: 0.2s; */
+}
+
+.addPasswordScreen input:focus {
+  border: 2px solid white;
+  transition: 0.2s;
+}
+
 .confirmQuery {
   width: 83%;
   height: 9%;
   color: white;
   cursor: pointer;
   background-color: #13817c;
-  border-radius: 3vh;
+  border-radius: 1vh;
   border: none;
   padding: 2%;
   opacity: 0.8;
@@ -541,7 +553,7 @@ body {
 }
 
 .confirmQuery:hover {
-  box-shadow: 0 0 15px rgb(1 255 242);
+  /* box-shadow: 0 0 15px rgb(1 255 242); */
   opacity: 1;
   transition: all ease-in-out 0.1s;
 }
@@ -549,7 +561,7 @@ body {
 #eyeForAdd {
   position: absolute;
   color: #13817c;
-  right: 19%;
+  right: 14%;
   bottom: 45.5%;
   font-size: 17px;
 }
@@ -615,35 +627,43 @@ body {
 }
 
 .newMasterPasswordField {
-  background-color: #000000;
-  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
-  border-radius: 0.5vh;
+  background-color: transparent;
+  /* box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15); */
+  /* border-radius: 0.5vh; */
   outline: none;
   border: none;
-  margin-top: 8%;
+  border-bottom: 1px solid teal;
+  margin-top: 8.5%;
   color: white;
   font-size: 1rem;
   font-weight: bold;
   font-family: "Montserrat", sans-serif;
-  padding: 4.5%;
-  margin-left: 8%;
+  padding: 3%;
+  /* margin-left: 8%; */
   height: 8%;
   text-align: center;
   padding-left: 14%;
   padding-right: 14%;
-  width: 55%;
+  align-self: center;
+  width: 23%;
+  margin-top: 4%;
 }
 
 .newMasterPasswordField:focus {
+  width: 51%;
+  transition: all ease-in-out 0.2s;
+}
+
+/* .newMasterPasswordField:focus {
   box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
-  /* border: 3px solid rgb(1 255 242); */
+  border: 3px solid rgb(1 255 242);
   transition: all ease-in-out 0.2s;
 }
 .newMasterPasswordField:hover {
   box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
-  /* border: 3px solid rgb(1 255 242); */
+  border: 3px solid rgb(1 255 242);
   transition: all ease-in-out 0.2s;
-}
+} */
 
 .renterMP {
   background-color: #000000;
@@ -656,7 +676,7 @@ body {
   font-size: 1rem;
   font-weight: bold;
   font-family: "Montserrat", sans-serif;
-  padding: 4.5%;
+  padding: 3%;
   margin-left: 8%;
   height: 8%;
   text-align: center;
@@ -715,11 +735,10 @@ body {
   background-color: #13817c;
   border-radius: 10vh;
   opacity: 0.8;
-  margin-top: 14%;
-  margin-bottom: 6%;
+  margin-top: 8%;
+  margin-bottom: 4%;
   margin-left: 9%;
   border: none;
-  /* box-shadow: 0 0 10px rgb(1, 255, 242); */
   padding: 3%;
 }
 
