@@ -84,27 +84,31 @@ document.getElementById("signUpButton").addEventListener("click", () => {
       .then((userCredential) => {
         console.log("Added login");
         const mainUser = auth.currentUser;
-        async function mainInit() {
-          async function init() {
-            const signUpProperties = httpsCallable(
-              functions,
-              "signUpProperties"
-            );
-            signUpProperties({ uid: auth.currentUser.uid }).then((result) => {
-              console.log(result);
-              auth.currentUser.getIdTokenResult(true).then((idTokenResult) => {
-                console.log("the result ", idTokenResult);
-                console.log("the result claims ", idTokenResult.claims);
-              });
-            });
-          }
-          await init();
-          setTimeout(() => {
-            // takeToMain.click();
-            console.log("WAIT");
-          }, 10000);
-        }
-        mainInit();
+        mainUser.getIdTokenResult(true).then((idTokenResult) => {
+          console.log("the result ", idTokenResult);
+          console.log("the result claims ", idTokenResult.claims);
+        });
+        // async function mainInit() {
+        //   async function init() {
+        //     const signUpProperties = httpsCallable(
+        //       functions,
+        //       "signUpProperties"
+        //     );
+        //     signUpProperties({ uid: auth.currentUser.uid }).then((result) => {
+        //       console.log(result);
+        //       // auth.currentUser.getIdTokenResult(true).then((idTokenResult) => {
+        //       //   console.log("the result ", idTokenResult);
+        //       //   console.log("the result claims ", idTokenResult.claims);
+        //       // });
+        //     });
+        //   }
+        //   await init();
+        //   setTimeout(() => {
+        //     // takeToMain.click();
+        //     console.log("WAIT");
+        //   }, 10000);
+        // }
+        // mainInit();
       })
       .catch((error) => {
         // catching errors
