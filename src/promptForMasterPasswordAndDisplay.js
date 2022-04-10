@@ -9,6 +9,12 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
 
 import {
+  initializeAppCheck,
+  ReCaptchaV3Provider,
+  getToken,
+} from "https://www.gstatic.com/firebasejs/9.6.4/firebase-app-check.js";
+
+import {
   doc,
   setDoc,
   getFirestore,
@@ -24,6 +30,7 @@ import {
   orderBy,
   where,
   serverTimestamp,
+  writeBatch,
 } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-firestore.js";
 
 // import {} from "nw.js";
@@ -270,6 +277,13 @@ try {
                         .update(rawRequest)
                         .digest("hex");
                       if (correctH == hashedRequest) {
+                        // Master password is correct and user is logged in
+                        let orderNumber =
+                          -10000; /* This negative number is for making updated
+                        queries go to the top of the page. The more negative order number an
+                        element has, the higher it will go on the page. This number will -1
+                        everytime an query gets updated so that if another query gets updated
+                        after, it will go even higher than the previously updated one*/
                         document.getElementById(
                           "setupMasterPasswordScreen"
                         ).style.display = "none";
@@ -339,6 +353,7 @@ try {
 
                         async function startUpShow(sourceDoc) {
                           const importedData = sourceDoc.data();
+                          console.log("THE REFREF IS: ", sourceDoc.ref);
                           console.log("Secondary ", sourceDoc.data());
                           let rawRandomID;
                           function getDecryptedID() {
@@ -1223,6 +1238,7 @@ try {
                                                   }
                                                   // setTimeout(() => {
                                                   if (
+                                                    // Checks if none of the values were changed so no need to send update request
                                                     nameIsTheSame &&
                                                     emailIsTheSame &&
                                                     passIsTheSame &&
@@ -1236,167 +1252,266 @@ try {
                                                     console.log(
                                                       "will update query"
                                                     );
-                                                    async function toUpdatingTimestamp() {
-                                                      // Updating timestamp so the updated query will be at the top of the page
-                                                      updateDoc(sourceDoc.ref, {
-                                                        nummy:
-                                                          serverTimestamp(),
-                                                      }).then(() => {
+                                                    console.log(
+                                                      "A normal object: ",
+                                                      {
+                                                        hey: "oh hey",
+                                                        bye: "oh ok bye",
+                                                      }
+                                                    );
+                                                    let objectToUpdate = {}; // Contains all the values to be updated
+                                                    async function loadingQueryUpdate() {
+                                                      orderNumber -= 1; // Makes the query that is about to be updated go to the top of the screen when its done updating
+                                                      objectToUpdate = {};
+                                                      async function toUpdatingTimestamp() {
+                                                        // Updating timestamp so the updated query will be at the top of the page
+                                                        objectToUpdate.nummy =
+                                                          serverTimestamp();
                                                         console.log(
                                                           "update Doc line 1224"
                                                         );
-                                                      });
-                                                      console.log(
-                                                        "nummy has been updated"
-                                                      );
-                                                    }
-                                                    toUpdatingTimestamp();
-                                                    if (
-                                                      nameIsTheSame == false
-                                                    ) {
-                                                      async function toUpdatingName() {
-                                                        let newName =
-                                                          await encryptWithMP(
-                                                            document.getElementById(
-                                                              `strongUpdateDisplayTextName${rawRandomID}`
-                                                            ).value
-                                                          );
-                                                        // docSnapToUpdate.forEach((docToUD) => {
-                                                        updateDoc(
-                                                          sourceDoc.ref,
-                                                          {
-                                                            website: newName,
-                                                          }
-                                                        ).then(() => {
-                                                          console.log(
-                                                            "update Doc line 1250"
-                                                          );
-                                                        });
                                                         console.log(
-                                                          "website/name has been updated"
+                                                          "nummy has been updated"
                                                         );
                                                       }
-                                                      toUpdatingName();
-                                                    }
-                                                    if (
-                                                      emailIsTheSame == false
-                                                    ) {
-                                                      async function toUpdatingEmail() {
-                                                        let newEmail =
-                                                          await encryptWithMP(
-                                                            document.getElementById(
-                                                              `strongUpdateDisplayTextEmail${rawRandomID}`
-                                                            ).value
-                                                          );
-                                                        // docSnapToUpdate.forEach((docToUD) => {
-                                                        updateDoc(
-                                                          sourceDoc.ref,
-                                                          {
-                                                            user: newEmail,
-                                                          }
-                                                        ).then(() => {
+                                                      await toUpdatingTimestamp();
+                                                      if (
+                                                        nameIsTheSame == false
+                                                      ) {
+                                                        async function toUpdatingName() {
+                                                          let newName =
+                                                            await encryptWithMP(
+                                                              document.getElementById(
+                                                                `strongUpdateDisplayTextName${rawRandomID}`
+                                                              ).value
+                                                            );
+                                                          objectToUpdate.website =
+                                                            newName;
+                                                        }
+                                                        await toUpdatingName();
+                                                      }
+                                                      if (
+                                                        emailIsTheSame == false
+                                                      ) {
+                                                        async function toUpdatingEmail() {
+                                                          let newEmail =
+                                                            await encryptWithMP(
+                                                              document.getElementById(
+                                                                `strongUpdateDisplayTextEmail${rawRandomID}`
+                                                              ).value
+                                                            );
+                                                          objectToUpdate.user =
+                                                            newEmail;
                                                           console.log(
                                                             "update doc line 1276"
                                                           );
-                                                        });
-                                                        console.log(
-                                                          "email has been updated"
-                                                        );
+                                                        }
+                                                        await toUpdatingEmail();
                                                       }
-                                                      toUpdatingEmail();
-                                                    }
-                                                    if (
-                                                      passIsTheSame == false
-                                                    ) {
-                                                      async function toUpdatingPass() {
-                                                        let newPass =
-                                                          await encryptWithMP(
-                                                            document.getElementById(
-                                                              `strongUpdateDisplayTextPassword${rawRandomID}`
-                                                            ).value
-                                                          );
-                                                        updateDoc(
-                                                          sourceDoc.ref,
-                                                          {
-                                                            pass: newPass,
-                                                          }
-                                                        ).then(() => {
+                                                      if (
+                                                        passIsTheSame == false
+                                                      ) {
+                                                        async function toUpdatingPass() {
+                                                          let newPass =
+                                                            await encryptWithMP(
+                                                              document.getElementById(
+                                                                `strongUpdateDisplayTextPassword${rawRandomID}`
+                                                              ).value
+                                                            );
+                                                          objectToUpdate.pass =
+                                                            newPass;
                                                           console.log(
                                                             "update Doc line 1302"
                                                           );
-                                                        });
-                                                        console.log(
-                                                          "pass has been updated"
-                                                        );
+                                                        }
+                                                        await toUpdatingPass();
                                                       }
-                                                      toUpdatingPass();
-                                                    }
-                                                    if (
-                                                      linkIsTheSame == false
-                                                    ) {
-                                                      async function toUpdatingLink() {
-                                                        if (
-                                                          originalUpdateInputFields.ogLink.trim()
-                                                            .length == 0 &&
-                                                          document
-                                                            .getElementById(
-                                                              `strongUpdateDisplayTextURL${rawRandomID}`
-                                                            )
-                                                            .value.trim() != 0
-                                                        ) {
-                                                          updateDoc(
-                                                            sourceDoc.ref,
-                                                            {
-                                                              isLink: "true",
-                                                            }
-                                                          ).then(() => {
+                                                      if (
+                                                        linkIsTheSame == false
+                                                      ) {
+                                                        async function toUpdatingLink() {
+                                                          if (
+                                                            originalUpdateInputFields.ogLink.trim()
+                                                              .length == 0 &&
+                                                            document
+                                                              .getElementById(
+                                                                `strongUpdateDisplayTextURL${rawRandomID}`
+                                                              )
+                                                              .value.trim() != 0
+                                                          ) {
+                                                            objectToUpdate.isLink =
+                                                              "true";
                                                             console.log(
                                                               "update Doc line 1329"
                                                             );
-                                                          });
-                                                        } else if (
-                                                          originalUpdateInputFields.ogLink.trim()
-                                                            .length != 0 &&
-                                                          document
-                                                            .getElementById(
-                                                              `strongUpdateDisplayTextURL${rawRandomID}`
-                                                            )
-                                                            .value.trim() == 0
-                                                        ) {
-                                                          updateDoc(
-                                                            sourceDoc.ref,
-                                                            {
-                                                              isLink: "false",
-                                                            }
-                                                          ).then(() => {
+                                                          } else if (
+                                                            originalUpdateInputFields.ogLink.trim()
+                                                              .length != 0 &&
+                                                            document
+                                                              .getElementById(
+                                                                `strongUpdateDisplayTextURL${rawRandomID}`
+                                                              )
+                                                              .value.trim() == 0
+                                                          ) {
+                                                            objectToUpdate.isLink =
+                                                              "false";
                                                             console.log(
                                                               "update doc line 1348"
                                                             );
-                                                          });
-                                                        }
-
-                                                        let newLink =
-                                                          await encryptWithMP(
-                                                            document.getElementById(
-                                                              `strongUpdateDisplayTextURL${rawRandomID}`
-                                                            ).value
-                                                          );
-                                                        updateDoc(
-                                                          sourceDoc.ref,
-                                                          {
-                                                            directLink: newLink,
                                                           }
-                                                        ).then(() => {
+
+                                                          let newLink =
+                                                            await encryptWithMP(
+                                                              document.getElementById(
+                                                                `strongUpdateDisplayTextURL${rawRandomID}`
+                                                              ).value
+                                                            );
+                                                          objectToUpdate.directLink =
+                                                            newLink;
                                                           console.log(
                                                             "update doc line 1366"
                                                           );
-                                                        });
-                                                        console.log(
-                                                          "direct link has been updated"
-                                                        );
+                                                        }
+                                                        await toUpdatingLink();
                                                       }
-                                                      toUpdatingLink();
                                                     }
+                                                    loadingQueryUpdate().then(
+                                                      () => {
+                                                        /* The "original values" are what we
+                                                            are using to determine wether or not
+                                                            we should send the update request
+                                                            through. Before the user clicks edit,
+                                                            we get the values that are in the input
+                                                            boxes. When the user clicks save, we 
+                                                            check if the input boxes have stayed the
+                                                            same. If they have, we don't send the update
+                                                            request */
+
+                                                        /* Here we are updating the "original
+                                                            values" after the update. Because lets say
+                                                            after this update, the user wants to update
+                                                            the values back to how they were before.
+                                                            The update will not go through because they
+                                                            will be detected as the same as the original
+                                                            values. So we have to change the "original values"
+                                                            to what the values are after the update */
+
+                                                        // dO THE BATCH UOPDATE THING HERE
+                                                        console.log(
+                                                          "THIS IS THE THE THE THE THE LOGGG: ",
+                                                          objectToUpdate
+                                                        );
+                                                        console.log(
+                                                          "ban: ",
+                                                          sourceDoc.ref
+                                                        );
+                                                        const batch =
+                                                          writeBatch(db);
+                                                        batch.update(
+                                                          sourceDoc.ref,
+                                                          objectToUpdate
+                                                        );
+                                                        batch
+                                                          .commit()
+                                                          .then(() => {
+                                                            console.log(
+                                                              "THIS IS THE THE THE THE THE LOGGG: ",
+                                                              objectToUpdate
+                                                            );
+                                                            if (
+                                                              !nameIsTheSame
+                                                            ) {
+                                                              // Changing the name of the query that shows up on the main dashboard to the updated one
+                                                              document.getElementById(
+                                                                `shownAppName${rawRandomID}`
+                                                              ).value = document.getElementById(
+                                                                `strongUpdateDisplayTextName${rawRandomID}`
+                                                              ).value;
+
+                                                              // Changing the name of the query that shows up in the update tab
+                                                              document.getElementById(
+                                                                `updateScreenQueryNameHeader${rawRandomID}`
+                                                              ).textContent = document.getElementById(
+                                                                `strongUpdateDisplayTextName${rawRandomID}`
+                                                              ).value;
+                                                            }
+                                                            if (
+                                                              !emailIsTheSame
+                                                            ) {
+                                                              // Changing the email of the query that shows up on the main dashboard to the updated one
+                                                              document.getElementById(
+                                                                `shownEmail${rawRandomID}`
+                                                              ).value = document.getElementById(
+                                                                `strongUpdateDisplayTextEmail${rawRandomID}`
+                                                              ).value;
+                                                            }
+
+                                                            // Updating the icon being displayed
+                                                            let newWebsiteLink =
+                                                              document.getElementById(
+                                                                `strongUpdateDisplayTextURL${rawRandomID}`
+                                                              ).value;
+                                                            if (
+                                                              newWebsiteLink.substring(
+                                                                0,
+                                                                5
+                                                              ) == "http:" ||
+                                                              newWebsiteLink.substring(
+                                                                0,
+                                                                6
+                                                              ) == "https:" ||
+                                                              newWebsiteLink.substring(
+                                                                0,
+                                                                7
+                                                              ) == "http://" ||
+                                                              newWebsiteLink.substring(
+                                                                0,
+                                                                8
+                                                              ) == "https://"
+                                                            ) {
+                                                              document.getElementById(
+                                                                `icon${rawRandomID}`
+                                                              ).src = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${newWebsiteLink.trim()}&size=96`;
+                                                              document.getElementById(
+                                                                `updateScreenIcon${rawRandomID}`
+                                                              ).src = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${newWebsiteLink.trim()}&size=96`;
+                                                            } else {
+                                                              document.getElementById(
+                                                                `icon${rawRandomID}`
+                                                              ).src = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://${newWebsiteLink.trim()}&size=96`;
+                                                              document.getElementById(
+                                                                `updateScreenIcon${rawRandomID}`
+                                                              ).src = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://${newWebsiteLink.trim()}&size=96`;
+                                                            }
+
+                                                            originalUpdateInputFields =
+                                                              {
+                                                                ogName:
+                                                                  document.getElementById(
+                                                                    `strongUpdateDisplayTextName${rawRandomID}`
+                                                                  ).value,
+                                                                ogEmail:
+                                                                  document.getElementById(
+                                                                    `strongUpdateDisplayTextEmail${rawRandomID}`
+                                                                  ).value,
+                                                                ogPass:
+                                                                  document.getElementById(
+                                                                    `strongUpdateDisplayTextPassword${rawRandomID}`
+                                                                  ).value,
+                                                                ogLink: document
+                                                                  .getElementById(
+                                                                    `strongUpdateDisplayTextURL${rawRandomID}`
+                                                                  )
+                                                                  .value.trim(),
+                                                              };
+                                                            // Moving query to the top of the screen
+                                                            document.getElementById(
+                                                              `mainDiv${rawRandomID}`
+                                                            ).style.order =
+                                                              orderNumber.toString();
+                                                          });
+                                                      }
+                                                    );
                                                   }
 
                                                   // Reset visual properties
@@ -1912,19 +2027,13 @@ try {
                           } else {
                             document.getElementById(
                               "newMasterPasswordField"
-                            ).style.backgroundColor = "#3d333c";
-                            document.getElementById(
-                              "newMasterPasswordField"
-                            ).style.border = "2px solid #844242";
+                            ).style.borderBottom = "2px solid #844242";
                             document.getElementById(
                               "renterMP"
-                            ).style.backgroundColor = "#3d333c";
-                            document.getElementById("renterMP").style.border =
-                              "2px solid #844242";
-                            // document.getElementById("timeToCrack").style.color =
-                            //   "#ff0000";
-                            // document.getElementById("timeToCrack").textContent =
-                            //   "Password is too weak";
+                            ).style.borderBottom = "2px solid #844242";
+                            document.getElementById(
+                              "createMPError"
+                            ).textContent = "Password is too weak";
                             document.getElementById(
                               "confirmMasterPasswordButton"
                             ).style.marginTop = "4%";
@@ -1933,19 +2042,13 @@ try {
                           console.log("diff");
                           document.getElementById(
                             "newMasterPasswordField"
-                          ).style.backgroundColor = "#3d333c";
-                          document.getElementById(
-                            "newMasterPasswordField"
-                          ).style.border = "2px solid #844242";
+                          ).style.borderBottom = "2px solid #844242";
+
                           document.getElementById(
                             "renterMP"
-                          ).style.backgroundColor = "#3d333c";
-                          document.getElementById("renterMP").style.border =
-                            "2px solid #844242";
-                          // document.getElementById("timeToCrack").style.color =
-                          //   "#ff0000";
-                          // document.getElementById("timeToCrack").textContent =
-                          //   "Passwords do not match";
+                          ).style.borderBottom = "2px solid #844242";
+                          document.getElementById("createMPError").textContent =
+                            "Passwords do not match";
                           document.getElementById(
                             "confirmMasterPasswordButton"
                           ).style.marginTop = "4%";
