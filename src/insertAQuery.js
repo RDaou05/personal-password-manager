@@ -14,6 +14,7 @@ import {
   where,
   orderBy,
   serverTimestamp,
+  writeBatch,
 } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-firestore.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -140,14 +141,8 @@ async function mainInit() {
           directLink: directLinkToAdd, // The url the user added (Will be blank if no url was added)
           random: randomID, // Randomly generated id that will be used for identifying the query for things like updating and deleting it
           nummy: serverTimestamp(), // Time stamp of creation
-        })
-          .then(() => {
-            alert("Data added successfully");
-          })
-          .catch((err) => {
-            alert("Error has been logged");
-            console.log(err);
-          });
+        });
+        return docRefForMP.id;
       };
       const dimAbleToDarken = () => {
         Array.from(
@@ -210,6 +205,7 @@ async function mainInit() {
       //
 
       document.getElementById("confirmQuery").addEventListener("click", () => {
+        let newQueryID; // Reference id of the path of the document the user will add
         async function confirmQueryButtonEventFuntion() {
           let enteredNameOfQuery = document
             .getElementById("nameOfQuery")
@@ -260,19 +256,24 @@ async function mainInit() {
               //   mostRecentEnteredURLOfQuery = enteredURLOfQuery;
               // }
               console.log(
+                "pass: ",
                 encryptedEnteredPasswordOfQuery,
                 " ",
+                "username/email: ",
                 encryptedEnteredUsernameOfQuery,
                 " ",
+                "name: ",
                 encryptedEnteredNameOfQuery,
                 " ",
+                "linkisthere: ",
                 encryptedLinkIsThere,
                 " ",
+                "url: ",
                 encryptedEnteredURLOfQuery
               );
               if (linkIsThere == "false") {
                 // Leaving url field blank if the user didn't provide one
-                writeQueryToFS(
+                newQueryID = await writeQueryToFS(
                   encryptedEnteredUsernameOfQuery,
                   encryptedEnteredPasswordOfQuery,
                   encryptedEnteredNameOfQuery,
@@ -291,7 +292,7 @@ async function mainInit() {
                 mostRecentID = id;
               } else if (linkIsThere == "true") {
                 // Will run this if the user provided a url
-                writeQueryToFS(
+                newQueryID = await writeQueryToFS(
                   encryptedEnteredUsernameOfQuery,
                   encryptedEnteredPasswordOfQuery,
                   encryptedEnteredNameOfQuery,
@@ -1052,101 +1053,226 @@ async function mainInit() {
                                     } else {
                                       // Code to update values
                                       console.log("will update query");
-                                      async function toUpdatingTimestamp() {
-                                        updateDoc(sourceDoc.ref, {
-                                          nummy: serverTimestamp(),
-                                        });
-                                        console.log("nummy has been updated");
-                                      }
-                                      toUpdatingTimestamp();
-                                      if (nameIsTheSame == false) {
-                                        async function toUpdatingName() {
-                                          let newName = await encryptWithMP(
-                                            document.getElementById(
-                                              `strongUpdateDisplayTextName${rawRandomID}`
-                                            ).value
-                                          );
-                                          // docSnapToUpdate.forEach((docToUD) => {
-                                          updateDoc(sourceDoc.ref, {
-                                            website: newName,
-                                          });
-                                          console.log(
-                                            "website/name has been updated"
-                                          );
+                                      console.log("A normal object: ", {
+                                        hey: "oh hey",
+                                        bye: "oh ok bye",
+                                      });
+                                      let objectToUpdate = {}; // Contains all the values to be updated
+                                      async function loadingQueryUpdate() {
+                                        objectToUpdate = {};
+                                        async function toUpdatingTimestamp() {
+                                          // Updating timestamp so the updated query will be at the top of the page
+                                          objectToUpdate.nummy =
+                                            serverTimestamp();
+                                          console.log("update Doc line 1224");
+                                          console.log("nummy has been updated");
                                         }
-                                        toUpdatingName();
-                                      }
-                                      if (emailIsTheSame == false) {
-                                        async function toUpdatingEmail() {
-                                          let newEmail = await encryptWithMP(
-                                            document.getElementById(
-                                              `strongUpdateDisplayTextEmail${rawRandomID}`
-                                            ).value
-                                          );
-                                          // docSnapToUpdate.forEach((docToUD) => {
-                                          updateDoc(sourceDoc.ref, {
-                                            user: newEmail,
-                                          });
-                                          console.log("email has been updated");
-                                        }
-                                        toUpdatingEmail();
-                                      }
-                                      if (passIsTheSame == false) {
-                                        async function toUpdatingPass() {
-                                          let newPass = await encryptWithMP(
-                                            document.getElementById(
-                                              `strongUpdateDisplayTextPassword${rawRandomID}`
-                                            ).value
-                                          );
-                                          updateDoc(sourceDoc.ref, {
-                                            pass: newPass,
-                                          });
-                                          console.log("pass has been updated");
-                                        }
-                                        toUpdatingPass();
-                                      }
-                                      if (linkIsTheSame == false) {
-                                        async function toUpdatingLink() {
-                                          if (
-                                            originalUpdateInputFields.ogLink.trim()
-                                              .length == 0 &&
-                                            document
-                                              .getElementById(
-                                                `strongUpdateDisplayTextURL${rawRandomID}`
-                                              )
-                                              .value.trim() != 0
-                                          ) {
-                                            updateDoc(sourceDoc.ref, {
-                                              isLink: "true",
-                                            });
-                                          } else if (
-                                            originalUpdateInputFields.ogLink.trim()
-                                              .length != 0 &&
-                                            document
-                                              .getElementById(
-                                                `strongUpdateDisplayTextURL${rawRandomID}`
-                                              )
-                                              .value.trim() == 0
-                                          ) {
-                                            updateDoc(sourceDoc.ref, {
-                                              isLink: "false",
-                                            });
+                                        await toUpdatingTimestamp();
+                                        if (nameIsTheSame == false) {
+                                          async function toUpdatingName() {
+                                            let newName = await encryptWithMP(
+                                              document.getElementById(
+                                                `strongUpdateDisplayTextName${rawRandomID}`
+                                              ).value
+                                            );
+                                            objectToUpdate.website = newName;
                                           }
-
-                                          let newLink = await encryptWithMP(
-                                            document.getElementById(
-                                              `strongUpdateDisplayTextURL${rawRandomID}`
-                                            ).value
-                                          );
-                                          updateDoc(sourceDoc.ref, {
-                                            directLink: newLink,
-                                          });
-                                          console.log(
-                                            "direct link has been updated"
-                                          );
+                                          await toUpdatingName();
                                         }
-                                        toUpdatingLink();
+                                        if (emailIsTheSame == false) {
+                                          async function toUpdatingEmail() {
+                                            let newEmail = await encryptWithMP(
+                                              document.getElementById(
+                                                `strongUpdateDisplayTextEmail${rawRandomID}`
+                                              ).value
+                                            );
+                                            objectToUpdate.user = newEmail;
+                                            console.log("update doc line 1276");
+                                          }
+                                          await toUpdatingEmail();
+                                        }
+                                        if (passIsTheSame == false) {
+                                          async function toUpdatingPass() {
+                                            let newPass = await encryptWithMP(
+                                              document.getElementById(
+                                                `strongUpdateDisplayTextPassword${rawRandomID}`
+                                              ).value
+                                            );
+                                            objectToUpdate.pass = newPass;
+                                            console.log("update Doc line 1302");
+                                          }
+                                          await toUpdatingPass();
+                                        }
+                                        if (linkIsTheSame == false) {
+                                          async function toUpdatingLink() {
+                                            if (
+                                              originalUpdateInputFields.ogLink.trim()
+                                                .length == 0 &&
+                                              document
+                                                .getElementById(
+                                                  `strongUpdateDisplayTextURL${rawRandomID}`
+                                                )
+                                                .value.trim() != 0
+                                            ) {
+                                              objectToUpdate.isLink = "true";
+                                              console.log(
+                                                "update Doc line 1329"
+                                              );
+                                            } else if (
+                                              originalUpdateInputFields.ogLink.trim()
+                                                .length != 0 &&
+                                              document
+                                                .getElementById(
+                                                  `strongUpdateDisplayTextURL${rawRandomID}`
+                                                )
+                                                .value.trim() == 0
+                                            ) {
+                                              objectToUpdate.isLink = "false";
+                                              console.log(
+                                                "update doc line 1348"
+                                              );
+                                            }
+
+                                            let newLink = await encryptWithMP(
+                                              document.getElementById(
+                                                `strongUpdateDisplayTextURL${rawRandomID}`
+                                              ).value
+                                            );
+                                            objectToUpdate.directLink = newLink;
+                                            console.log("update doc line 1366");
+                                          }
+                                          await toUpdatingLink();
+                                        }
                                       }
+                                      loadingQueryUpdate().then(() => {
+                                        /* The "original values" are what we
+                                              are using to determine wether or not
+                                              we should send the update request
+                                              through. Before the user clicks edit,
+                                              we get the values that are in the input
+                                              boxes. When the user clicks save, we 
+                                              check if the input boxes have stayed the
+                                              same. If they have, we don't send the update
+                                              request */
+
+                                        /* Here we are updating the "original
+                                              values" after the update. Because lets say
+                                              after this update, the user wants to update
+                                              the values back to how they were before.
+                                              The update will not go through because they
+                                              will be detected as the same as the original
+                                              values. So we have to change the "original values"
+                                              to what the values are after the update */
+
+                                        // dO THE BATCH UOPDATE THING HERE
+                                        console.log(
+                                          "THIS IS THE THE THE THE THE LOGGG: ",
+                                          objectToUpdate
+                                        );
+                                        console.log("hereb: ", newQueryID);
+                                        console.log(
+                                          "AND: ",
+                                          doc(
+                                            db,
+                                            "users",
+                                            "filler",
+                                            userUID,
+                                            "mpaps",
+                                            "ps",
+                                            newQueryID
+                                          )
+                                        );
+                                        const batch = writeBatch(db);
+                                        batch.update(
+                                          doc(
+                                            db,
+                                            "users",
+                                            "filler",
+                                            userUID,
+                                            "mpaps",
+                                            "ps",
+                                            newQueryID
+                                          ),
+                                          objectToUpdate
+                                        );
+                                        batch.commit().then(() => {
+                                          console.log(
+                                            "THIS IS THE THE THE THE THE LOGGG: ",
+                                            objectToUpdate
+                                          );
+                                          if (!nameIsTheSame) {
+                                            // Changing the name of the query that shows up on the main dashboard to the updated one
+                                            document.getElementById(
+                                              `shownAppName${rawRandomID}`
+                                            ).value = document.getElementById(
+                                              `strongUpdateDisplayTextName${rawRandomID}`
+                                            ).value;
+
+                                            // Changing the name of the query that shows up in the update tab
+                                            document.getElementById(
+                                              `updateScreenQueryNameHeader${rawRandomID}`
+                                            ).textContent = document.getElementById(
+                                              `strongUpdateDisplayTextName${rawRandomID}`
+                                            ).value;
+                                          }
+                                          if (!emailIsTheSame) {
+                                            // Changing the email of the query that shows up on the main dashboard to the updated one
+                                            document.getElementById(
+                                              `shownEmail${rawRandomID}`
+                                            ).value = document.getElementById(
+                                              `strongUpdateDisplayTextEmail${rawRandomID}`
+                                            ).value;
+                                          }
+                                          if (!linkIsTheSame) {
+                                            // Updating the icon being displayed
+                                            let newWebsiteLink =
+                                              document.getElementById(
+                                                `strongUpdateDisplayTextURL${rawRandomID}`
+                                              ).value;
+                                            if (
+                                              newWebsiteLink.substring(0, 5) ==
+                                                "http:" ||
+                                              newWebsiteLink.substring(0, 6) ==
+                                                "https:" ||
+                                              newWebsiteLink.substring(0, 7) ==
+                                                "http://" ||
+                                              newWebsiteLink.substring(0, 8) ==
+                                                "https://"
+                                            ) {
+                                              document.getElementById(
+                                                `icon${rawRandomID}`
+                                              ).src = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${newWebsiteLink.trim()}&size=96`;
+                                              document.getElementById(
+                                                `updateScreenIcon${rawRandomID}`
+                                              ).src = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${newWebsiteLink.trim()}&size=96`;
+                                            } else {
+                                              document.getElementById(
+                                                `icon${rawRandomID}`
+                                              ).src = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://${newWebsiteLink.trim()}&size=96`;
+                                              document.getElementById(
+                                                `updateScreenIcon${rawRandomID}`
+                                              ).src = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://${newWebsiteLink.trim()}&size=96`;
+                                            }
+
+                                            originalUpdateInputFields = {
+                                              ogName: document.getElementById(
+                                                `strongUpdateDisplayTextName${rawRandomID}`
+                                              ).value,
+                                              ogEmail: document.getElementById(
+                                                `strongUpdateDisplayTextEmail${rawRandomID}`
+                                              ).value,
+                                              ogPass: document.getElementById(
+                                                `strongUpdateDisplayTextPassword${rawRandomID}`
+                                              ).value,
+                                              ogLink: document
+                                                .getElementById(
+                                                  `strongUpdateDisplayTextURL${rawRandomID}`
+                                                )
+                                                .value.trim(),
+                                            };
+                                          }
+                                        });
+                                      });
                                     }
 
                                     // Reset visual properties
@@ -1379,26 +1505,12 @@ async function mainInit() {
                       //   collection(db, userUID, "mpaps", "ps"),
                       //   where("random", "==", rawRandomID)
                       // );
-                      const docSnapToDelete = await getDocs(
-                        query(
-                          collection(
-                            db,
-                            "users",
-                            "filler",
-                            userUID,
-                            "mpaps",
-                            "ps"
-                          ),
-                          where("random", "==", rawRandomID)
-                        )
-                      );
+
                       // console.log("snap is ", docSnapToDelete);
                       // );
-                      docSnapToDelete.forEach((doc) => {
-                        // console.log(sourceDoc.data());
-                        // console.log("The ref ", sourceDoc.ref);
-                        deleteDoc(doc.ref);
-                      });
+
+                      deleteDoc(docSnapOfAddedDocRef);
+
                       // console.log("plain ", docRefToDelete);
                       // console.log("plainData ", docRefToDelete.data());
                       // deleteDoc(docRefToDelete);
