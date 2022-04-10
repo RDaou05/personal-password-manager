@@ -64,14 +64,19 @@ try {
     // async function waitForAuth() {
     //   return getAuth();
     // }
-    const auth = getAuth();
+    const auth = await getAuth();
     let initiated = false; // Using this to check if the auth token has been refreshed or not
     onAuthStateChanged(auth, (mainUser) => {
       if (!initiated) {
         if (mainUser) {
-          initiated = true; // Setting this to true makes it so this wont run again when the reauth happens
           // Checks if user is signed in
+          initiated = true; // Setting this to true makes it so this wont run again when the reauth happens
           const mainUser = auth.currentUser;
+          let openUrlObject =
+            {}; /* This is where we store the links that open when 
+          the user clicks on the icon for a query. The reason this is being stored in an object is
+          because if the user decides to update the link, we can just update the object. The
+          object will contain the randomID of the query as the key, and the url as the value*/
           let hashedSetMasterPassValue =
             ""; /* We have this as a variable so we 
           don't have to make a read everytime we want to decrypt 
@@ -1446,44 +1451,73 @@ try {
                                                               ).value;
                                                             }
 
-                                                            // Updating the icon being displayed
-                                                            let newWebsiteLink =
-                                                              document.getElementById(
-                                                                `strongUpdateDisplayTextURL${rawRandomID}`
-                                                              ).value;
                                                             if (
-                                                              newWebsiteLink.substring(
-                                                                0,
-                                                                5
-                                                              ) == "http:" ||
-                                                              newWebsiteLink.substring(
-                                                                0,
-                                                                6
-                                                              ) == "https:" ||
-                                                              newWebsiteLink.substring(
-                                                                0,
-                                                                7
-                                                              ) == "http://" ||
-                                                              newWebsiteLink.substring(
-                                                                0,
-                                                                8
-                                                              ) == "https://"
+                                                              !linkIsTheSame
                                                             ) {
-                                                              document.getElementById(
-                                                                `icon${rawRandomID}`
-                                                              ).src = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${newWebsiteLink.trim()}&size=96`;
-                                                              document.getElementById(
-                                                                `updateScreenIcon${rawRandomID}`
-                                                              ).src = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${newWebsiteLink.trim()}&size=96`;
-                                                            } else {
-                                                              document.getElementById(
-                                                                `icon${rawRandomID}`
-                                                              ).src = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://${newWebsiteLink.trim()}&size=96`;
-                                                              document.getElementById(
-                                                                `updateScreenIcon${rawRandomID}`
-                                                              ).src = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://${newWebsiteLink.trim()}&size=96`;
-                                                            }
+                                                              console.log(
+                                                                "LINK IS NOT THE SAME\nLINK IS NOT THE SAME\nLINK IS NOT THE SAME\nLINK IS NOT THE SAME\nLINK IS NOT THE SAME\n"
+                                                              );
+                                                              // Updating the icon being displayed
+                                                              let newWebsiteLink =
+                                                                document.getElementById(
+                                                                  `strongUpdateDisplayTextURL${rawRandomID}`
+                                                                ).value;
+                                                              if (
+                                                                newWebsiteLink.substring(
+                                                                  0,
+                                                                  5
+                                                                ) == "http:" ||
+                                                                newWebsiteLink.substring(
+                                                                  0,
+                                                                  6
+                                                                ) == "https:" ||
+                                                                newWebsiteLink.substring(
+                                                                  0,
+                                                                  7
+                                                                ) ==
+                                                                  "http://" ||
+                                                                newWebsiteLink.substring(
+                                                                  0,
+                                                                  8
+                                                                ) == "https://"
+                                                              ) {
+                                                                document.getElementById(
+                                                                  `icon${rawRandomID}`
+                                                                ).src = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${newWebsiteLink.trim()}&size=96`;
+                                                                document.getElementById(
+                                                                  `updateScreenIcon${rawRandomID}`
+                                                                ).src = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${newWebsiteLink.trim()}&size=96`;
+                                                              } else {
+                                                                document.getElementById(
+                                                                  `icon${rawRandomID}`
+                                                                ).src = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://${newWebsiteLink.trim()}&size=96`;
+                                                                document.getElementById(
+                                                                  `updateScreenIcon${rawRandomID}`
+                                                                ).src = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://${newWebsiteLink.trim()}&size=96`;
+                                                              }
 
+                                                              // Updating the link that gets opened when the user clicks on the icon
+                                                              openUrlObject[
+                                                                rawRandomID
+                                                              ] =
+                                                                newWebsiteLink.trim();
+                                                              console.log(
+                                                                "Updated object: ",
+                                                                openUrlObject
+                                                              );
+                                                              console.log(
+                                                                "Updated object for spec raw: ",
+                                                                openUrlObject[
+                                                                  rawRandomID
+                                                                ]
+                                                              );
+                                                              console.log(
+                                                                "ben: ",
+                                                                openUrlObject[
+                                                                  rawRandomID
+                                                                ]
+                                                              );
+                                                            }
                                                             originalUpdateInputFields =
                                                               {
                                                                 ogName:
@@ -1904,21 +1938,32 @@ try {
                             let decryptedLink = await decryptWithMP(
                               importedData.directLink
                             );
+                            openUrlObject[rawRandomID] = decryptedLink;
                             let urlStringBool = importedData.isLink;
                             if (urlStringBool == "true") {
                               document
                                 .getElementById(`icon${rawRandomID}`)
                                 .addEventListener("click", () => {
                                   if (importedData.isLink == "true") {
-                                    if (
-                                      decryptedLink.includes("http") &&
-                                      decryptedLink.includes("://")
-                                    ) {
-                                      nw.Shell.openExternal(decryptedLink);
-                                    } else {
-                                      nw.Shell.openExternal(
-                                        "http://" + decryptedLink
-                                      );
+                                    let linkFromObject =
+                                      /* This value will change if the user
+                                    updates the url*/
+                                      openUrlObject[rawRandomID];
+                                    if (linkFromObject.trim() != "") {
+                                      /* This if statement checks
+                                    if the user deleted the url in an update */
+                                      /* If the query just didn't have a url by default, than importedData.isLink would equal false
+                                    so this if statement wouldn't even be running */
+                                      if (
+                                        linkFromObject.includes("http") &&
+                                        linkFromObject.includes("://")
+                                      ) {
+                                        nw.Shell.openExternal(linkFromObject);
+                                      } else {
+                                        nw.Shell.openExternal(
+                                          "http://" + linkFromObject
+                                        );
+                                      }
                                     }
                                   }
                                 });
@@ -2176,6 +2221,8 @@ try {
           // User is signed out
           // ...
         }
+      } else {
+        console.log("Already initiated");
       }
     });
   }

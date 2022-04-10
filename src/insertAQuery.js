@@ -44,12 +44,9 @@ const firebaseConfig = {
 
 // Initialize Firebase
 try {
-  // Access your firebase app
-  let app = firebase.app();
-  // Delete your app.
-  app.delete(app);
-} catch {
   const app = initializeApp(firebaseConfig);
+} catch (err) {
+  console.log(err);
 }
 
 let mostRecentEncryptedEnteredUsernameOfQuery;
@@ -69,6 +66,11 @@ async function mainInit() {
       if (mainUser) {
         // Checks if user is signed in
         initiated = true; // Setting this to true makes it so this wont run again when the reauth happens
+        let openUrlObject =
+          {}; /* This is where we store the links that open when 
+          the user clicks on the icon for a query. The reason this is being stored in an object is
+          because if the user decides to update the link, we can just update the object. The
+          object will contain the randomID of the query as the key, and the url as the value*/
         let hashedSetMasterPassValue = ""; /* We have this as a variable so we 
     don't have to make a read everytime we want to decrypt 
     something with the master password */
@@ -1375,6 +1377,22 @@ async function mainInit() {
                                                       ).src = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://${newWebsiteLink.trim()}&size=96`;
                                                     }
 
+                                                    // Updating the link that gets opened when the user clicks on the icon
+                                                    openUrlObject[rawRandomID] =
+                                                      newWebsiteLink.trim();
+                                                    console.log(
+                                                      "Updated object: ",
+                                                      openUrlObject
+                                                    );
+                                                    console.log(
+                                                      "Updated object for spec raw: ",
+                                                      openUrlObject[rawRandomID]
+                                                    );
+                                                    console.log(
+                                                      "ben: ",
+                                                      openUrlObject[rawRandomID]
+                                                    );
+
                                                     originalUpdateInputFields =
                                                       {
                                                         ogName:
@@ -1717,21 +1735,32 @@ async function mainInit() {
                       let decryptedLink = await decryptWithMP(
                         importedData.directLink
                       );
+                      openUrlObject[rawRandomID] = decryptedLink;
                       let urlStringBool = importedData.isLink;
                       if (urlStringBool == "true") {
                         document
                           .getElementById(`icon${rawRandomID}`)
                           .addEventListener("click", () => {
                             if (importedData.isLink == "true") {
-                              if (
-                                decryptedLink.includes("http") &&
-                                decryptedLink.includes("://")
-                              ) {
-                                nw.Shell.openExternal(decryptedLink);
-                              } else {
-                                nw.Shell.openExternal(
-                                  "http://" + decryptedLink
-                                );
+                              let linkFromObject =
+                                /* This value will change if the user
+                                    updates the url*/
+                                openUrlObject[rawRandomID];
+                              if (linkFromObject.trim() != "") {
+                                /* This if statement checks
+                                    if the user deleted the url in an update */
+                                /* If the query just didn't have a url by default, than importedData.isLink would equal false
+                                    so this if statement wouldn't even be running */
+                                if (
+                                  linkFromObject.includes("http") &&
+                                  linkFromObject.includes("://")
+                                ) {
+                                  nw.Shell.openExternal(linkFromObject);
+                                } else {
+                                  nw.Shell.openExternal(
+                                    "http://" + linkFromObject
+                                  );
+                                }
                               }
                             }
                           });
