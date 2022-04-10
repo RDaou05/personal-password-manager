@@ -144,6 +144,8 @@ body {
 .queryScreen {
   margin-left: 12.5%;
   margin-right: 12.5%;
+  display: flex;
+  flex-direction: column;
 }
 
 .mainDivClass {
@@ -200,6 +202,9 @@ body {
   display: inline-block;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 900;
+  font-size: 16px;
 }
 
 .shownEmail {
@@ -214,6 +219,9 @@ body {
   display: inline-block;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 900;
+  font-size: 16px;
 }
 
 .hiddenPasswordInputBox {
@@ -562,7 +570,7 @@ body {
   position: absolute;
   color: #13817c;
   right: 14%;
-  bottom: 45.5%;
+  bottom: 45%;
   font-size: 17px;
 }
 
@@ -628,8 +636,6 @@ body {
 
 .newMasterPasswordField {
   background-color: transparent;
-  /* box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15); */
-  /* border-radius: 0.5vh; */
   outline: none;
   border: none;
   border-bottom: 1px solid teal;
@@ -641,11 +647,11 @@ body {
   padding: 3%;
   /* margin-left: 8%; */
   height: 8%;
-  text-align: center;
-  padding-left: 14%;
+  /* text-align: center; */
+  padding-left: 2%;
   padding-right: 14%;
   align-self: center;
-  width: 23%;
+  width: 40%;
   margin-top: 4%;
 }
 
@@ -666,33 +672,25 @@ body {
 } */
 
 .renterMP {
-  background-color: #000000;
-  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
-  border-radius: 1vh;
+  background-color: transparent;
   outline: none;
   border: none;
-  margin-top: 4%;
+  border-bottom: 1px solid teal;
+  margin-top: 3%;
   color: white;
   font-size: 1rem;
   font-weight: bold;
   font-family: "Montserrat", sans-serif;
   padding: 3%;
-  margin-left: 8%;
   height: 8%;
-  text-align: center;
-  padding-left: 14%;
+  padding-left: 2%;
   padding-right: 14%;
-  width: 55%;
+  align-self: center;
+  width: 40%;
 }
 
 .renterMP:focus {
-  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
-  border: 3px solid rgb(1 255 242);
-  transition: all ease-in-out 0.2s;
-}
-.renterMP:hover {
-  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
-  border: 3px solid rgb(1 255 242);
+  width: 51%;
   transition: all ease-in-out 0.2s;
 }
 
