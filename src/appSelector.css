@@ -268,6 +268,7 @@ body {
   top: 0%;
   left: 0%;
   margin: 2% 1% 0 1%;
+  display: none;
 }
 
 .upgradeToP {
@@ -290,7 +291,6 @@ body {
   transition: 0.5s;
   background-size: 200% auto;
   cursor: pointer;
-  /* display: none; */
 }
 
 .upgradeToP:hover {

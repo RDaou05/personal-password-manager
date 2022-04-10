@@ -12,6 +12,11 @@ import {
   createUserWithEmailAndPassword,
 } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
 
+import {
+  getFunctions,
+  httpsCallable,
+} from "https://www.gstatic.com/firebasejs/9.6.4/firebase-functions.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyA3pL18gW3Ts88QX93bFhwmruuXLYmVKAo",
   authDomain: "personal-pm-98268.firebaseapp.com",
@@ -40,13 +45,14 @@ import { premiumPurple } from "/appSelectorStyles/purplePremium.js";
 import { normalStyles } from "/appSelectorStyles/normalStyles.js";
 
 const auth = getAuth();
+const functions = getFunctions();
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
     const uid = user.uid;
     alert("User is signed in. User is ", user.email);
     console.log(user);
-    user.getIdTokenResult().then((res) => {
+    user.getIdTokenResult(true).then((res) => {
       console.log("Res is: ", res);
       console.log("Claims are: ", res.claims);
       const aStatus = res.claims.a;
@@ -59,13 +65,21 @@ onAuthStateChanged(auth, (user) => {
       const upgradeButtonContainer = Array.from(
         document.getElementsByClassName("upgradeToPContainer")
       )[0];
+      Array.from(
+        document.getElementsByClassName("upgradeToP")
+      )[0].addEventListener("click", () => {
+        const givePRole = httpsCallable(functions, "givePRole");
+        givePRole({ uid: auth.currentUser.uid }).then((result) => {
+          console.log(result);
+          auth.currentUser.getIdTokenResult(true).then((idTokenResult) => {
+            console.log("the result ", idTokenResult);
+            console.log("the result claims ", idTokenResult.claims);
+          });
+        });
+      });
       exitPreviewButton.style.pointerEvents = "auto";
       // Keeping the exit preview always clickable is needed to allow the user to exit the preview whenever they want
 
-      // Making sure upgrade button is visible
-      upgradeButtonContainer.style.display = "initial";
-
-      //
       const showPremiumUIButton = Array.from(
         document.getElementsByClassName("showPUIButton")
       )[0];
@@ -90,6 +104,8 @@ onAuthStateChanged(auth, (user) => {
       if (!aStatus && !pStatus) {
         // Runs if user has free trial version
         hasPrivileges = false;
+        // Making sure upgrade button is visible if using free trial
+        upgradeButtonContainer.style.display = "initial";
         // Adds blue border when hovering over the two middle buttons
         let ftStyles = `
         .redirectAppButtons:hover {
@@ -107,11 +123,34 @@ onAuthStateChanged(auth, (user) => {
         a premium memeber */
         exitPreviewButton.style.display = "none";
 
-        const chooseThemeButton = Array.from(
-          document.getElementsByClassName("showPUIButtonContainer")
-        )[0];
+        // Making sure upgrade button is hidden if not using free trial
+        upgradeButtonContainer.style.display = "none";
 
-        let premiumStyles = normalStyles;
+        let setLocalTheme = localStorage.getItem("pmTheme");
+        setLocalTheme.trim();
+        // Checking if the user already has a theme saved from local storage
+        let premiumStyles;
+        if (setLocalTheme != null) {
+          if (setLocalTheme == "PremiumBlack") {
+            premiumStyles = premiumBlack;
+          } else if (setLocalTheme == "PremiumFrost") {
+            premiumStyles = premiumFrost;
+          } else if (setLocalTheme == "PremiumAmin") {
+            premiumStyles = premiumAmin;
+          } else if (setLocalTheme == "PremiumPurple") {
+            premiumStyles = premiumPurple;
+          } else if (setLocalTheme == "NormalStyles") {
+            premiumStyles = normalStyles;
+          } else if (setLocalTheme == "PremiumGrey") {
+            premiumStyles = premiumGrey;
+          } else {
+            console.log("There shouldn't be an else");
+          }
+        } else {
+          premiumStyles = normalStyles;
+        }
+
+        // Inserting style tag
         let premiumStyleSheet = document.createElement("style");
         premiumStyleSheet.textContent = premiumStyles;
         document.head.appendChild(premiumStyleSheet);
@@ -154,6 +193,9 @@ onAuthStateChanged(auth, (user) => {
 
               exitPreviewButton.style.display = "initial";
               upgradeButtonContainer.style.display = "none"; // Hiding upgrade button since exit button is taking up space
+            } else {
+              // If they have premium, store the selected theme in local storage
+              localStorage.setItem("pmTheme", themeName);
             }
 
             // Automatically close theme window after select theme
