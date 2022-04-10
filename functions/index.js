@@ -2,54 +2,46 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp();
 
-exports.giveFTRole = functions.https.onCall((data, context) => {
-  // get user and add custom claim
-  return admin
-    .auth()
-    .getUserByEmail(data.email)
-    .then((user) => {
-      return admin.auth().setCustomUserClaims(user.uid, {
-        ft: true,
-        p: false,
-        a: false,
+exports.queryCounter = functions.firestore
+  .document("/users/filler/{userId}/mpaps/ps/{passQuery}")
+  .onCreate((snap, context) => {
+    const db = admin.firestore();
+    const userUID = context.params.uid;
+    db.doc("/tempcol/tempcoldoc")
+      .get()
+      .then((gotten) => {
+        db.doc(`/users/filler/${userUID}/mpaps/limits/numofq`)
+          .set({
+            qamount: gotten,
+            ofwritten: userUID,
+          })
+          .then(() => {
+            return {
+              message: "Yep it works!",
+            };
+          })
+          .catch((err) => {
+            return {
+              error: `Error is: ${err}`,
+            };
+          });
       });
-    })
-    .then(() => {
-      return {
-        message: `Success! ${data.email} has been registered with ft`,
-      };
-    })
-    .catch((err) => {
-      return err;
-    });
-});
-
-exports.signUpProperties = functions.https.onCall((data, context) => {
-  return admin
-    .auth()
-    .setCustomUserClaims(data.uid, {
-      ft: true,
-      p: false,
-      a: false,
-    })
-    .then(() => {
-      return {
-        message: `Success!`,
-      };
-    })
-    .catch((err) => {
-      console.log(err);
-      return err;
-    });
-});
+  });
 
 exports.givePRole = functions.https.onCall((data, context) => {
-  // get user and add custom claim
-  return admin
+  const usersUID = data.uid;
+  const db = admin.firestore();
+  const p1 = db
+    .collection("users")
+    .doc("filler")
+    .collection(usersUID)
+    .doc("r")
+    .set({ memb: "p" });
+  const p2 = admin
     .auth()
-    .getUserByEmail(data.email)
-    .then((user) => {
-      return admin.auth().setCustomUserClaims(user.uid, {
+    .getUser(usersUID)
+    .then(() => {
+      return admin.auth().setCustomUserClaims(usersUID, {
         ft: false,
         p: true,
         a: false,
@@ -57,21 +49,41 @@ exports.givePRole = functions.https.onCall((data, context) => {
     })
     .then(() => {
       return {
-        message: `Success! ${data.email} has been registered with p`,
+        message: `Success! User with UID: ${usersUID}, has been registered with p`,
       };
     })
     .catch((err) => {
       return err;
     });
+  return Promise.all([p1, p2]);
 });
 
-exports.giveFTRoleInFS = functions.auth.user().onCreate((user) => {
+exports.giveSignUpRoles = functions.auth.user().onCreate((user) => {
   const usersUID = user.uid;
   const db = admin.firestore();
-  return db
+  const p1 = db
     .collection("users")
     .doc("filler")
     .collection(usersUID)
     .doc("r")
     .set({ memb: "ft" });
+  const p2 = admin
+    .auth()
+    .getUser(usersUID)
+    .then(() => {
+      return admin.auth().setCustomUserClaims(usersUID, {
+        ft: true,
+        p: false,
+        a: false,
+      });
+    })
+    .then(() => {
+      return {
+        message: `Success! ${user.email} has been registered with ft`,
+      };
+    })
+    .catch((err) => {
+      return err;
+    });
+  return Promise.all([p1, p2]);
 });
