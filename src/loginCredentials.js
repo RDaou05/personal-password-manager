@@ -95,14 +95,18 @@ document.getElementById("googleSignInButton").addEventListener("click", () => {
       const determiningPLA = async () => {
         if (newUserDetermine === undefined) {
         } else if (newUserDetermine === true) {
-          const signUpProperties = httpsCallable(functions, "signUpProperties");
-          signUpProperties({ uid: result.user.uid }).then((result) => {
-            console.log(result);
-            auth.currentUser.getIdTokenResult(true).then((idTokenResult) => {
-              console.log("the result ", idTokenResult);
-              console.log("the result claims ", idTokenResult.claims);
-            });
+          auth.currentUser.getIdTokenResult(true).then((idTokenResult) => {
+            console.log("the result ", idTokenResult);
+            console.log("the result claims ", idTokenResult.claims);
           });
+          // const signUpProperties = httpsCallable(functions, "signUpProperties");
+          // signUpProperties({ uid: result.user.uid }).then((result) => {
+          //   console.log(result);
+          //   auth.currentUser.getIdTokenResult(true).then((idTokenResult) => {
+          //     console.log("the result ", idTokenResult);
+          //     console.log("the result claims ", idTokenResult.claims);
+          //   });
+          // });
         }
       };
       await determiningPLA();
