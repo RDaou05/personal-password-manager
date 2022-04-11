@@ -186,7 +186,7 @@ body {
 .letterBoxLetter {
   color: white;
   padding-top: 24%;
-  padding-left: 35%;
+  padding-left: 28%;
   margin: 0;
 }
 
@@ -1015,6 +1015,26 @@ tfoot:before {
   font-family: "Montserrat", sans-serif;
 }
 
+.deleteQueryButton {
+  background-color: transparent;
+  border: 2px solid rgb(132, 66, 66);
+  border-radius: 9vh;
+  font-family: "Montserrat", sans-serif;
+  font-size: 19px;
+  width: -webkit-fill-available;
+  text-overflow: ellipsis;
+  color: rgb(132, 66, 66);
+  font-weight: 900;
+  padding: 2%;
+  float: left;
+  cursor: pointer;
+  box-shadow: 0px 10px 30px 5px rgb(0 0 0);
+}
+
+.deleteQueryButton:hover {
+  margin-top: -0.5%;
+  transition: 0.2s all ease;
+}
 /* @media screen and (min-width: 635px) {
   .tholder {
     margin-top: 2.5%;

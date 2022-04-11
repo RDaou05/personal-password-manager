@@ -573,6 +573,7 @@ async function mainInit() {
                           ) {
                             //
                             async function checkIfUpdateScreenExists() {
+                              // This function checks if an update tab already exists for the query being clicked on
                               let arrayOfExistingUpdateScreens = [];
                               async function createAndAddUpdatesCheckList() {
                                 Array.from(
@@ -715,6 +716,11 @@ async function mainInit() {
                                           <button id="cancelButtonUpdate${rawRandomID}" class="cancelButtonUpdate uce">Cancel</button>
                                         </td>
                                       </tr>
+                                      <tr id="deleteRow${rawRandomID}" class="deleteRow uce">
+                                        <td class="uce">
+                                          <button id="deleteQueryButton${rawRandomID}" class="deleteQueryButton uce">Delete</button>
+                                        </td>
+                                      </tr>
                                     </tfoot>
                                   </table>
                                 </div>
@@ -723,6 +729,48 @@ async function mainInit() {
                                   document.createElement("span");
                                 updateHolder.innerHTML = htmlOfNewUpdateScreen;
                                 mcParent.appendChild(updateHolder);
+
+                                // Listener to delete query that was added
+                                let deleteButton = document.getElementById(
+                                  `deleteQueryButton${rawRandomID}`
+                                );
+                                deleteButton.addEventListener(
+                                  "click",
+                                  async () => {
+                                    console.log(
+                                      "Delete button has been clicked"
+                                    );
+
+                                    await deleteDoc(
+                                      doc(
+                                        db,
+                                        "users",
+                                        "filler",
+                                        userUID,
+                                        "mpaps",
+                                        "ps",
+                                        newQueryID
+                                      )
+                                    );
+                                    document.getElementById(
+                                      // Hides update tab
+                                      `updateQueryScreen${rawRandomID}`
+                                    ).style.display = "none";
+
+                                    // Animation to delete query from main page
+                                    document.getElementById(
+                                      `mainDiv${rawRandomID}`
+                                    ).style.animation = "fadeAway 0.3s ease";
+                                    document
+                                      .getElementById(`mainDiv${rawRandomID}`)
+                                      .addEventListener("animationend", () => {
+                                        document.getElementById(
+                                          `mainDiv${rawRandomID}`
+                                        ).style.display = "none";
+                                      });
+                                  }
+                                );
+
                                 // Animation listeners
                                 const updateInputFieldsForAniListeners = [
                                   document.getElementById(
@@ -1005,6 +1053,7 @@ async function mainInit() {
                                         console.log(
                                           "STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN STARTING UP LISTENERS AGAIN ....1"
                                         );
+
                                         cancelButton.addEventListener(
                                           "click",
                                           () => {
