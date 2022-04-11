@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "A personal password manager",
   "main": "login.html",
-  "chromium-args": "--disable-features=nw2",
   "window": {
     "title": "Password Manager",
     "resizable": true,
