@@ -775,7 +775,7 @@ try {
                                         <td class="uce">
                                           <button id="deleteQueryButton${rawRandomID}" class="deleteQueryButton uce">Delete</button>
                                         </td>
-                                      </tr>
+                                    </tr>
                                   </tfoot>
                                 </table>
                               </div>
@@ -798,10 +798,12 @@ try {
                                           );
 
                                           await deleteDoc(sourceDoc.ref);
-                                          document.getElementById(
-                                            // Hides update tab
-                                            `updateQueryScreen${rawRandomID}`
-                                          ).style.display = "none";
+                                          // Deletes update tab
+                                          document
+                                            .getElementById(
+                                              `updateQueryScreen${rawRandomID}`
+                                            )
+                                            .parentNode.remove();
 
                                           // Animation to delete query from main page
                                           document.getElementById(
