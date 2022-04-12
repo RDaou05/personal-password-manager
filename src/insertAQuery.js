@@ -730,6 +730,16 @@ async function mainInit() {
                                 updateHolder.innerHTML = htmlOfNewUpdateScreen;
                                 mcParent.appendChild(updateHolder);
 
+                                /* We are putting in the class "uce" so 
+                                the update tab wil not disapper when the popup gets clicked*/
+                                let htmlOfConfirmDeletePopup = `
+                                <div id="cdel${rawRandomID}" class="cdel uce">
+                                  <h2 id="askConfirmDelete${rawRandomID}" class="askConfirmDelete uce">Delete this item?</h2>
+                                  <p id="delmessage${rawRandomID}" class="delmessage uce">Are you sure you want to delete this item?</p>
+                                  <button id="yesdel${rawRandomID}" class="yesdel uce">Confirm</button>
+                                  <button id="canceldel${rawRandomID}" class="canceldel uce">Cancel</button>
+                                </div>
+                                `;
                                 // Listener to delete query that was added
                                 let deleteButton = document.getElementById(
                                   `deleteQueryButton${rawRandomID}`
@@ -740,7 +750,6 @@ async function mainInit() {
                                     console.log(
                                       "Delete button has been clicked"
                                     );
-
                                     await deleteDoc(
                                       doc(
                                         db,
@@ -752,10 +761,11 @@ async function mainInit() {
                                         newQueryID
                                       )
                                     );
-                                    document.getElementById(
-                                      // Hides update tab
-                                      `updateQueryScreen${rawRandomID}`
-                                    ).style.display = "none";
+
+                                    // Listener to delete query that was added
+                                    let deleteButton = document.getElementById(
+                                      `deleteQueryButton${rawRandomID}`
+                                    );
 
                                     // Animation to delete query from main page
                                     document.getElementById(
