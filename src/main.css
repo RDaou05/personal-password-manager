@@ -1035,6 +1035,60 @@ tfoot:before {
   margin-top: -0.5%;
   transition: 0.2s all ease;
 }
+
+.cdel {
+  display: none;
+  background-color: #0c1213;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  border-radius: 0.5vh;
+  padding: 2%;
+  padding-bottom: 1.2%;
+  box-shadow: 0px 10px 30px 5px rgb(0 0 0);
+}
+
+.askConfirmDelete {
+  color: white;
+  font-family: sans-serif;
+  font-size: 21px;
+  font-weight: 500;
+  margin-top: 0;
+}
+
+.delmessage {
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  margin-top: 8.5%;
+}
+
+.delConfirmAndCancel {
+  border: none;
+  border-radius: 5vh;
+  padding: 3% 5% 3% 5%;
+  background: transparent;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 900;
+  cursor: pointer;
+  margin-top: 5%;
+}
+
+.yesdel {
+  float: right;
+  border: 2px solid #844242;
+  color: #844242;
+}
+
+.canceldel {
+  float: right;
+  border: 2px solid grey;
+  color: grey;
+  margin-right: 4%;
+}
+
 /* @media screen and (min-width: 635px) {
   .tholder {
     margin-top: 2.5%;

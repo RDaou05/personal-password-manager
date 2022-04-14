@@ -785,25 +785,43 @@ try {
                                       updateHolder.innerHTML =
                                         htmlOfNewUpdateScreen;
                                       mcParent.appendChild(updateHolder);
+
+                                      /* We are putting in the class "uce" so 
+                                the update tab wil not disapper when the popup gets clicked*/
+                                      let htmlOfConfirmDeletePopup = `
+                                <div id="cdel${rawRandomID}" class="cdel uce">
+                                  <h2 id="askConfirmDelete${rawRandomID}" class="askConfirmDelete uce">Delete this item?</h2>
+                                  <p id="delmessage${rawRandomID}" class="delmessage uce">Are you sure you want to delete this item?</p>
+                                  <button id="yesdel${rawRandomID}" class="yesdel delConfirmAndCancel uce">Delete</button>
+                                  <button id="canceldel${rawRandomID}" class="canceldel delConfirmAndCancel uce">Cancel</button>
+                                </div>
+                                `;
+
+                                      // We want the popup to be in the same span tag as the update tab
+
+                                      // Adding the popup to the span tag
+                                      let confirmDeletePopup =
+                                        document.createElement("span");
+                                      confirmDeletePopup.innerHTML =
+                                        htmlOfConfirmDeletePopup;
+                                      updateHolder.appendChild(
+                                        confirmDeletePopup
+                                      );
+
+                                      document.getElementById(
+                                        `delmessage${rawRandomID}`
+                                      ).textContent = `Are you sure you want to delete ${await decryptWithMP(
+                                        importedData.website
+                                      )}?`;
+
                                       // Listener to delete query that was added
-                                      let deleteButton =
-                                        document.getElementById(
-                                          `deleteQueryButton${rawRandomID}`
-                                        );
-                                      deleteButton.addEventListener(
-                                        "click",
-                                        async () => {
+                                      document
+                                        .getElementById(`yesdel${rawRandomID}`) // Confirm delete button
+                                        .addEventListener("click", async () => {
                                           console.log(
                                             "Delete button has been clicked"
                                           );
-
-                                          await deleteDoc(sourceDoc.ref);
-                                          // Deletes update tab
-                                          document
-                                            .getElementById(
-                                              `updateQueryScreen${rawRandomID}`
-                                            )
-                                            .parentNode.remove();
+                                          await deleteDoc(sourceDoc.ref); // Deleting query
 
                                           // Animation to delete query from main page
                                           document.getElementById(
@@ -822,8 +840,57 @@ try {
                                                 ).style.display = "none";
                                               }
                                             );
+                                          document // No need to also hide the confirm delete popup since the whole span will be deleted
+                                            .getElementById(
+                                              `updateQueryScreen${rawRandomID}`
+                                            )
+                                            .parentNode.remove();
+
+                                          document.getElementById(
+                                            "ableToDarken"
+                                          ).style.pointerEvents = "auto"; // Allowing user to interact with background
+                                          resetDimAbleToDarken(); // Undim screen
+                                        });
+
+                                      document
+                                        .getElementById(
+                                          `canceldel${rawRandomID}`
+                                        )
+                                        .addEventListener("click", () => {
+                                          document.getElementById(
+                                            // Hide confirm delete tab
+                                            `cdel${rawRandomID}`
+                                          ).style.display = "none";
+
+                                          document.getElementById(
+                                            // Push update tab back out
+                                            `updateQueryScreen${rawRandomID}`
+                                          ).style.animation =
+                                            "pushOutUpdateTab 0.3s ease";
+                                          document.getElementById(
+                                            "ableToDarken"
+                                          ).style.pointerEvents = "auto"; // Allowing user to interact with background
+                                        });
+                                      let deleteButton =
+                                        document.getElementById(
+                                          `deleteQueryButton${rawRandomID}`
+                                        );
+                                      deleteButton.addEventListener(
+                                        "click",
+                                        async () => {
+                                          document.getElementById(
+                                            `cdel${rawRandomID}`
+                                          ).style.display = "initial";
+                                          document.getElementById(
+                                            `updateQueryScreen${rawRandomID}`
+                                          ).style.animation =
+                                            "pullInUpdateTab 0.3s ease";
+                                          document.getElementById(
+                                            "ableToDarken"
+                                          ).style.pointerEvents = "none"; // Not allowing user to interact with background while delete popup is active
                                         }
                                       );
+
                                       // Animation listeners
                                       const updateInputFieldsForAniListeners = [
                                         document.getElementById(
