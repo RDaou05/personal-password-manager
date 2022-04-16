@@ -304,7 +304,12 @@ try {
                                 "settingsScreen"
                               ).style.userSelect = "auto";
                               document.body.style.pointerEvents = "none";
-                              document.body.style.opacity = ".5";
+                              document.getElementById(
+                                "headerFlexbox"
+                              ).style.opacity = ".5";
+                              document.getElementById(
+                                "queryScreen"
+                              ).style.opacity = ".5";
                               document.getElementById(
                                 "settingsScreen"
                               ).style.display = "flex";
@@ -324,6 +329,12 @@ try {
                               ).style.userSelect = "none";
                               document.body.style.pointerEvents = "auto";
                               document.body.style.opacity = "1";
+                              document.getElementById(
+                                "headerFlexbox"
+                              ).style.opacity = "1";
+                              document.getElementById(
+                                "queryScreen"
+                              ).style.opacity = "1";
                               document.getElementById(
                                 "settingsScreen"
                               ).style.display = "none";

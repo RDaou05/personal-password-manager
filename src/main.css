@@ -1,4 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
 
 *:focus {
   outline: 0 !important;
@@ -587,6 +589,62 @@ body {
   transition: all ease-in-out 0.1s;
 }
 
+.changeMasterPasswordScreen {
+  display: flex;
+  z-index: 2;
+  flex-direction: column;
+  align-self: center;
+  justify-self: center;
+  background: #1b1b1b;
+  position: absolute;
+  width: 28%;
+  height: 29%;
+  border-radius: 0.5vh;
+  padding: 3%;
+}
+
+.changeMasterPasswordHeader {
+  color: white;
+  margin-top: 0;
+  margin-bottom: 8%;
+  font-family: "Open Sans", sans-serif;
+}
+
+.changeMPInput {
+  border: none;
+  color: white;
+  padding: 5%;
+  border-top: 1px solid #746e6e;
+  background-color: #30343c;
+}
+
+.changeMPCurrentMP {
+  border: none;
+  border-top-right-radius: 1vh;
+  border-top-left-radius: 1vh;
+}
+
+.changeMPRenterNewMP {
+  border-bottom-right-radius: 1vh;
+  border-bottom-left-radius: 1vh;
+}
+
+.showPasswordsText {
+  color: white;
+  font-family: "Open Sans", sans-serif;
+  align-self: flex-start;
+}
+
+.changeMPFooter {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.confirmMasterPasswordChange {
+  align-self: center;
+}
+
 #closeSettings {
   color: #00fff3;
   font-size: 30px;
@@ -619,14 +677,64 @@ body {
 
 .accountSettingsHeader {
   color: white;
-  font-family: "Montserrat", sans-serif;
-  font-weight: 900;
   font-size: 22px;
+  font-family: "Open Sans", sans-serif;
+  letter-spacing: 1px;
 }
 
 .accountSettings {
   display: flex;
   flex-direction: column;
+}
+
+.mainSettings {
+  padding-top: 3%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.accountSettingsSection {
+  width: 41%;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+
+.accountSettingsButtons {
+  background-color: #30343c;
+  border: none;
+  color: white;
+  font-family: "Open Sans", sans-serif;
+  padding: 2%;
+  cursor: pointer;
+}
+
+.settingsButtonText {
+  float: left;
+  font-size: 16px;
+  padding-left: 1%;
+  font-family: "Noto Sans", sans-serif;
+}
+
+.upgradeToPremium {
+  border-top-left-radius: 1vh;
+  border-top-right-radius: 1vh;
+  background-image: linear-gradient(to left, #8e2de2, #4a00e0);
+}
+
+.changeMasterPassword {
+  border-top: 1px solid #746e6e;
+}
+
+.logOutOfPMAccount {
+  border-bottom-left-radius: 1vh;
+  border-bottom-right-radius: 1vh;
+  border-top: 1px solid #746e6e;
+}
+
+.logOutOfPMAccount p {
+  color: #cf4242;
 }
 
 #fromMainToLogin {

@@ -27,7 +27,7 @@
     <div class="mc">
       <a href="#top" id="scrollToTop"></a>
       <span id="ableToDarken">
-        <div class="headerFlexbox">
+        <div class="headerFlexbox" id="headerFlexbox">
           <i class="fas fa-cog" id="settingsButton"></i>
           <h2 id="titleHeader">PM Dashboard</h2>
           <button class="addButton" id="addButton">Add Password</button>
@@ -35,15 +35,37 @@
         <div class="queryScreen" id="queryScreen"></div>
         <div class="settingsScreen" id="settingsScreen">
           <i class="far fa-times-circle" id="closeSettings"></i>
+          <div class="changeMasterPasswordScreen">
+            <h3 class="changeMasterPasswordHeader">Change Master Password</h3>
+            <input type="password" class="changeMPCurrentMP changeMPInput" />
+            <input type="password" class="changeMPNewMP changeMPInput" />
+            <input type="password" class="changeMPRenterNewMP changeMPInput" />
+            <div class="changeMPFooter">
+              <p class="showPasswordsText">
+                Show Passwords&nbsp;&nbsp;<i
+                  class="far fa-eye"
+                  id="showPasswordsIcon"
+                ></i>
+              </p>
+              <button class="confirmMasterPasswordChange">
+                Change password
+                <!-- REMEMBER TO MAKE THIS A BATCH WRITE WHEN CHANGING ENCRYPTION FOR ALL QUERIES -->
+                <!-- DON'T WANT SOME TO BE ENCRYPTED WITH NEW MP AND SOME WITH THE OLD -->
+              </button>
+            </div>
+          </div>
           <div class="mainSettings">
             <div class="accountSettingsSection">
               <h3 class="accountSettingsHeader">Account</h3>
               <div class="accountSettings">
                 <button class="upgradeToPremium accountSettingsButtons">
-                  Upgrade to premium
+                  <p class="settingsButtonText">Upgrade to premium</p>
                 </button>
                 <button class="changeMasterPassword accountSettingsButtons">
-                  Change master password
+                  <p class="settingsButtonText">Change master password</p>
+                </button>
+                <button class="logOutOfPMAccount accountSettingsButtons">
+                  <p class="settingsButtonText">Log Out</p>
                 </button>
               </div>
             </div>
