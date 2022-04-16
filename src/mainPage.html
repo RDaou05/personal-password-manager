@@ -35,19 +35,18 @@
         <div class="queryScreen" id="queryScreen"></div>
         <div class="settingsScreen" id="settingsScreen">
           <i class="far fa-times-circle" id="closeSettings"></i>
-          <div class="settingsButtonsContainer">
-            <button id="SAinfoSettingsButton" class="settingsButtons">
-              Security and Account info
-            </button>
-            <button id="importSettingsButton" class="settingsButtons">
-              Import Passwords
-            </button>
-            <button id="exportSettingsButton" class="settingsButtons">
-              Export Passwords
-            </button>
-            <button id="logoutSettingsButton" class="settingsButtons">
-              Logout Of Password Manager
-            </button>
+          <div class="mainSettings">
+            <div class="accountSettingsSection">
+              <h3 class="accountSettingsHeader">Account</h3>
+              <div class="accountSettings">
+                <button class="upgradeToPremium accountSettingsButtons">
+                  Upgrade to premium
+                </button>
+                <button class="changeMasterPassword accountSettingsButtons">
+                  Change master password
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -121,9 +120,17 @@
                 <a href="#" id="back">Back to main page</a>
               </div>
             </div>
-            <a href="appSelector.html" id="fromPMToMain"></a>
-            <a href="login.html" id="fromMainToLogin"></a>
-            <a href="account.html" id="fromMainToAccount"></a>
+            <a
+              href="appSelector.html"
+              id="fromPMToMain"
+              style="display: none"
+            ></a>
+            <a href="login.html" id="fromMainToLogin" style="display: none"></a>
+            <a
+              href="account.html"
+              id="fromMainToAccount"
+              style="display: none"
+            ></a>
           </div>
         </div>
       </span>

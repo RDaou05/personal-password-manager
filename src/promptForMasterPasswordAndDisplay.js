@@ -307,7 +307,7 @@ try {
                               document.body.style.opacity = ".5";
                               document.getElementById(
                                 "settingsScreen"
-                              ).style.display = "initial";
+                              ).style.display = "flex";
                               document.getElementById(
                                 "settingsScreen"
                               ).style.pointerEvents = "auto";
@@ -333,14 +333,6 @@ try {
                               document.getElementById(
                                 "settingsScreen"
                               ).style.opacity = "1";
-                            });
-                          // Add all setting buttton listeners under this line
-                          document
-                            .getElementById("SAinfoSettingsButton")
-                            .addEventListener("click", () => {
-                              document
-                                .getElementById("fromMainToAccount")
-                                .click();
                             });
                         }
                         ieSettingsFunction();
@@ -815,6 +807,7 @@ try {
                                       )}?`;
 
                                       // Listener to delete query that was added
+                                      console.log("listener created");
                                       document
                                         .getElementById(`yesdel${rawRandomID}`) // Confirm delete button
                                         .addEventListener("click", async () => {
@@ -822,6 +815,7 @@ try {
                                             "Delete button has been clicked"
                                           );
                                           await deleteDoc(sourceDoc.ref); // Deleting query
+                                          console.log("A delete has been made");
 
                                           // Animation to delete query from main page
                                           document.getElementById(
@@ -985,75 +979,75 @@ try {
                                           }
                                         );
                                       // This won't excecute if the update tab has already been opened before because this runs in an else if statement that only excecutes of the update tab doesn't exist at all yet
-                                      setTimeout(() => {
-                                        // Setting timeout because when click on query to open update tab, the click will register to open and close the tab right away because that same click will also trigger this listener to close the tab
-                                        document // Listener to close update tab by clicking out of it
-                                          .getElementById("htmlMain")
-                                          .addEventListener(
-                                            "mousedown",
-                                            (updateClickEvt) => {
+                                      // setTimeout(() => {
+                                      // Setting timeout because when click on query to open update tab, the click will register to open and close the tab right away because that same click will also trigger this listener to close the tab
+                                      document // Listener to close update tab by clicking out of it
+                                        .getElementById("htmlMain")
+                                        .addEventListener(
+                                          "mousedown",
+                                          (updateClickEvt) => {
+                                            if (
+                                              updateClickEvt.target.className
+                                                .split(" ")
+                                                .includes("uce") //If an element is in the update tab box, it contains a class of "uce"
+                                            ) {
+                                              console.log("Contains uce");
+                                            } else {
                                               if (
-                                                updateClickEvt.target.className
-                                                  .split(" ")
-                                                  .includes("uce") //If an element is in the update tab box, it contains a class of "uce"
+                                                // Doesn't do the animation if update tab is already closed in and not showing
+                                                document.getElementById(
+                                                  `updateQueryScreen${rawRandomID}`
+                                                ).style.width == "40%"
                                               ) {
-                                                console.log("Contains uce");
-                                              } else {
+                                                console.log("no contain");
                                                 if (
-                                                  // Doesn't do the animation if update tab is already closed in and not showing
+                                                  // Checking if update tab is in edit mode while trying to close the update tab
+                                                  document.getElementById(
+                                                    `cancelButtonUpdate${rawRandomID}`
+                                                  ).style.display ==
+                                                    "initial" &&
+                                                  document.getElementById(
+                                                    `saveButtonUpdate${rawRandomID}`
+                                                  ).style.display ==
+                                                    "initial" &&
+                                                  document.getElementById(
+                                                    `editButtonUpdate${rawRandomID}`
+                                                  ).style.display == "none"
+                                                ) {
+                                                  console.log(
+                                                    "Exiting edit mode..."
+                                                  );
+                                                  // Checking if update tab is in edit mode, send click event to cancel button to discard changes and go out of edit mode
+                                                  document
+                                                    .getElementById(
+                                                      `cancelButtonUpdate${rawRandomID}`
+                                                    )
+                                                    .click();
+                                                }
+                                                let newUpdateTab =
                                                   document.getElementById(
                                                     `updateQueryScreen${rawRandomID}`
-                                                  ).style.width == "40%"
-                                                ) {
-                                                  console.log("no contain");
-                                                  if (
-                                                    // Checking if update tab is in edit mode while trying to close the update tab
-                                                    document.getElementById(
-                                                      `cancelButtonUpdate${rawRandomID}`
-                                                    ).style.display ==
-                                                      "initial" &&
-                                                    document.getElementById(
-                                                      `saveButtonUpdate${rawRandomID}`
-                                                    ).style.display ==
-                                                      "initial" &&
-                                                    document.getElementById(
-                                                      `editButtonUpdate${rawRandomID}`
-                                                    ).style.display == "none"
-                                                  ) {
-                                                    console.log(
-                                                      "Exiting edit mode..."
-                                                    );
-                                                    // Checking if update tab is in edit mode, send click event to cancel button to discard changes and go out of edit mode
-                                                    document
-                                                      .getElementById(
-                                                        `cancelButtonUpdate${rawRandomID}`
-                                                      )
-                                                      .click();
-                                                  }
-                                                  let newUpdateTab =
-                                                    document.getElementById(
-                                                      `updateQueryScreen${rawRandomID}`
-                                                    );
-                                                  newUpdateTab.style.animation =
-                                                    "";
-                                                  newUpdateTab.style.animation =
-                                                    "pullInUpdateTab 0.3s ease";
-                                                  resetDimAbleToDarken();
-                                                  // Array.from(
-                                                  //   document
-                                                  //     .getElementById(
-                                                  //       "ableToDarken"
-                                                  //     )
-                                                  //     .getElementsByTagName("div")
-                                                  // ).forEach((cv) => {
-                                                  //   cv.style.animation =
-                                                  //     "fadeBack 0.25s ease";
-                                                  // });
-                                                }
+                                                  );
+                                                newUpdateTab.style.animation =
+                                                  "";
+                                                newUpdateTab.style.animation =
+                                                  "pullInUpdateTab 0.3s ease";
+                                                resetDimAbleToDarken();
+                                                // Array.from(
+                                                //   document
+                                                //     .getElementById(
+                                                //       "ableToDarken"
+                                                //     )
+                                                //     .getElementsByTagName("div")
+                                                // ).forEach((cv) => {
+                                                //   cv.style.animation =
+                                                //     "fadeBack 0.25s ease";
+                                                // });
                                               }
                                             }
-                                          );
-                                      }, 200);
+                                          }
+                                        );
+                                      // }, 200);
 
                                       async function listenForEditRequest() {
                                         console.log("Up here in func");
