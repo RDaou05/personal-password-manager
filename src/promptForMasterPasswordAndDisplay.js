@@ -347,6 +347,38 @@ try {
                             });
                         }
                         ieSettingsFunction();
+
+                        // CODE UNDERNEATH IS FOR INSIDE THE SETTINGS PAGE
+
+                        // Listener to show and hide password text
+                        Array.from(
+                          document.getElementsByClassName("showPasswordsText")
+                        )[0].addEventListener("click", () => {
+                          /* Here im checking the type of the first input box (out of the three that show up in the change master pass window) 
+                          If it is text I change it to password (and the other way around) I could of checked for any of 
+                          the input boxes, but they would all be the same since im changing the type for them all at once */
+
+                          const currentInputType = Array.from(
+                            document.getElementsByClassName("changeMPInput")
+                          )[0].type;
+                          const arrayOfInputBoxesToCheck = Array.from(
+                            document.getElementsByClassName("changeMPInput")
+                          );
+                          if (currentInputType == "password") {
+                            arrayOfInputBoxesToCheck[0].type = "text";
+                            arrayOfInputBoxesToCheck[1].type = "text";
+                            arrayOfInputBoxesToCheck[2].type = "text";
+                          } else if (currentInputType == "text") {
+                            arrayOfInputBoxesToCheck[0].type = "password";
+                            arrayOfInputBoxesToCheck[1].type = "password";
+                            arrayOfInputBoxesToCheck[2].type = "password";
+                          }
+
+                          document
+                            .getElementById("showPasswordsIcon")
+                            .classList.toggle("fa-eye-slash");
+                        });
+
                         // Add settings option (end)
                         await getDocs(refForPS).then((docSnapp) => {
                           console.log("get Docs line 314");

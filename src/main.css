@@ -596,17 +596,16 @@ body {
   align-self: center;
   justify-self: center;
   background: #1b1b1b;
-  position: absolute;
-  width: 28%;
-  height: 29%;
-  border-radius: 0.5vh;
+  width: 25%;
+  height: -webkit-fill-available;
   padding: 3%;
+  justify-content: space-evenly;
 }
 
 .changeMasterPasswordHeader {
   color: white;
   margin-top: 0;
-  margin-bottom: 8%;
+  text-align: center;
   font-family: "Open Sans", sans-serif;
 }
 
@@ -633,6 +632,7 @@ body {
   color: white;
   font-family: "Open Sans", sans-serif;
   align-self: flex-start;
+  cursor: pointer;
 }
 
 .changeMPFooter {
@@ -643,6 +643,26 @@ body {
 
 .confirmMasterPasswordChange {
   align-self: center;
+  padding: 1.5% 6% 1.5% 6%;
+  border-radius: 8vh;
+  border: none;
+  color: white;
+  font-family: "Open Sans", sans-serif;
+  background-color: darkcyan;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.changeMPInputsContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.confirmMasterPasswordChange:hover {
+  opacity: 1;
+  transition: 0.2s;
 }
 
 #closeSettings {
