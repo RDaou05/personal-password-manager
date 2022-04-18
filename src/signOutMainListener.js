@@ -37,8 +37,6 @@ try {
 
 const auth = getAuth();
 
-alert("USER IS ", auth.currentUser);
-
 document.body.addEventListener("keydown", (evt) => {
   if (evt.ctrlKey && evt.keyCode == 76) {
     signOut(auth)

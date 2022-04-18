@@ -37,8 +37,6 @@ try {
 
 const auth = getAuth();
 
-alert("USER IS ", auth.currentUser);
-
 document.getElementById("backToLoginLink").addEventListener("click", () => {
   signOut(auth)
     .then(() => {
