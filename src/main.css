@@ -821,8 +821,7 @@ body {
 .newMasterPasswordField {
   background-color: transparent;
   outline: none;
-  border: none;
-  border-bottom: 1px solid teal;
+  border: 2px solid teal;
   margin-top: 8.5%;
   color: white;
   font-size: 1rem;
@@ -844,6 +843,11 @@ body {
   transition: all ease-in-out 0.2s;
 }
 
+.newMasterPasswordField:focus ~ #passwordStrengthBar {
+  width: 67%;
+  transition: all ease-in-out 0.2s;
+}
+
 /* .newMasterPasswordField:focus {
   box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
   border: 3px solid rgb(1 255 242);
@@ -859,7 +863,7 @@ body {
   background-color: transparent;
   outline: none;
   border: none;
-  border-bottom: 1px solid teal;
+  border: 2px solid teal;
   margin-top: 3%;
   color: white;
   font-size: 1rem;
@@ -875,6 +879,11 @@ body {
 
 .renterMP:focus {
   width: 51%;
+  transition: all ease-in-out 0.2s;
+}
+
+.renterMP:focus ~ #reenterPasswordStrengthBar {
+  width: 67%;
   transition: all ease-in-out 0.2s;
 }
 
@@ -899,12 +908,18 @@ body {
 }
 
 #passwordStrengthBar {
-  margin-left: 8.25%;
-  height: 6px;
-  margin-top: 4%;
+}
+
+#reenterPasswordStrengthBar {
+}
+
+meter {
+  align-self: center;
+  width: 56%;
+  height: 12px;
   overflow: hidden;
-  width: 83%;
   border-radius: 1vh;
+  margin-top: 1%;
 }
 
 .confirmMasterPasswordButton {

@@ -292,6 +292,7 @@ try {
                   console.log("temp is ", tempSnap);
                   console.log("If snap exists or not is ", tempSnap.exists());
                   if (tempSnap.exists()) {
+                    // If statement checking if user already has a Master Password
                     console.log(tempSnap.data(), " exists!");
                     document.body.style.pointerEvents = "none";
                     document.getElementById(
@@ -308,6 +309,9 @@ try {
                       "passwordStrengthBar"
                     ).style.display = "none";
                     document.getElementById(
+                      "reenterPasswordStrengthBar"
+                    ).style.display = "none";
+                    document.getElementById(
                       "confirmMasterPasswordButton"
                     ).style.marginTop = "10%";
                     document.getElementById(
@@ -318,6 +322,13 @@ try {
                     document.getElementById(
                       "confirmMasterPasswordButton"
                     ).style.marginTop = "5%";
+                    document.getElementById(
+                      "newAndEnterMasterPasswordField"
+                    ).style.border = "none";
+                    document.getElementById(
+                      "newAndEnterMasterPasswordField"
+                    ).style.borderBottom = "1px solid teal";
+
                     document.getElementById("renterMP").style.display = "none";
 
                     //----------------------Check if master password is correct----------------------//
@@ -2257,11 +2268,19 @@ try {
                             .click();
                         }
                       });
-
-                    //----------------------Check if master password is correct----------------------//
                   } else {
                     document.getElementById("renterMP").style.display =
                       "initial";
+
+                    // Making padding 2% for input boxes because we are adding the password strength meter
+                    let enterMasterPassBox = document.getElementById(
+                      "newMasterPasswordField"
+                    );
+                    let confirmMasterPassBox =
+                      document.getElementById("renterMP");
+                    enterMasterPassBox.style.paddingBottom = "2%";
+                    confirmMasterPassBox.style.paddingBottom = "2%";
+                    //
                     console.log(tempSnap.data(), " doesn't exist :(");
                     document.body.style.pointerEvents = "none";
                     document.getElementById(
@@ -2302,10 +2321,9 @@ try {
                           } else {
                             document.getElementById(
                               "newMasterPasswordField"
-                            ).style.borderBottom = "2px solid #844242";
-                            document.getElementById(
-                              "renterMP"
-                            ).style.borderBottom = "2px solid #844242";
+                            ).style.border = "2px solid #844242";
+                            document.getElementById("renterMP").style.border =
+                              "2px solid #844242";
                             document.getElementById(
                               "createMPError"
                             ).textContent = "Password is too weak";

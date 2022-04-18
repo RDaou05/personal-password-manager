@@ -128,12 +128,7 @@
                 placeholder="Master Password"
                 autofocus="autofocus"
               />
-              <input
-                type="password"
-                class="renterMP"
-                id="renterMP"
-                placeholder="Confirm Master Password"
-              />
+
               <meter
                 min="0"
                 low="1"
@@ -142,6 +137,23 @@
                 max="4"
                 id="passwordStrengthBar"
               ></meter>
+
+              <input
+                type="password"
+                class="renterMP"
+                id="renterMP"
+                placeholder="Confirm Master Password"
+              />
+
+              <meter
+                min="0"
+                low="1"
+                optimum="2"
+                high="3"
+                max="4"
+                id="reenterPasswordStrengthBar"
+              ></meter>
+
               <button
                 class="confirmMasterPasswordButton"
                 id="confirmMasterPasswordButton"
@@ -184,24 +196,6 @@
         let result = zxcvbn(enteredWantedNewMasterPassword);
         bar.value = result.score;
         let amountOfGuesses = result.guesses;
-        // if (
-        //   amountOfGuesses.toString().includes("e") ||
-        //   amountOfGuesses.toString().length > 10
-        // ) {
-        //   document.getElementById(
-        //     "timeToCrack"
-        //   ).textContent = `This password can be guessed in A LOT tries`;
-        // } else {
-        //   if (amountOfGuesses == 1) {
-        //     document.getElementById(
-        //       "timeToCrack"
-        //     ).textContent = `This password can be guessed in ${amountOfGuesses} try`;
-        //   } else {
-        //     document.getElementById(
-        //       "timeToCrack"
-        //     ).textContent = `This password can be guessed in ${amountOfGuesses} tries`;
-        //   }
-        // }
         console.log(
           "Bar val is ",
           bar.value,
@@ -213,6 +207,28 @@
           result.guesses
         );
       });
+    document.getElementById("renterMP").addEventListener("keyup", (evt) => {
+      console.log(
+        "Its in normal mode because display is ",
+        document.getElementById("reenterPasswordStrengthBar").style.display
+      );
+      let enteredWantedNewMasterPassword =
+        document.getElementById("renterMP").value;
+      let bar = document.getElementById("reenterPasswordStrengthBar");
+      let result = zxcvbn(enteredWantedNewMasterPassword);
+      bar.value = result.score;
+      let amountOfGuesses = result.guesses;
+      console.log(
+        "Bar val is ",
+        bar.value,
+        "Result score is ",
+        result.score,
+        "Time crack is ",
+        result.crack_time_seconds,
+        "Result guesses ",
+        result.guesses
+      );
+    });
   </script>
   <script
     defer
