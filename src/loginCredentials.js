@@ -66,74 +66,44 @@ const functions = getFunctions();
 console.log(auth.currentUser);
 const provider = new GoogleAuthProvider();
 // console.log(window.location.host);
-document.getElementById("googleSignInButton").addEventListener("click", () => {
-  let myVar;
-  function executeIfNoErrors() {
+document
+  .getElementById("googleSignInButton")
+  .addEventListener("click", async () => {
     document.body.style.opacity = ".4";
-    myVar = setTimeout(() => {
-      console.log("Temp/test cred is ", auth.currentUser);
-      // window.localStorage.setItem("emailForSignIn", email.trim());
-      document.getElementById("takeToMain").click();
-    }, 2000);
-  }
-  function myStopFunction() {
-    clearTimeout(myVar);
-    document.body.style.opacity = "1";
-  }
-  signInWithPopup(auth, provider)
-    .then(async (result) => {
-      console.log("res is ", result);
-      console.log("Logged into ", auth.userCredential);
-      console.log("token res ", result._tokenResponse);
-      console.log("Is new user? ", result._tokenResponse.isNewUser);
-      const newUserDetermine = result._tokenResponse.isNewUser;
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
-      // The signed-in user info.
-      const user = result.user;
-      const determiningPLA = async () => {
-        if (newUserDetermine === undefined) {
-        } else if (newUserDetermine === true) {
-          auth.currentUser.getIdTokenResult(true).then((idTokenResult) => {
-            console.log("the result ", idTokenResult);
-            console.log("the result claims ", idTokenResult.claims);
-          });
-          // const signUpProperties = httpsCallable(functions, "signUpProperties");
-          // signUpProperties({ uid: result.user.uid }).then((result) => {
-          //   console.log(result);
-          //   auth.currentUser.getIdTokenResult(true).then((idTokenResult) => {
-          //     console.log("the result ", idTokenResult);
-          //     console.log("the result claims ", idTokenResult.claims);
-          //   });
-          // });
+    await signInWithPopup(auth, provider)
+      .then(async (result) => {
+        // const newUserDetermine = result._tokenResponse.isNewUser;
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        document.getElementById("takeToMain").click();
+        console.log(credential);
+        // ...
+      })
+      .catch((error) => {
+        document.body.style.opacity = "1";
+        console.log(error);
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        console.log(credential);
+        if (errorCode == "auth/user-disabled") {
+          document.getElementById("ableToDim").style.opacity = "0.1";
+          document.getElementById("accountDisabledMessage").style.display =
+            "initial";
+          document.getElementById("ableToDim").style.pointerEvents = "none";
+        } else if (errorCode == "auth/popup-closed-by-user") {
+          document.getElementById("ableToDim").style.opacity = "1";
         }
-      };
-      await determiningPLA();
-      executeIfNoErrors();
-      console.log(credential);
-      // ...
-    })
-    .catch((error) => {
-      myStopFunction();
-      console.log(error);
-      // Handle Errors here.
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.email;
-      // The AuthCredential type that was used.
-      const credential = GoogleAuthProvider.credentialFromError(error);
-      console.log(credential);
-      if (errorCode == "auth/user-disabled") {
-        document.getElementById("ableToDim").style.opacity = "0.1";
-        document.getElementById("accountDisabledMessage").style.display =
-          "initial";
-        document.getElementById("ableToDim").style.pointerEvents = "none";
-      }
-      // ...
-    });
-});
+        // ...
+      });
+  });
 
 // document.getElementById("realIcon").addEventListener("click", () => {
 //   signOut(auth)
@@ -290,11 +260,9 @@ onAuthStateChanged(auth, (user) => {
     // User is signed in, see docs for a list of available properties
     // https://firebase.google.com/docs/reference/js/firebase.User
     const uid = user.uid;
-    alert("User is signed in. User is ", user.email);
     console.log(user);
     // ...
   } else {
-    alert("User is signed out");
     // User is signed out
     // ...
   }
