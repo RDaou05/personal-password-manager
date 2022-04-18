@@ -50,7 +50,6 @@ const functions = getFunctions();
 onAuthStateChanged(auth, (user) => {
   if (user) {
     const uid = user.uid;
-    alert("User is signed in. User is ", user.email);
     console.log(user);
     user.getIdTokenResult(true).then((res) => {
       console.log("Res is: ", res);
@@ -273,7 +272,6 @@ onAuthStateChanged(auth, (user) => {
     ).textContent = `Log out • ${user.email}`;
     // ...
   } else {
-    alert("User is signed out");
     // User is signed out
     // ...
   }
