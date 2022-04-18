@@ -67,12 +67,16 @@ onAuthStateChanged(auth, (user) => {
       Array.from(
         document.getElementsByClassName("upgradeToP")
       )[0].addEventListener("click", () => {
+        document.body.style.pointerEvents = "none";
+        document.body.style.opacity = "0.5";
         const givePRole = httpsCallable(functions, "givePRole");
         givePRole({ uid: auth.currentUser.uid }).then((result) => {
           console.log(result);
           auth.currentUser.getIdTokenResult(true).then((idTokenResult) => {
             console.log("the result ", idTokenResult);
             console.log("the result claims ", idTokenResult.claims);
+            document.body.style.pointerEvents = "auto";
+            document.body.style.opacity = "1";
           });
         });
       });
