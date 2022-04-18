@@ -46,18 +46,23 @@
               />
             </div>
             <div class="changeMPFooter">
-              <p class="showPasswordsText">
-                Show Passwords&nbsp;&nbsp;<i
-                  class="far fa-eye"
-                  id="showPasswordsIcon"
-                ></i>
-              </p>
+              <button class="showNewMPPasswordsButton">
+                <p class="showPasswordsText">
+                  Show Passwords&nbsp;&nbsp;<i
+                    class="far fa-eye"
+                    id="showPasswordsIcon"
+                  ></i>
+                </p>
+              </button>
               <button class="confirmMasterPasswordChange">
-                Change password
+                Change Password
                 <!-- REMEMBER TO MAKE THIS A BATCH WRITE WHEN CHANGING ENCRYPTION FOR ALL QUERIES -->
                 <!-- DON'T WANT SOME TO BE ENCRYPTED WITH NEW MP AND SOME WITH THE OLD -->
               </button>
             </div>
+            <button class="closeChangeMasterPasswordWindow">
+              Cancel Changes
+            </button>
           </div>
           <div class="mainSettings">
             <div class="accountSettingsSection">
@@ -216,7 +221,6 @@
   ></script>
   <script defer src="signOutOfCreateScreen.js" type="module"></script>
   <!-- <script defer src="displayQuery.js" type="module"></script> -->
-  <script src="signOutBackToAppSelector.js" type="module"></script>
   <script defer src="insertAQuery.js" type="module"></script>
   <script defer>
     try {

@@ -229,6 +229,55 @@ try {
               });
             };
 
+            const changeMPWindow = Array.from(
+              document.getElementsByClassName("changeMasterPasswordScreen")
+            )[0];
+
+            changeMPWindow.addEventListener("animationend", (ani) => {
+              let aniName = ani.animationName;
+              if (aniName == "pushOutMPTab") {
+                changeMPWindow.style.padding = "3%";
+                changeMPWindow.style.width = "37%";
+                Array.from(
+                  document.getElementsByClassName("changeMasterPasswordHeader")
+                )[0].style.display = "initial";
+                Array.from(
+                  document.getElementsByClassName("changeMPInputsContainer")
+                )[0].style.display = "flex";
+                Array.from(
+                  document.getElementsByClassName("changeMPFooter")
+                )[0].style.display = "flex";
+                Array.from(
+                  document.getElementsByClassName(
+                    "closeChangeMasterPasswordWindow"
+                  )
+                )[0].style.display = "initial";
+              } else if (aniName == "pullInMPTab") {
+                changeMPWindow.style.padding = "0%";
+                changeMPWindow.style.width = "0%";
+                Array.from(
+                  document.getElementsByClassName("changeMasterPasswordHeader")
+                )[0].style.display = "none";
+                Array.from(
+                  document.getElementsByClassName("changeMPInputsContainer")
+                )[0].style.display = "none";
+                Array.from(
+                  document.getElementsByClassName("changeMPFooter")
+                )[0].style.display = "none";
+                Array.from(
+                  document.getElementsByClassName(
+                    "closeChangeMasterPasswordWindow"
+                  )
+                )[0].style.display = "none";
+              }
+            });
+
+            const showChangeMPWindow = () => {
+              changeMPWindow.style.animation = "pushOutMPTab 0.3s ease";
+            };
+            const hideChangeMPWindow = () => {
+              changeMPWindow.style.animation = "pullInMPTab 0.3s ease";
+            };
             // Testing security rules here
 
             // getDoc(
@@ -349,10 +398,43 @@ try {
                         ieSettingsFunction();
 
                         // CODE UNDERNEATH IS FOR INSIDE THE SETTINGS PAGE
+                        const changeMasterPasswordSettingsButton = Array.from(
+                          document.getElementsByClassName(
+                            "changeMasterPassword"
+                          )
+                        )[0];
+                        const closeChangeMasterPasswordTabButton = Array.from(
+                          document.getElementsByClassName(
+                            "closeChangeMasterPasswordWindow"
+                          )
+                        )[0];
+                        const logOutSettingsButton = Array.from(
+                          document.getElementsByClassName("logOutOfPMAccount")
+                        )[0];
+
+                        logOutSettingsButton.addEventListener("click", () => {
+                          document.getElementById("fromPMToMain").click();
+                        });
+
+                        changeMasterPasswordSettingsButton.addEventListener(
+                          "click",
+                          () => {
+                            showChangeMPWindow();
+                          }
+                        );
+
+                        closeChangeMasterPasswordTabButton.addEventListener(
+                          "click",
+                          () => {
+                            hideChangeMPWindow();
+                          }
+                        );
 
                         // Listener to show and hide password text
                         Array.from(
-                          document.getElementsByClassName("showPasswordsText")
+                          document.getElementsByClassName(
+                            "showNewMPPasswordsButton"
+                          )
                         )[0].addEventListener("click", () => {
                           /* Here im checking the type of the first input box (out of the three that show up in the change master pass window) 
                           If it is text I change it to password (and the other way around) I could of checked for any of 
