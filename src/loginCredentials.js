@@ -100,6 +100,11 @@ document
           document.getElementById("ableToDim").style.pointerEvents = "none";
         } else if (errorCode == "auth/popup-closed-by-user") {
           document.getElementById("ableToDim").style.opacity = "1";
+        } else {
+          document.getElementById("ableToDim").style.opacity = "0.1";
+          document.getElementById("errorHasOccuredBox").style.display =
+            "initial";
+          document.getElementById("ableToDim").style.pointerEvents = "none";
         }
         // ...
       });
@@ -229,6 +234,11 @@ document.getElementById("unlockButton").addEventListener("click", () => {
           document.getElementById("accountDisabledMessage").style.display =
             "initial";
           document.getElementById("ableToDim").style.pointerEvents = "none";
+        } else {
+          document.getElementById("ableToDim").style.opacity = "0.1";
+          document.getElementById("errorHasOccuredBox").style.display =
+            "initial";
+          document.getElementById("ableToDim").style.pointerEvents = "none";
         }
       });
   } else {
@@ -251,6 +261,16 @@ document
   .getElementById("continueAccountDisabled")
   .addEventListener("click", () => {
     document.getElementById("accountDisabledMessage").style.display = "none";
+    document.getElementById("ableToDim").style.opacity = "1";
+    document.getElementById("ableToDim").style.pointerEvents = "auto";
+  });
+
+document
+  .getElementById("continueErrorHasOccurred")
+  .addEventListener("click", () => {
+    Array.from(
+      document.getElementsByClassName("errorHasOccuredBox")
+    )[0].style.display = "none";
     document.getElementById("ableToDim").style.opacity = "1";
     document.getElementById("ableToDim").style.pointerEvents = "auto";
   });

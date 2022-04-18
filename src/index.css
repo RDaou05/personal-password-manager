@@ -233,6 +233,19 @@ h4#lgwg {
   display: none;
 }
 
+.errorHasOccuredBox {
+  background: rgb(34, 34, 34);
+  width: 73%;
+  z-index: 2;
+  box-shadow: 0px 10px 95px 5px rgba(0, 0, 0.15);
+  border-radius: 1vh;
+  position: absolute;
+  text-align: center;
+  padding: 5%;
+  top: 30%;
+  display: none;
+}
+
 #accountDisabledMessage h4 {
   margin: 5px;
 }
@@ -254,10 +267,38 @@ h4#lgwg {
   color: white;
   font-family: "Montserrat", sans-serif;
   font-size: 89%;
+  cursor: pointer;
 }
 
-#continueAccountDisabled:hover {
+#continueErrorHasOccurred {
+  margin-top: 7%;
+  outline: none;
+  border-radius: 1vh;
+  border: none;
+  padding: 3% 18%;
+  background-color: #0b817b;
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  font-size: 89%;
   cursor: pointer;
+}
+
+#errorHasOccuredHeader {
+  color: red;
+}
+
+#pcText {
+  margin-bottom: 0;
+}
+
+#supportEmail {
+  color: rgb(0, 255, 213);
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+
+#ifYouWerentAwareText {
+  margin-top: 0;
 }
 
 /* #googleSignInText {
