@@ -55,7 +55,20 @@ const firebaseConfig = {
 // Initialize Firebase
 try {
   try {
+    nw.App.clearCache();
     const app = initializeApp(firebaseConfig);
+    console.log("running");
+    nw.App.clearCache();
+    const appCheck = initializeAppCheck(app, {
+      provider: new ReCaptchaV3Provider(
+        "6LciglofAAAAAD8hjB0f5kYV809r-t30PI8rYAQz"
+      ),
+
+      // Optional argument. If true, the SDK automatically refreshes App Check
+      // tokens as needed.
+      isTokenAutoRefreshEnabled: true,
+    });
+    console.log("ran");
   } catch (err) {
     console.log(err);
   }
@@ -440,6 +453,33 @@ try {
                             hideChangeMPWindow();
                           }
                         );
+
+                        Array.from(
+                          document.getElementsByClassName(
+                            "confirmMasterPasswordChange"
+                          )
+                        )[0].addEventListener("click", async () => {
+                          const arrayOfChangeMPInputBoxes = Array.from(
+                            document.getElementsByClassName("changeMPInput")
+                          );
+                          const enterCurrentMPInputBox =
+                            arrayOfChangeMPInputBoxes[0];
+                          const enterNewMPInputBox =
+                            arrayOfChangeMPInputBoxes[1];
+                          const reEnterNewMPInputBox =
+                            arrayOfChangeMPInputBoxes[2];
+
+                          // const ds = await getDocs(refForMS);
+                          // console.log("get Docs line 115 ", hashedSetMasterPassValue);
+                          // ds.forEach((doc) => {
+                          //   let receivedMPH = doc.data().mph;
+                          //   console.log(receivedMPH);
+                          //   console.log("ID?: ", doc.id);
+                          // });
+                          // const updateMPBatch = writeBatch(db);
+                          // updateMPBatch.update(sourceDoc.ref, objectToUpdate);
+                          // updateMPBatch.commit();
+                        });
 
                         // Listener to show and hide password text
                         Array.from(
