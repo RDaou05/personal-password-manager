@@ -729,10 +729,6 @@ body {
   justify-content: center;
 }
 
-.mainSettings {
-  padding-top: 3%;
-}
-
 .accountSettingsHeader {
   color: white;
   font-size: 22px;
@@ -749,13 +745,15 @@ body {
   padding-top: 3%;
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
+  flex-direction: column;
 }
 
 .accountSettingsSection {
   width: 41%;
   display: flex;
   justify-content: flex-start;
+  align-self: center;
   flex-direction: column;
 }
 
@@ -794,6 +792,26 @@ body {
 
 .logOutOfPMAccount p {
   color: #cf4242;
+}
+
+.securitySettingsSection {
+  width: 41%;
+  display: flex;
+  justify-content: flex-start;
+  align-self: center;
+  flex-direction: column;
+}
+
+.securitySettingsHeader {
+  color: white;
+  font-size: 22px;
+  font-family: "Open Sans", sans-serif;
+  letter-spacing: 1px;
+}
+
+.securitySettings {
+  display: flex;
+  flex-direction: column;
 }
 
 #fromMainToLogin {
