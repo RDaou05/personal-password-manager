@@ -53,6 +53,9 @@ const firebaseConfig = {
   measurementId: "G-59QL5BNCX4",
 };
 // Initialize Firebase
+
+export let hashedSetMasterPassValue; // Exporting the hash of the master password to encrypt and decrypt
+
 try {
   try {
     nw.App.clearCache();
@@ -77,6 +80,7 @@ try {
     // async function waitForAuth() {
     //   return getAuth();
     // }
+
     const auth = await getAuth();
     let initiated = false; // Using this to check if the auth token has been refreshed or not
     onAuthStateChanged(auth, (mainUser) => {
@@ -90,10 +94,9 @@ try {
           the user clicks on the icon for a query. The reason this is being stored in an object is
           because if the user decides to update the link, we can just update the object. The
           object will contain the randomID of the query as the key, and the url as the value*/
-          let hashedSetMasterPassValue =
-            ""; /* We have this as a variable so we 
-          don't have to make a read everytime we want to decrypt 
-          something with the master password */
+          let currentEncryptedString = "";
+          const randomStringToBeEncrypted = // See line 124 for details
+            "this is a random string to be decrypted asyr9476387569238789UYduhsicBFEF68";
           mainUser.getIdTokenResult().then((res) => {
             // Checking if user a free trial, premium, or admin
             console.log("Res is: ", res);
@@ -120,7 +123,12 @@ try {
             console.log(userUID);
             let originalMarginTop = 0.0;
             let refForMainUID = doc(db, "users", "filler", userUID, "mpaps");
-            let refForMS = collection(
+            let refForMSCheck = collection(
+              /* This collection stores a string that is encrypted with the
+            master pass. When the user logs in, I check to see if the master password
+            the enter can be used to decrypt the string that is stored here. If it can,
+            that means the master pass they entered is correct. If the decryption returns
+            a blank string, that means it is the wrong master password*/
               db,
               "users",
               "filler",
@@ -130,32 +138,16 @@ try {
             );
             let refForPS = query(
               collection(db, "users", "filler", userUID, "mpaps", "ps"),
-              orderBy("nummy", "desc")
+              orderBy("nummy", "desc") // "Nummy" is just the timestamp of creation
             );
-            function encryptFunction(textToBeEncrypted, finalKey) {
+            async function encryptFunction(textToBeEncrypted, finalKey) {
               let key = finalKey;
               let data = CryptoJS.AES.encrypt(textToBeEncrypted, key);
               data = data.toString();
               return data;
             }
 
-            const encryptWithMP = async (unencryptedText) => {
-              let receivedMPH;
-              if (hashedSetMasterPassValue.trim() == "") {
-                const docSnap = await getDocs(refForMS);
-                console.log("get Docs line 115 ", hashedSetMasterPassValue);
-                docSnap.forEach((doc) => {
-                  receivedMPH = doc.data().mph;
-                });
-                hashedSetMasterPassValue = receivedMPH;
-              } else {
-                receivedMPH = hashedSetMasterPassValue;
-                console.log("encrypt ELSE", hashedSetMasterPassValue);
-              }
-
-              return encryptFunction(unencryptedText, receivedMPH);
-            };
-            function decryptFunction(textToBeDecrypted, finalKey) {
+            async function decryptFunction(textToBeDecrypted, finalKey) {
               let key = finalKey;
               let decr = CryptoJS.AES.decrypt(textToBeDecrypted, key);
               decr = decr.toString(CryptoJS.enc.Utf8);
@@ -163,30 +155,37 @@ try {
               return decr;
             }
 
-            const decryptWithMP = async (encryptedText) => {
-              let receivedMPH;
-              if (hashedSetMasterPassValue.trim() == "") {
-                const docSnap = await getDocs(refForMS);
-                console.log("get Docs line 133 ", hashedSetMasterPassValue);
-                docSnap.forEach((doc) => {
+            async function checkIfEnteredMPIsCorrect(enteredMP) {
+              let receivedMPH; // This is the random string that is encrypted with the master pass
+              // See line 124 for more details
+              if (currentEncryptedString.trim() == "") {
+                const docSnapGetEncryptedString = await getDocs(refForMSCheck);
+                console.log("got it again on line 144 (getDocs)");
+                docSnapGetEncryptedString.forEach((doc) => {
                   receivedMPH = doc.data().mph;
                 });
-                hashedSetMasterPassValue = receivedMPH;
+                currentEncryptedString = receivedMPH;
+                console.log("THE CES: ", currentEncryptedString);
+                console.log("THE MINI RMPH: ", receivedMPH);
               } else {
-                receivedMPH = hashedSetMasterPassValue;
-                console.log("decrypt ELSE", hashedSetMasterPassValue);
+                receivedMPH = currentEncryptedString;
+                console.log("THE RMPH: ", receivedMPH);
               }
 
-              return decryptFunction(encryptedText, receivedMPH);
-            };
-            async function getCorrectHash() {
-              let receivedMPH;
-              const docSnapGetHash = await getDocs(refForMS);
-              docSnapGetHash.forEach((doc) => {
-                receivedMPH = doc.data().mph;
-              });
-              console.log("get Docs line 144");
-              return receivedMPH;
+              const hashedEnteredMasterPassword = crypto
+                .createHash("sha512")
+                .update(enteredMP)
+                .digest("hex");
+              const decryptedMPString = await decryptFunction(
+                receivedMPH,
+                hashedEnteredMasterPassword
+              ); // Decrypted string (see line 124 for details)
+              console.log("LOG: ", decryptedMPString);
+              if (decryptedMPString.trim().length == 0) {
+                return false;
+              } else {
+                return true;
+              }
             }
 
             const writeBlankDataToFS = async () => {
@@ -205,11 +204,12 @@ try {
                 });
               // WRITE
             };
-            const writeMPToFS = async (hashedMP) => {
-              // WRITE
-              //.
-              const docRefForUID = await addDoc(refForMS, {
-                mph: hashedMP,
+            const writeStringEncryptedWithMPToFS = async (
+              stringEncryptedWithHash
+            ) => {
+              // See line 124 for details
+              const docRefForUID = await addDoc(refForMSCheck, {
+                mph: stringEncryptedWithHash,
               })
                 .then(() => {
                   console.log("add Doc line 176");
@@ -219,9 +219,6 @@ try {
                   alert("Error has been logged");
                   console.log(err);
                 });
-              ////.
-              //
-              // WRITE
             };
             const dimAbleToDarken = () => {
               Array.from(
@@ -346,16 +343,22 @@ try {
 
                     //----------------------Check if master password is correct----------------------//
                     async function checkRequestedMP() {
-                      let correctH = await getCorrectHash();
                       let rawRequest = document.getElementById(
                         "newAndEnterMasterPasswordField"
                       ).value;
-                      let hashedRequest = crypto
-                        .createHash("sha512")
-                        .update(rawRequest)
-                        .digest("hex");
-                      if (correctH == hashedRequest) {
+                      const masterPasswordIsCorrect =
+                        await checkIfEnteredMPIsCorrect(rawRequest);
+                      if (masterPasswordIsCorrect) {
                         // Master password is correct and user is logged in
+
+                        const hashedValueOfCorrectMP = crypto
+                          .createHash("sha512")
+                          .update(rawRequest)
+                          .digest("hex");
+                        hashedSetMasterPassValue = hashedValueOfCorrectMP; /* 
+                        Just making a variable that has the correct hash of the
+                        master password */
+
                         let orderNumber =
                           -10000; /* This negative number is for making updated
                         queries go to the top of the page. The more negative order number an
@@ -577,8 +580,9 @@ try {
                             async function addLetterBox() {
                               console.log("Its been true");
                               let icon = document.createElement("img");
-                              let websiteLink = await decryptWithMP(
-                                importedData.directLink
+                              let websiteLink = await decryptFunction(
+                                importedData.directLink,
+                                hashedSetMasterPassValue
                               );
                               if (
                                 websiteLink.substring(0, 5) == "http:" ||
@@ -612,8 +616,9 @@ try {
                             ];
                             async function addLetterBox() {
                               // console.log("Its been false");
-                              let firstLetterOfAppName = await decryptWithMP(
-                                importedData.website
+                              let firstLetterOfAppName = await decryptFunction(
+                                importedData.website,
+                                hashedSetMasterPassValue
                               );
                               firstLetterOfAppName =
                                 firstLetterOfAppName[0].toUpperCase();
@@ -667,8 +672,9 @@ try {
                           }
                           async function showUserAndPass() {
                             let shownAppName = document.createElement("input");
-                            let decryptedShownAppName = await decryptWithMP(
-                              importedData.website
+                            let decryptedShownAppName = await decryptFunction(
+                              importedData.website,
+                              hashedSetMasterPassValue
                             );
                             shownAppName.value =
                               decryptedShownAppName.charAt(0).toUpperCase() +
@@ -695,8 +701,9 @@ try {
                               ).style.cursor = "pointer";
                             }
                             let shownEmail = document.createElement("input");
-                            shownEmail.value = await decryptWithMP(
-                              importedData.user
+                            shownEmail.value = await decryptFunction(
+                              importedData.user,
+                              hashedSetMasterPassValue
                             );
                             shownEmail.setAttribute(
                               "id",
@@ -709,67 +716,8 @@ try {
                             document
                               .getElementById(`shownEmail${rawRandomID}`)
                               .classList.add("shownEmail");
-                            //   let hiddenPasswordInputBox =
-                            //     document.createElement("input");
-                            //   hiddenPasswordInputBox.value = await decryptWithMP(
-                            //     importedData.pass
-                            //   );
-                            //   hiddenPasswordInputBox.type = "password";
-                            //   hiddenPasswordInputBox.setAttribute(
-                            //     "id",
-                            //     `hiddenPasswordInputBox${rawRandomID}`
-                            //   );
-                            //   hiddenPasswordInputBox.readOnly = true;
-                            //   document
-                            //     .getElementById(`subInfoSpan${rawRandomID}`)
-                            //     .appendChild(hiddenPasswordInputBox);
-                            //   document
-                            //     .getElementById(
-                            //       `hiddenPasswordInputBox${rawRandomID}`
-                            //     )
-                            //     .classList.add("hiddenPasswordInputBox");
                           }
                           async function requestUpdateQueryFunction() {
-                            // let editContainer = document.createElement("div");
-                            // editContainer.setAttribute(
-                            //   "id",
-                            //   `editContainer${rawRandomID}`
-                            // );
-                            // document
-                            //   .getElementById(`threeToggles${rawRandomID}`)
-                            //   .appendChild(editContainer);
-                            // document
-                            //   .getElementById(`editContainer${rawRandomID}`)
-                            //   .classList.add("editContainer");
-                            // let edit = document.createElement("i");
-                            // edit.setAttribute("id", `edit${rawRandomID}`);
-                            // document
-                            //   .getElementById(`editContainer${rawRandomID}`)
-                            //   .appendChild(edit);
-                            // document
-                            //   .getElementById(`edit${rawRandomID}`)
-                            //   .setAttribute("class", "fas fa-pen");
-                            // document
-                            //   .getElementById(`edit${rawRandomID}`)
-                            //   .classList.add("editClass");
-                            // if (importedData.isLink == "true") {
-                            //   document.getElementById(
-                            //     `editContainer${rawRandomID}`
-                            //   ).style.marginTop = "1.2%";
-                            // } else {
-                            //   document.getElementById(
-                            //     `editContainer${rawRandomID}`
-                            //   ).style.marginTop = "0.9%";
-                            // }
-                            // let refForPS = collection(
-                            //   db,
-                            //   "users",
-                            //   "filler",
-                            //   userUID,
-                            //   "mpaps",
-                            //   "ps"
-                            // );
-
                             document
                               .getElementById(`mainDiv${rawRandomID}`)
                               .addEventListener("click", async (clickedEvt) => {
@@ -978,8 +926,9 @@ try {
 
                                       document.getElementById(
                                         `delmessage${rawRandomID}`
-                                      ).textContent = `Are you sure you want to delete ${await decryptWithMP(
-                                        importedData.website
+                                      ).textContent = `Are you sure you want to delete ${await decryptFunction(
+                                        importedData.website,
+                                        hashedSetMasterPassValue
                                       )}?`;
 
                                       // Listener to delete query that was added
@@ -1566,10 +1515,11 @@ try {
                                                       ) {
                                                         async function toUpdatingName() {
                                                           let newName =
-                                                            await encryptWithMP(
+                                                            await encryptFunction(
                                                               document.getElementById(
                                                                 `strongUpdateDisplayTextName${rawRandomID}`
-                                                              ).value
+                                                              ).value,
+                                                              hashedSetMasterPassValue
                                                             );
                                                           objectToUpdate.website =
                                                             newName;
@@ -1581,10 +1531,11 @@ try {
                                                       ) {
                                                         async function toUpdatingEmail() {
                                                           let newEmail =
-                                                            await encryptWithMP(
+                                                            await encryptFunction(
                                                               document.getElementById(
                                                                 `strongUpdateDisplayTextEmail${rawRandomID}`
-                                                              ).value
+                                                              ).value,
+                                                              hashedSetMasterPassValue
                                                             );
                                                           objectToUpdate.user =
                                                             newEmail;
@@ -1599,10 +1550,11 @@ try {
                                                       ) {
                                                         async function toUpdatingPass() {
                                                           let newPass =
-                                                            await encryptWithMP(
+                                                            await encryptFunction(
                                                               document.getElementById(
                                                                 `strongUpdateDisplayTextPassword${rawRandomID}`
-                                                              ).value
+                                                              ).value,
+                                                              hashedSetMasterPassValue
                                                             );
                                                           objectToUpdate.pass =
                                                             newPass;
@@ -1647,10 +1599,11 @@ try {
                                                           }
 
                                                           let newLink =
-                                                            await encryptWithMP(
+                                                            await encryptFunction(
                                                               document.getElementById(
                                                                 `strongUpdateDisplayTextURL${rawRandomID}`
-                                                              ).value
+                                                              ).value,
+                                                              hashedSetMasterPassValue
                                                             );
                                                           objectToUpdate.directLink =
                                                             newLink;
@@ -1908,8 +1861,9 @@ try {
                                       // // Done with adding listener to close update tab
                                       const showUpdateScreenIcon = async () => {
                                         let websiteLinkForUpdateIcon =
-                                          await decryptWithMP(
-                                            importedData.directLink
+                                          await decryptFunction(
+                                            importedData.directLink,
+                                            hashedSetMasterPassValue
                                           );
                                         let updateScreenIcon =
                                           document.getElementById(
@@ -1962,20 +1916,24 @@ try {
                                       const displayAllCurrentInfoUpdate =
                                         async () => {
                                           let displayNameForUpdateIcon =
-                                            await decryptWithMP(
-                                              importedData.website
+                                            await decryptFunction(
+                                              importedData.website,
+                                              hashedSetMasterPassValue
                                             );
                                           let displayEmailForUpdateIcon =
-                                            await decryptWithMP(
-                                              importedData.user
+                                            await decryptFunction(
+                                              importedData.user,
+                                              hashedSetMasterPassValue
                                             );
                                           let displayPasswordForUpdateIcon =
-                                            await decryptWithMP(
-                                              importedData.pass
+                                            await decryptFunction(
+                                              importedData.pass,
+                                              hashedSetMasterPassValue
                                             );
                                           let displayURLForUpdateIcon =
-                                            await decryptWithMP(
-                                              importedData.directLink
+                                            await decryptFunction(
+                                              importedData.directLink,
+                                              hashedSetMasterPassValue
                                             );
                                           document.getElementById(
                                             `updateScreenQueryNameHeader${rawRandomID}`
@@ -2216,8 +2174,9 @@ try {
 
                           async function websiteRedirectFunction() {
                             // Website Redirect //
-                            let decryptedLink = await decryptWithMP(
-                              importedData.directLink
+                            let decryptedLink = await decryptFunction(
+                              importedData.directLink,
+                              hashedSetMasterPassValue
                             );
                             openUrlObject[rawRandomID] = decryptedLink;
                             let urlStringBool = importedData.isLink;
@@ -2271,7 +2230,6 @@ try {
                         document.getElementById(
                           "newAndEnterMasterPasswordField"
                         ).style.borderBottom = "1px solid rgb(132, 66, 66)";
-                        console.log("NOPE, correct hash is, ", correctH);
                       }
                     }
                     //
@@ -2330,10 +2288,11 @@ try {
                       "setupMasterPasswordScreen"
                     ).style.pointerEvents = "auto";
                     document.body.style.opacity = ".65";
-                    //----------------------Adding master password----------------------//
+
+                    //----------------------Creating master password----------------------//
                     document
                       .getElementById("confirmMasterPasswordButton")
-                      .addEventListener("click", () => {
+                      .addEventListener("click", async () => {
                         let rawMPInput = document
                           .getElementById("newMasterPasswordField")
                           .value.trim();
@@ -2341,7 +2300,7 @@ try {
                           .getElementById("renterMP")
                           .value.trim();
                         if (rawMPInput == rawREMPInput) {
-                          let encryptedPassword = crypto
+                          let correctPasswordHash = crypto
                             .createHash("sha512")
                             .update(rawMPInput)
                             .digest("hex");
@@ -2351,8 +2310,23 @@ try {
                             document.getElementById("passwordStrengthBar")
                               .value == 3
                           ) {
-                            writeMPToFS(encryptedPassword);
-                            writeBlankDataToFS();
+                            hashedSetMasterPassValue = correctPasswordHash; /* 
+                            Just making a variable that has the correct hash of the
+                            master password */
+
+                            const randomStringEncrypted = CryptoJS.AES.encrypt(
+                              // Encrypting the random string with the master pass hash as the key
+                              randomStringToBeEncrypted,
+                              correctPasswordHash
+                            ).toString();
+
+                            await writeStringEncryptedWithMPToFS(
+                              randomStringEncrypted
+                            ); // See line 124 for details
+
+                            await writeBlankDataToFS(); // To check if the user has a master pass set up, we check for this data.
+                            //
+
                             document.getElementById(
                               "setupMasterPasswordScreen"
                             ).style.display = "none";
