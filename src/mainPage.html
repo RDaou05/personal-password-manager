@@ -81,7 +81,18 @@
             </div>
             <div class="securitySettingsSection">
               <h3 class="securitySettingsHeader">Security</h3>
-              <div class="securitySettings"></div>
+              <div class="securitySettings">
+                <button class="mfa securitySettingsButtons">
+                  <p class="settingsButtonText">
+                    Enable Multi-Factor Authentication (MFA)
+                  </p>
+                </button>
+                <button class="autolock securitySettingsButtons">
+                  <p class="settingsButtonText">
+                    Change time to automatically lock the app after inactivity
+                  </p>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -261,6 +272,7 @@
       document.getElementById("fromPMToMain").click();
     });
   </script>
+  <!-- <script src="yoooo.js" type="module"></script> -->
   <!-- <script src="checkForUILimitMain.js"></script> -->
   <!-- <script defer src="resizeEnterPMFontSize.js"></script> -->
   <!-- <script defer src="2faGoogleSetup.js"></script> -->

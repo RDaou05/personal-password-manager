@@ -814,6 +814,26 @@ body {
   flex-direction: column;
 }
 
+.securitySettingsButtons {
+  background-color: #30343c;
+  border: none;
+  color: white;
+  font-family: "Open Sans", sans-serif;
+  padding: 2%;
+  cursor: pointer;
+}
+
+.mfa {
+  border-top-left-radius: 1vh;
+  border-top-right-radius: 1vh;
+}
+
+.autolock {
+  border-bottom-left-radius: 1vh;
+  border-bottom-right-radius: 1vh;
+  border-top: 1px solid #746e6e;
+}
+
 #fromMainToLogin {
   display: none;
 }
