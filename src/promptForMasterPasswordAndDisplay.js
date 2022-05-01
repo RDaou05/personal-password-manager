@@ -15,6 +15,11 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-app-check.js";
 
 import {
+  getFunctions,
+  httpsCallable,
+} from "https://www.gstatic.com/firebasejs/9.6.4/firebase-functions.js";
+
+import {
   doc,
   setDoc,
   getFirestore,
@@ -82,6 +87,7 @@ try {
     // }
 
     const auth = await getAuth();
+    const functions = await getFunctions();
     let initiated = false; // Using this to check if the auth token has been refreshed or not
     onAuthStateChanged(auth, (mainUser) => {
       if (!initiated) {
@@ -531,6 +537,10 @@ try {
                           const importedData = sourceDoc.data();
                           console.log("THE REFREF IS: ", sourceDoc.ref);
                           console.log("Secondary ", sourceDoc.data());
+                          console.log(
+                            "Secondary stringified",
+                            JSON.stringify(sourceDoc.data())
+                          );
                           let rawRandomID;
                           function getDecryptedID() {
                             rawRandomID = importedData.random;
@@ -1515,12 +1525,9 @@ try {
                                                       ) {
                                                         async function toUpdatingName() {
                                                           let newName =
-                                                            await encryptFunction(
-                                                              document.getElementById(
-                                                                `strongUpdateDisplayTextName${rawRandomID}`
-                                                              ).value,
-                                                              hashedSetMasterPassValue
-                                                            );
+                                                            document.getElementById(
+                                                              `strongUpdateDisplayTextName${rawRandomID}`
+                                                            ).value;
                                                           objectToUpdate.website =
                                                             newName;
                                                         }
@@ -1531,12 +1538,10 @@ try {
                                                       ) {
                                                         async function toUpdatingEmail() {
                                                           let newEmail =
-                                                            await encryptFunction(
-                                                              document.getElementById(
-                                                                `strongUpdateDisplayTextEmail${rawRandomID}`
-                                                              ).value,
-                                                              hashedSetMasterPassValue
-                                                            );
+                                                            document.getElementById(
+                                                              `strongUpdateDisplayTextEmail${rawRandomID}`
+                                                            ).value;
+
                                                           objectToUpdate.user =
                                                             newEmail;
                                                           console.log(
@@ -1550,12 +1555,10 @@ try {
                                                       ) {
                                                         async function toUpdatingPass() {
                                                           let newPass =
-                                                            await encryptFunction(
-                                                              document.getElementById(
-                                                                `strongUpdateDisplayTextPassword${rawRandomID}`
-                                                              ).value,
-                                                              hashedSetMasterPassValue
-                                                            );
+                                                            document.getElementById(
+                                                              `strongUpdateDisplayTextPassword${rawRandomID}`
+                                                            ).value;
+
                                                           objectToUpdate.pass =
                                                             newPass;
                                                           console.log(
@@ -1599,12 +1602,10 @@ try {
                                                           }
 
                                                           let newLink =
-                                                            await encryptFunction(
-                                                              document.getElementById(
-                                                                `strongUpdateDisplayTextURL${rawRandomID}`
-                                                              ).value,
-                                                              hashedSetMasterPassValue
-                                                            );
+                                                            document.getElementById(
+                                                              `strongUpdateDisplayTextURL${rawRandomID}`
+                                                            ).value;
+
                                                           objectToUpdate.directLink =
                                                             newLink;
                                                           console.log(
@@ -1644,14 +1645,61 @@ try {
                                                           "ban: ",
                                                           sourceDoc.ref
                                                         );
-                                                        const batch =
-                                                          writeBatch(db);
-                                                        batch.update(
-                                                          sourceDoc.ref,
-                                                          objectToUpdate
+                                                        const updateUserQuery =
+                                                          httpsCallable(
+                                                            functions,
+                                                            "updateRawData"
+                                                          );
+                                                        let sourceRef =
+                                                          sourceDoc.ref;
+                                                        // updateUserQuery({
+                                                        //   allupdateData: [
+                                                        //     objectToUpdate,
+                                                        //     hashedSetMasterPassValue,
+                                                        //     sourceRef,
+                                                        //   ],
+                                                        // })
+                                                        console.log(
+                                                          "SENDING: ",
+                                                          userUID
                                                         );
-                                                        batch
-                                                          .commit()
+                                                        updateUserQuery({
+                                                          objectToUpdate:
+                                                            objectToUpdate,
+                                                          hashedSetMasterPassValue:
+                                                            hashedSetMasterPassValue,
+                                                          sourceRefID:
+                                                            sourceRef.id,
+                                                          userUID: userUID,
+                                                        })
+                                                          .then((result) => {
+                                                            console.log(
+                                                              "Sucess updateUserQuery"
+                                                            );
+                                                            console.log(result);
+                                                            auth.currentUser
+                                                              .getIdTokenResult(
+                                                                true
+                                                              )
+                                                              .then(
+                                                                (
+                                                                  idTokenResult
+                                                                ) => {
+                                                                  console.log(
+                                                                    "the result ",
+                                                                    idTokenResult
+                                                                  );
+                                                                  console.log(
+                                                                    "the result claims ",
+                                                                    idTokenResult.claims
+                                                                  );
+                                                                  document.body.style.pointerEvents =
+                                                                    "auto";
+                                                                  document.body.style.opacity =
+                                                                    "1";
+                                                                }
+                                                              );
+                                                          })
                                                           .then(() => {
                                                             console.log(
                                                               "THIS IS THE THE THE THE THE LOGGG: ",
