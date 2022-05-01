@@ -1,10 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-app.js";
 import {
-  getFunctions,
-  httpsCallable,
-} from "https://www.gstatic.com/firebasejs/9.6.4/firebase-functions.js";
-import {
   getAuth,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
@@ -58,8 +54,6 @@ try {
 
 const auth = getAuth();
 const db = getFirestore(); // Changed from getDatabase() to getFirestore()
-const functions = getFunctions();
-console.log(functions);
 
 document.getElementById("signUpButton").addEventListener("click", () => {
   let email = document.getElementById("emailInput").value;

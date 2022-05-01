@@ -8,10 +8,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.4/firebase
 // });
 // win.resizeTo(392, 518);
 // import { getAnalytics } from "firebase/analytics";
-import {
-  getFunctions,
-  httpsCallable,
-} from "https://www.gstatic.com/firebasejs/9.6.4/firebase-functions.js";
 
 import {
   getAuth,
@@ -61,7 +57,6 @@ const app = initializeApp(firebaseConfig);
 
 const auth = getAuth();
 const db = getFirestore(); // Changed from getDatabase() to getFirestore()
-const functions = getFunctions();
 
 console.log(auth.currentUser);
 const provider = new GoogleAuthProvider();
