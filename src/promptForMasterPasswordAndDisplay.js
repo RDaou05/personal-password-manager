@@ -1552,13 +1552,12 @@ try {
 
                                                       // Adding link is present boolean value to object to update
                                                       if (
-                                                        originalUpdateInputFields.ogLink.trim()
-                                                          .length == 0 &&
                                                         document
                                                           .getElementById(
                                                             `strongUpdateDisplayTextURL${rawRandomID}`
                                                           )
-                                                          .value.trim() != 0
+                                                          .value.trim()
+                                                          .length != 0
                                                       ) {
                                                         objectToUpdate.isLink =
                                                           "true";
@@ -1566,13 +1565,12 @@ try {
                                                           "update Doc line 1329"
                                                         );
                                                       } else if (
-                                                        originalUpdateInputFields.ogLink.trim()
-                                                          .length != 0 &&
                                                         document
                                                           .getElementById(
                                                             `strongUpdateDisplayTextURL${rawRandomID}`
                                                           )
-                                                          .value.trim() == 0
+                                                          .value.trim()
+                                                          .length == 0
                                                       ) {
                                                         objectToUpdate.isLink =
                                                           "false";
