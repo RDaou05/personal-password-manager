@@ -133,15 +133,22 @@ async function mainInit() {
             directLinkToAdd,
             randomID
           ) => {
-            const docRefForMP = await addDoc(refForPS, {
+            const objectToAdd = {
               user: userToAdd, // Username/email of query
               pass: passToAdd, // Password of query
               website: websiteToAdd, // Name of query
               isLink: isLinkToAdd, // Boolean that tells if the user added a url or not
               directLink: directLinkToAdd, // The url the user added (Will be blank if no url was added)
               random: randomID, // Randomly generated id that will be used for identifying the query for things like updating and deleting it
+            };
+            console.log("1: ", objectToAdd);
+            console.log("2: ", JSON.stringify(objectToAdd));
+            const docRefForMP = await addDoc(refForPS, {
+              combinedQueryInfo: JSON.stringify(objectToAdd),
               nummy: serverTimestamp(), // Time stamp of creation
             });
+            console.log("3: ", JSON.stringify(objectToAdd));
+            console.log("Added: ", JSON.stringify(objectToAdd));
             return docRefForMP.id;
           };
           const dimAbleToDarken = () => {
@@ -1226,7 +1233,7 @@ async function mainInit() {
                                                 "Will not update query"
                                               );
                                             } else {
-                                              // Code to update values
+                                              // Will update values
                                               console.log("will update query");
                                               console.log("A normal object: ", {
                                                 hey: "oh hey",
