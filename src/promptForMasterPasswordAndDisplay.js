@@ -2266,21 +2266,10 @@ try {
                     }
                     //
                     setTimeout(() => {
+                      // Focuses login or create master pass input field when page loads
                       document
                         .getElementById("newAndEnterMasterPasswordField")
                         .focus();
-                      // document.getElementById(
-                      //   "newAndEnterMasterPasswordField"
-                      // ).style.boxShadow = "0 20px 20px rgb(0 0 0 / 80%)";
-                      // document.getElementById(
-                      //   "newAndEnterMasterPasswordField"
-                      // ).style.border = "3px solid rgb(1 255 242)";
-                      // document.getElementById(
-                      //   "newAndEnterMasterPasswordField"
-                      // ).style.boxShadow = "none";
-                      // document.getElementById(
-                      //   "newAndEnterMasterPasswordField"
-                      // ).style.border = "none";
                     }, 500);
 
                     //
@@ -2367,9 +2356,10 @@ try {
                           } else {
                             document.getElementById(
                               "newMasterPasswordField"
-                            ).style.border = "2px solid #844242";
-                            document.getElementById("renterMP").style.border =
-                              "2px solid #844242";
+                            ).style.borderBottom = "2px solid #844242";
+                            document.getElementById(
+                              "renterMP"
+                            ).style.borderBottom = "2px solid #844242";
                             document.getElementById(
                               "createMPError"
                             ).textContent = "Password is too weak";
