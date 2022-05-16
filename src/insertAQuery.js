@@ -140,6 +140,7 @@ async function mainInit() {
               isLink: isLinkToAdd, // Boolean that tells if the user added a url or not
               directLink: directLinkToAdd, // The url the user added (Will be blank if no url was added)
               random: randomID, // Randomly generated id that will be used for identifying the query for things like updating and deleting it
+              nummy: serverTimestamp(), // Time stamp of creation
             };
             console.log("1: ", objectToAdd);
             console.log("2: ", JSON.stringify(objectToAdd));
@@ -299,6 +300,8 @@ async function mainInit() {
                     );
                     if (linkIsThere == "false") {
                       // Leaving url field blank if the user didn't provide one
+                      // Saving the ID of the document that is added
+                      // Doing this so user can delete and update with the same ID
                       newQueryID = await writeQueryToFS(
                         encryptedEnteredUsernameOfQuery,
                         encryptedEnteredPasswordOfQuery,
@@ -318,6 +321,8 @@ async function mainInit() {
                       mostRecentID = id;
                     } else if (linkIsThere == "true") {
                       // Will run this if the user provided a url
+                      // Saving the ID of the document that is added
+                      // Doing this so user can delete and update with the same ID
                       newQueryID = await writeQueryToFS(
                         encryptedEnteredUsernameOfQuery,
                         encryptedEnteredPasswordOfQuery,
@@ -1233,7 +1238,7 @@ async function mainInit() {
                                                 "Will not update query"
                                               );
                                             } else {
-                                              // Will update values
+                                              // Code to update values
                                               console.log("will update query");
                                               console.log("A normal object: ", {
                                                 hey: "oh hey",
@@ -1242,113 +1247,64 @@ async function mainInit() {
                                               let objectToUpdate = {}; // Contains all the values to be updated
                                               async function loadingQueryUpdate() {
                                                 objectToUpdate = {};
-                                                async function toUpdatingTimestamp() {
-                                                  // Updating timestamp so the updated query will be at the top of the page
-                                                  objectToUpdate.nummy =
-                                                    serverTimestamp();
-                                                  console.log(
-                                                    "update Doc line 1224"
-                                                  );
-                                                  console.log(
-                                                    "nummy has been updated"
-                                                  );
-                                                }
-                                                await toUpdatingTimestamp();
-                                                if (nameIsTheSame == false) {
-                                                  async function toUpdatingName() {
-                                                    let newName =
-                                                      await encryptFunction(
-                                                        document.getElementById(
-                                                          `strongUpdateDisplayTextName${rawRandomID}`
-                                                        ).value,
-                                                        hashedSetMasterPassValue
-                                                      );
-                                                    objectToUpdate.website =
-                                                      newName;
-                                                  }
-                                                  await toUpdatingName();
-                                                }
-                                                if (emailIsTheSame == false) {
-                                                  async function toUpdatingEmail() {
-                                                    let newEmail =
-                                                      await encryptFunction(
-                                                        document.getElementById(
-                                                          `strongUpdateDisplayTextEmail${rawRandomID}`
-                                                        ).value,
-                                                        hashedSetMasterPassValue
-                                                      );
-                                                    objectToUpdate.user =
-                                                      newEmail;
-                                                    console.log(
-                                                      "update doc line 1276"
-                                                    );
-                                                  }
-                                                  await toUpdatingEmail();
-                                                }
-                                                if (passIsTheSame == false) {
-                                                  async function toUpdatingPass() {
-                                                    let newPass =
-                                                      await encryptFunction(
-                                                        document.getElementById(
-                                                          `strongUpdateDisplayTextPassword${rawRandomID}`
-                                                        ).value,
-                                                        hashedSetMasterPassValue
-                                                      );
-                                                    objectToUpdate.pass =
-                                                      newPass;
-                                                    console.log(
-                                                      "update Doc line 1302"
-                                                    );
-                                                  }
-                                                  await toUpdatingPass();
-                                                }
-                                                if (linkIsTheSame == false) {
-                                                  async function toUpdatingLink() {
-                                                    if (
-                                                      originalUpdateInputFields.ogLink.trim()
-                                                        .length == 0 &&
-                                                      document
-                                                        .getElementById(
-                                                          `strongUpdateDisplayTextURL${rawRandomID}`
-                                                        )
-                                                        .value.trim() != 0
-                                                    ) {
-                                                      objectToUpdate.isLink =
-                                                        "true";
-                                                      console.log(
-                                                        "update Doc line 1329"
-                                                      );
-                                                    } else if (
-                                                      originalUpdateInputFields.ogLink.trim()
-                                                        .length != 0 &&
-                                                      document
-                                                        .getElementById(
-                                                          `strongUpdateDisplayTextURL${rawRandomID}`
-                                                        )
-                                                        .value.trim() == 0
-                                                    ) {
-                                                      objectToUpdate.isLink =
-                                                        "false";
-                                                      console.log(
-                                                        "update doc line 1348"
-                                                      );
-                                                    }
 
-                                                    let newLink =
-                                                      await encryptFunction(
-                                                        document.getElementById(
-                                                          `strongUpdateDisplayTextURL${rawRandomID}`
-                                                        ).value,
-                                                        hashedSetMasterPassValue
-                                                      );
-                                                    objectToUpdate.directLink =
-                                                      newLink;
+                                                objectToUpdate.website =
+                                                  document.getElementById(
+                                                    `strongUpdateDisplayTextName${rawRandomID}`
+                                                  ).value;
+
+                                                objectToUpdate.user =
+                                                  document.getElementById(
+                                                    `strongUpdateDisplayTextEmail${rawRandomID}`
+                                                  ).value;
+                                                console.log(
+                                                  "update doc line 1276"
+                                                );
+
+                                                objectToUpdate.pass =
+                                                  document.getElementById(
+                                                    `strongUpdateDisplayTextPassword${rawRandomID}`
+                                                  ).value;
+                                                console.log(
+                                                  "update Doc line 1302"
+                                                );
+
+                                                async function toUpdatingLink() {
+                                                  if (
+                                                    document
+                                                      .getElementById(
+                                                        `strongUpdateDisplayTextURL${rawRandomID}`
+                                                      )
+                                                      .value.trim() != 0
+                                                  ) {
+                                                    objectToUpdate.isLink =
+                                                      "true";
                                                     console.log(
-                                                      "update doc line 1366"
+                                                      "update Doc line 1329"
+                                                    );
+                                                  } else if (
+                                                    document
+                                                      .getElementById(
+                                                        `strongUpdateDisplayTextURL${rawRandomID}`
+                                                      )
+                                                      .value.trim() == 0
+                                                  ) {
+                                                    objectToUpdate.isLink =
+                                                      "false";
+                                                    console.log(
+                                                      "update doc line 1348"
                                                     );
                                                   }
-                                                  await toUpdatingLink();
+
+                                                  objectToUpdate.directLink =
+                                                    document.getElementById(
+                                                      `strongUpdateDisplayTextURL${rawRandomID}`
+                                                    ).value;
+                                                  console.log(
+                                                    "update doc line 1366"
+                                                  );
                                                 }
+                                                await toUpdatingLink();
                                               }
                                               loadingQueryUpdate().then(() => {
                                                 /* The "original values" are what we
@@ -1370,7 +1326,6 @@ async function mainInit() {
                                               values. So we have to change the "original values"
                                               to what the values are after the update */
 
-                                                // dO THE BATCH UOPDATE THING HERE
                                                 console.log(
                                                   "THIS IS THE THE THE THE THE LOGGG: ",
                                                   objectToUpdate
@@ -1391,6 +1346,12 @@ async function mainInit() {
                                                     newQueryID
                                                   )
                                                 );
+
+                                                const updateUserQuery =
+                                                  httpsCallable(
+                                                    functions,
+                                                    "updateRawData"
+                                                  );
                                                 const batch = writeBatch(db);
                                                 batch.update(
                                                   doc(
@@ -1404,7 +1365,16 @@ async function mainInit() {
                                                   ),
                                                   objectToUpdate
                                                 );
-                                                batch.commit().then(() => {
+                                                updateUserQuery({
+                                                  objectToUpdate:
+                                                    objectToUpdate,
+                                                  hashedSetMasterPassValue:
+                                                    hashedSetMasterPassValue,
+                                                  sourceRefID: sourceRef.id,
+                                                  userUID: userUID,
+                                                  isLink: objectToUpdate.isLink,
+                                                  randomID: importedData.random,
+                                                }).then(() => {
                                                   console.log(
                                                     "THIS IS THE THE THE THE THE LOGGG: ",
                                                     objectToUpdate
