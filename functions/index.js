@@ -21,7 +21,7 @@ exports.addUserQuery = functions.https.onCall(async (data, context) => {
     const randomID = data.randomID;
     const isLink = data.isLink;
     let encryptedObjectToAdd = {};
-    const encryptionKey = data.hashedSetMasterPassValue;
+    const encryptionKey = data.hashedSetMasterPassValue + userSecret;
 
     const newQueryPath = db
       .collection("users")
@@ -36,8 +36,11 @@ exports.addUserQuery = functions.https.onCall(async (data, context) => {
     for (const [key, value] of Object.entries(rawObjectToAdd)) {
       // Encrypting values from object and putting it in a new encrypted object
       infoArray.push(`${key}: ${value}`);
-      encryptedObjectToAdd[key] =
-        CryptoJS.AES.encrypt(value, encryptionKey).toString() + userSecret;
+
+      encryptedObjectToAdd[key] = CryptoJS.AES.encrypt(
+        value,
+        encryptionKey
+      ).toString();
     }
 
     encryptedObjectToAdd.isLink = isLink;
@@ -77,13 +80,24 @@ exports.addUserQuery = functions.https.onCall(async (data, context) => {
   }
 });
 
-exports.updateRawData = functions.https.onCall((data, context) => {
+exports.updateRawData = functions.https.onCall(async (data, context) => {
   const nummy = admin.firestore.FieldValue.serverTimestamp();
   const rawObjectToUpdate = data.objectToUpdate;
   const randomID = data.randomID;
   const isLink = data.isLink;
   let encryptedObjectToUpdate = {};
-  const encryptionKey = data.hashedSetMasterPassValue;
+
+  // Getting secret key for user to add to the end of each encryption
+  let userSecret;
+  const userSecretPath = db
+    .collection("users")
+    .doc("filler")
+    .collection(data.userUID)
+    .doc("secKey");
+  let doc = await userSecretPath.get();
+  userSecret = doc.data().secKeyStr;
+
+  const encryptionKey = data.hashedSetMasterPassValue + userSecret;
   const db = admin.firestore();
   const updatePath = db
     .collection("users")
