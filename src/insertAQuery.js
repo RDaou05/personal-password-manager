@@ -20,6 +20,11 @@ import {
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 import {
+  getFunctions,
+  httpsCallable,
+} from "https://www.gstatic.com/firebasejs/9.6.4/firebase-functions.js";
+
+import {
   getAuth,
   onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
@@ -63,6 +68,7 @@ async function mainInit() {
   const db = getFirestore();
 
   const auth = await getAuth();
+  const functions = await getFunctions();
   let initiated = false;
   onAuthStateChanged(auth, (mainUser) => {
     if (!initiated) {
@@ -251,97 +257,47 @@ async function mainInit() {
                   enteredPasswordOfQuery != ""
                 ) {
                   async function uploadQ() {
-                    let encryptedEnteredPasswordOfQuery = await encryptFunction(
-                      enteredPasswordOfQuery,
-                      hashedSetMasterPassValue
-                    );
-                    let encryptedEnteredUsernameOfQuery = await encryptFunction(
-                      enteredUsernameOfQuery,
-                      hashedSetMasterPassValue
-                    );
-                    let encryptedEnteredNameOfQuery = await encryptFunction(
-                      enteredNameOfQuery,
-                      hashedSetMasterPassValue
-                    );
-                    let encryptedLinkIsThere = await encryptFunction(
-                      linkIsThere,
-                      hashedSetMasterPassValue
-                    );
-                    let encryptedEnteredURLOfQuery = await encryptFunction(
-                      enteredURLOfQuery,
-                      hashedSetMasterPassValue
-                    );
+                    const objectToAdd = {
+                      pass: enteredPasswordOfQuery,
+                      email: enteredUsernameOfQuery,
+                      website: enteredNameOfQuery,
+                      directLink: enteredURLOfQuery,
+                    };
                     let id = await makeid(250);
-                    // mostRecentEnteredPasswordOfQuery = enteredPasswordOfQuery;
-                    // mostRecentEnteredUsernameOfQuery = enteredUsernameOfQuery;
-                    // mostRecentEnteredNameOfQuery = enteredNameOfQuery;
-                    // mostRecentLinkIsThere = mostRecentLinkIsThere;
-
-                    // if (linkIsThere == "false") {
-                    //   mostRecentEnteredURLOfQuery = " ";
-                    // } else if (linkIsThere == "true") {
-                    //   mostRecentEnteredURLOfQuery = enteredURLOfQuery;
-                    // }
-                    console.log(
-                      "pass: ",
-                      encryptedEnteredPasswordOfQuery,
-                      " ",
-                      "username/email: ",
-                      encryptedEnteredUsernameOfQuery,
-                      " ",
-                      "name: ",
-                      encryptedEnteredNameOfQuery,
-                      " ",
-                      "linkisthere: ",
-                      encryptedLinkIsThere,
-                      " ",
-                      "url: ",
-                      encryptedEnteredURLOfQuery
+                    const addUserQuery = httpsCallable(
+                      functions,
+                      "addUserQuery"
                     );
-                    if (linkIsThere == "false") {
-                      // Leaving url field blank if the user didn't provide one
-                      // Saving the ID of the document that is added
-                      // Doing this so user can delete and update with the same ID
-                      newQueryID = await writeQueryToFS(
-                        encryptedEnteredUsernameOfQuery,
-                        encryptedEnteredPasswordOfQuery,
-                        encryptedEnteredNameOfQuery,
-                        linkIsThere,
-                        " ",
-                        id
-                      );
-                      mostRecentEncryptedEnteredUsernameOfQuery =
-                        encryptedEnteredUsernameOfQuery;
-                      mostRecentEncryptedEnteredPasswordOfQuery =
-                        encryptedEnteredPasswordOfQuery;
-                      mostRecentEncryptedEnteredNameOfQuery =
-                        encryptedEnteredNameOfQuery;
-                      mostRecentLinkIsThere = linkIsThere;
-                      mostRecentEncryptedEnteredURLOfQuery = " ";
-                      mostRecentID = id;
-                    } else if (linkIsThere == "true") {
-                      // Will run this if the user provided a url
-                      // Saving the ID of the document that is added
-                      // Doing this so user can delete and update with the same ID
-                      newQueryID = await writeQueryToFS(
-                        encryptedEnteredUsernameOfQuery,
-                        encryptedEnteredPasswordOfQuery,
-                        encryptedEnteredNameOfQuery,
-                        linkIsThere,
-                        encryptedEnteredURLOfQuery,
-                        id
-                      );
-                      mostRecentEncryptedEnteredUsernameOfQuery =
-                        encryptedEnteredUsernameOfQuery;
-                      mostRecentEncryptedEnteredPasswordOfQuery =
-                        encryptedEnteredPasswordOfQuery;
-                      mostRecentEncryptedEnteredNameOfQuery =
-                        encryptedEnteredNameOfQuery;
-                      mostRecentLinkIsThere = linkIsThere;
-                      mostRecentEncryptedEnteredURLOfQuery =
-                        encryptedEnteredURLOfQuery;
-                      mostRecentID = id;
-                    }
+
+                    const finalEncryptedAddedQueryReturn = await addUserQuery({
+                      objectToAdd: objectToAdd,
+                      hashedSetMasterPassValue: hashedSetMasterPassValue,
+                      userUID: userUID,
+                      isLink: linkIsThere,
+                      randomID: id,
+                    });
+                    console.log(finalEncryptedAddedQueryReturn);
+
+                    // Updating the values for the new user document
+                    const encryptedObjectFromCF =
+                      finalEncryptedAddedQueryReturn.data.encryptedObj;
+
+                    mostRecentEncryptedEnteredUsernameOfQuery =
+                      encryptedObjectFromCF.email;
+                    //
+                    mostRecentEncryptedEnteredPasswordOfQuery =
+                      encryptedObjectFromCF.pass;
+                    //
+                    mostRecentEncryptedEnteredNameOfQuery =
+                      encryptedObjectFromCF.website;
+                    //
+                    mostRecentEncryptedEnteredURLOfQuery =
+                      encryptedObjectFromCF.directLink;
+                    //
+                    mostRecentLinkIsThere = encryptedObjectFromCF.isLink;
+                    //
+                    mostRecentID = // Setting the ID of the new doc that was created
+                      finalEncryptedAddedQueryReturn.data.IDOfNewDoc;
                   }
                   async function startUpShow(
                     suppliedEncryptedEnteredUsernameOfQuery,
@@ -1899,17 +1855,9 @@ async function mainInit() {
                     }
                     activate();
                   }
-                  //
-                  // async function deleteAllChildren(parent) {
-                  //   while (parent.firstChild) {
-                  //     parent.removeChild(parent.firstChild);
-                  //   }
-                  // }
 
                   await uploadQ();
-                  // await deleteAllChildren(document.getElementById("queryScreen")); // DELETE OLD SHOWN QUERYS
 
-                  // const docSnapp = await getDocs(refForSortPS); //RESHOW QUERIES WITH ADDED ONE
                   await startUpShow(
                     mostRecentEncryptedEnteredUsernameOfQuery,
                     mostRecentEncryptedEnteredPasswordOfQuery,
@@ -1919,6 +1867,7 @@ async function mainInit() {
                     mostRecentID
                   );
                 } else {
+                  console.log("UhOh");
                   if (enteredNameOfQuery != "") {
                     let nameB = document.getElementById("nameOfQuery");
                     nameB.style.backgroundColor = "#3d333c";
