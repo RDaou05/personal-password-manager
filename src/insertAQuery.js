@@ -129,35 +129,8 @@ async function mainInit() {
                 Math.floor(Math.random() * charactersLength)
               );
             }
-            return result; // Returns a VERY long unique random id
+            return result; // Returns a VERY long random id
           }
-          const writeQueryToFS = async (
-            userToAdd,
-            passToAdd,
-            websiteToAdd,
-            isLinkToAdd,
-            directLinkToAdd,
-            randomID
-          ) => {
-            const objectToAdd = {
-              user: userToAdd, // Username/email of query
-              pass: passToAdd, // Password of query
-              website: websiteToAdd, // Name of query
-              isLink: isLinkToAdd, // Boolean that tells if the user added a url or not
-              directLink: directLinkToAdd, // The url the user added (Will be blank if no url was added)
-              random: randomID, // Randomly generated id that will be used for identifying the query for things like updating and deleting it
-              nummy: serverTimestamp(), // Time stamp of creation
-            };
-            console.log("1: ", objectToAdd);
-            console.log("2: ", JSON.stringify(objectToAdd));
-            const docRefForMP = await addDoc(refForPS, {
-              combinedQueryInfo: JSON.stringify(objectToAdd),
-              nummy: serverTimestamp(), // Time stamp of creation
-            });
-            console.log("3: ", JSON.stringify(objectToAdd));
-            console.log("Added: ", JSON.stringify(objectToAdd));
-            return docRefForMP.id;
-          };
           const dimAbleToDarken = () => {
             Array.from(
               document
