@@ -57,11 +57,11 @@ try {
   console.log(err);
 }
 
-let mostRecentEncryptedEnteredUsernameOfQuery;
-let mostRecentEncryptedEnteredPasswordOfQuery;
-let mostRecentEncryptedEnteredNameOfQuery;
+let mostRecentEnteredUsernameOfQuery;
+let mostRecentEnteredPasswordOfQuery;
+let mostRecentEnteredNameOfQuery;
 let mostRecentLinkIsThere;
-let mostRecentEncryptedEnteredURLOfQuery;
+let mostRecentEnteredURLOfQuery;
 let mostRecentID;
 
 async function mainInit() {
@@ -251,43 +251,25 @@ async function mainInit() {
                     });
                     console.log(finalEncryptedAddedQueryReturn);
 
-                    // Updating the values for the new user document
-                    const encryptedObjectFromCF =
-                      finalEncryptedAddedQueryReturn.data.encryptedObj;
-
-                    mostRecentEncryptedEnteredUsernameOfQuery =
-                      encryptedObjectFromCF.email;
-                    //
-                    mostRecentEncryptedEnteredPasswordOfQuery =
-                      encryptedObjectFromCF.pass;
-                    //
-                    mostRecentEncryptedEnteredNameOfQuery =
-                      encryptedObjectFromCF.website;
-                    //
-                    mostRecentEncryptedEnteredURLOfQuery =
-                      encryptedObjectFromCF.directLink;
-                    //
-                    mostRecentLinkIsThere = encryptedObjectFromCF.isLink;
-                    //
                     mostRecentID = // Setting the ID of the new doc that was created
                       finalEncryptedAddedQueryReturn.data.IDOfNewDoc;
                   }
                   async function startUpShow(
-                    suppliedEncryptedEnteredUsernameOfQuery,
-                    suppliedEncryptedEnteredPasswordOfQuery,
-                    suppliedEncryptedEnteredNameOfQuery,
+                    suppliedEnteredUsernameOfQuery,
+                    suppliedEnteredPasswordOfQuery,
+                    suppliedEnteredNameOfQuery,
                     suppliedLinkIsThere,
-                    suppliedEncryptedEnteredURLOfQuery,
+                    suppliedEnteredURLOfQuery,
                     suppliedID
                   ) {
                     // Credentials to add to the screen
                     const importedData = {
-                      directLink: suppliedEncryptedEnteredURLOfQuery,
+                      directLink: suppliedEnteredURLOfQuery,
                       random: suppliedID,
                       isLink: suppliedLinkIsThere,
-                      website: suppliedEncryptedEnteredNameOfQuery,
-                      pass: suppliedEncryptedEnteredPasswordOfQuery,
-                      user: suppliedEncryptedEnteredUsernameOfQuery,
+                      website: suppliedEnteredNameOfQuery,
+                      pass: suppliedEnteredPasswordOfQuery,
+                      user: suppliedEnteredUsernameOfQuery,
                     };
                     let rawRandomID;
                     function getDecryptedID() {
@@ -338,10 +320,7 @@ async function mainInit() {
                       async function addLetterBox() {
                         console.log("Its been true");
                         let icon = document.createElement("img");
-                        let websiteLink = await decryptFunction(
-                          importedData.directLink,
-                          hashedSetMasterPassValue
-                        );
+                        let websiteLink = importedData.directLink;
                         if (
                           websiteLink.substring(0, 5) == "http:" ||
                           websiteLink.substring(0, 6) == "https:" ||
@@ -374,10 +353,7 @@ async function mainInit() {
                       ];
                       async function addLetterBox() {
                         // console.log("Its been false");
-                        let firstLetterOfAppName = await decryptFunction(
-                          importedData.website,
-                          hashedSetMasterPassValue
-                        );
+                        let firstLetterOfAppName = importedData.website;
                         firstLetterOfAppName =
                           firstLetterOfAppName[0].toUpperCase();
                         console.log("First letter is ", firstLetterOfAppName);
@@ -420,17 +396,11 @@ async function mainInit() {
                     }
                     async function showUserAndPass() {
                       let shownAppName = document.createElement("input");
-                      let decryptedShownAppName = await decryptFunction(
-                        importedData.website,
-                        hashedSetMasterPassValue
-                      );
+                      let decryptedShownAppName = importedData.website;
                       shownAppName.value =
                         decryptedShownAppName.charAt(0).toUpperCase() +
                         decryptedShownAppName.slice(1);
-                      // if (importedData.isLink == "true") {
-                      // } else {
-                      //   shownAppName.style.marginLeft = "13%";
-                      // }
+
                       shownAppName.readOnly = true;
                       shownAppName.setAttribute(
                         "id",
@@ -449,10 +419,7 @@ async function mainInit() {
                         ).style.cursor = "pointer";
                       }
                       let shownEmail = document.createElement("input");
-                      shownEmail.value = await decryptFunction(
-                        importedData.user,
-                        hashedSetMasterPassValue
-                      );
+                      shownEmail.value = importedData.user;
                       shownEmail.setAttribute("id", `shownEmail${rawRandomID}`);
                       shownEmail.readOnly = true;
                       document
@@ -657,10 +624,7 @@ async function mainInit() {
 
                                 document.getElementById(
                                   `delmessage${rawRandomID}`
-                                ).textContent = `Are you sure you want to delete ${await decryptFunction(
-                                  importedData.website,
-                                  hashedSetMasterPassValue
-                                )}?`;
+                                ).textContent = `Are you sure you want to delete ${importedData.website}?`;
 
                                 // Listener to delete query that was added
                                 document
@@ -1467,10 +1431,7 @@ async function mainInit() {
                                   "pushOutUpdateTab 0.3s ease";
                                 const showUpdateScreenIcon = async () => {
                                   let websiteLinkForUpdateIcon =
-                                    await decryptFunction(
-                                      importedData.directLink,
-                                      hashedSetMasterPassValue
-                                    );
+                                    importedData.directLink;
                                   let updateScreenIcon =
                                     document.getElementById(
                                       `updateScreenIcon${rawRandomID}`
@@ -1506,25 +1467,13 @@ async function mainInit() {
                                 const displayAllCurrentInfoUpdate =
                                   async () => {
                                     let displayNameForUpdateIcon =
-                                      await decryptFunction(
-                                        importedData.website,
-                                        hashedSetMasterPassValue
-                                      );
+                                      importedData.website;
                                     let displayEmailForUpdateIcon =
-                                      await decryptFunction(
-                                        importedData.user,
-                                        hashedSetMasterPassValue
-                                      );
+                                      importedData.user;
                                     let displayPasswordForUpdateIcon =
-                                      await decryptFunction(
-                                        importedData.pass,
-                                        hashedSetMasterPassValue
-                                      );
+                                      importedData.pass;
                                     let displayURLForUpdateIcon =
-                                      await decryptFunction(
-                                        importedData.directLink,
-                                        hashedSetMasterPassValue
-                                      );
+                                      importedData.directLink;
                                     document.getElementById(
                                       `updateScreenQueryNameHeader${rawRandomID}`
                                     ).textContent =
@@ -1736,10 +1685,7 @@ async function mainInit() {
 
                     async function websiteRedirectFunction() {
                       // Website Redirect //
-                      let decryptedLink = await decryptFunction(
-                        importedData.directLink,
-                        hashedSetMasterPassValue
-                      );
+                      let decryptedLink = importedData.directLink;
                       openUrlObject[rawRandomID] = decryptedLink;
                       let urlStringBool = importedData.isLink;
                       if (urlStringBool == "true") {
@@ -1772,51 +1718,8 @@ async function mainInit() {
                             }
                           });
                       }
-
-                      // Website Redirect //
                     }
 
-                    // async function ieSettingsFunction() {
-                    //   console.log("Settings only once ONCE 111");
-                    //   document
-                    //     .getElementById("settingsButton")
-                    //     .addEventListener("click", () => {
-                    //       document.body.style.userSelect = "none";
-                    //       document.getElementById("settingsScreen").style.userSelect =
-                    //         "auto";
-                    //       document.body.style.pointerEvents = "none";
-                    //       document.body.style.opacity = ".5";
-                    //       document.getElementById("settingsScreen").style.display =
-                    //         "initial";
-                    //       document.getElementById(
-                    //         "settingsScreen"
-                    //       ).style.pointerEvents = "auto";
-                    //       document.getElementById("settingsScreen").style.opacity =
-                    //         "1";
-                    //     });
-                    //   document
-                    //     .getElementById("closeSettings")
-                    //     .addEventListener("click", () => {
-                    //       document.body.style.userSelect = "auto";
-                    //       document.getElementById("settingsScreen").style.userSelect =
-                    //         "none";
-                    //       document.body.style.pointerEvents = "auto";
-                    //       document.body.style.opacity = "1";
-                    //       document.getElementById("settingsScreen").style.display =
-                    //         "none";
-                    //       document.getElementById(
-                    //         "settingsScreen"
-                    //       ).style.pointerEvents = "none";
-                    //       document.getElementById("settingsScreen").style.opacity =
-                    //         "1";
-                    //     });
-                    //   // Add all setting buttton listeners under this line
-                    //   document
-                    //     .getElementById("SAinfoSettingsButton")
-                    //     .addEventListener("click", () => {
-                    //       document.getElementById("fromMainToAccount").click();
-                    //     });
-                    // }
                     async function activate() {
                       await createThreeContainerHolder();
                       await showUserAndPass();
@@ -1830,13 +1733,24 @@ async function mainInit() {
                   }
 
                   await uploadQ();
+                  mostRecentEnteredUsernameOfQuery = enteredUsernameOfQuery;
+                  //
+                  mostRecentEnteredPasswordOfQuery = enteredPasswordOfQuery;
+                  //
+                  mostRecentEnteredNameOfQuery = enteredNameOfQuery;
+                  //
+                  mostRecentEnteredURLOfQuery = enteredURLOfQuery;
 
+                  // Boolean value (as a string) if a link is present
+                  mostRecentLinkIsThere = linkIsThere;
+                  //
                   await startUpShow(
-                    mostRecentEncryptedEnteredUsernameOfQuery,
-                    mostRecentEncryptedEnteredPasswordOfQuery,
-                    mostRecentEncryptedEnteredNameOfQuery,
+                    // Starting process to display added values on the dashboard
+                    mostRecentEnteredUsernameOfQuery,
+                    mostRecentEnteredPasswordOfQuery,
+                    mostRecentEnteredNameOfQuery,
                     mostRecentLinkIsThere,
-                    mostRecentEncryptedEnteredURLOfQuery,
+                    mostRecentEnteredURLOfQuery,
                     mostRecentID
                   );
                 } else {
