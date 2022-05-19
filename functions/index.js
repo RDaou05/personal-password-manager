@@ -3,6 +3,80 @@ const admin = require("firebase-admin");
 const CryptoJS = require("crypto-js");
 admin.initializeApp();
 
+exports.addUserQuery = functions.https.onCall(async (data, context) => {
+  try {
+    const nummy = admin.firestore.FieldValue.serverTimestamp();
+    const db = admin.firestore();
+
+    // Getting secret key for user to add to the end of each encryption
+    let userSecret;
+    const userSecretPath = db
+      .collection("users")
+      .doc("filler")
+      .collection(data.userUID)
+      .doc("secKey");
+    let doc = await userSecretPath.get();
+    userSecret = doc.data().secKeyStr;
+    const rawObjectToAdd = data.objectToAdd;
+    const randomID = data.randomID;
+    const isLink = data.isLink;
+    let encryptedObjectToAdd = {};
+    const encryptionKey = data.hashedSetMasterPassValue;
+
+    const newQueryPath = db
+      .collection("users")
+      .doc("filler")
+      .collection(data.userUID)
+      .doc("mpaps")
+      .collection("ps")
+      .doc();
+
+    let infoArray = [];
+
+    for (const [key, value] of Object.entries(rawObjectToAdd)) {
+      // Encrypting values from object and putting it in a new encrypted object
+      infoArray.push(`${key}: ${value}`);
+      encryptedObjectToAdd[key] =
+        CryptoJS.AES.encrypt(value, encryptionKey).toString() + userSecret;
+    }
+
+    encryptedObjectToAdd.isLink = isLink;
+    encryptedObjectToAdd.random = randomID;
+    const stringifiedEncryptedObject = JSON.stringify(encryptedObjectToAdd);
+
+    const batch = db.batch();
+    batch.create(newQueryPath, {
+      combinedQueryInfo: stringifiedEncryptedObject,
+      nummy: nummy,
+    });
+    try {
+      await batch.commit();
+      return {
+        ERROR: "None",
+        IDOfNewDoc: newQueryPath.id,
+        data: data,
+        encryptedObj: encryptedObjectToAdd,
+        stringifiedEncryptedObject: stringifiedEncryptedObject,
+        newQueryPath: newQueryPath,
+        infoArray: infoArray,
+        rawObjectToAdd: rawObjectToAdd,
+      };
+    } catch (err) {
+      return {
+        ERROR: err,
+        data: data,
+        encryptedObj: encryptedObjectToAdd,
+        stringifiedEncryptedObject: stringifiedEncryptedObject,
+        newQueryPath: newQueryPath,
+        infoArray: infoArray,
+        rawObjectToAdd: rawObjectToAdd,
+      };
+    }
+  } catch (err) {
+    return { ERROR: err };
+  }
+});
+
 exports.updateRawData = functions.https.onCall((data, context) => {
   const nummy = admin.firestore.FieldValue.serverTimestamp();
   const rawObjectToUpdate = data.objectToUpdate;
@@ -22,6 +96,7 @@ exports.updateRawData = functions.https.onCall((data, context) => {
   let infoArray = [];
 
   for (const [key, value] of Object.entries(rawObjectToUpdate)) {
+    // Encrypting values from object and putting it in a new encrypted object
     infoArray.push(`${key}: ${value}`);
     encryptedObjectToUpdate[key] = CryptoJS.AES.encrypt(
       value,
@@ -61,15 +136,6 @@ exports.updateRawData = functions.https.onCall((data, context) => {
         rawObjectToUpdate: rawObjectToUpdate,
       };
     });
-
-  return {
-    data: data,
-    encryptedObj: encryptedObjectToUpdate,
-    strEncryptedObj: stringifiedEncryptedObject,
-    updatePath: updatePath,
-    infoArray: infoArray,
-    rawObjectToUpdate: rawObjectToUpdate,
-  };
 });
 
 exports.givePRole = functions.https.onCall((data, context) => {
@@ -103,6 +169,7 @@ exports.givePRole = functions.https.onCall((data, context) => {
 });
 
 exports.giveSignUpSecret = functions.auth.user().onCreate((user) => {
+  const usersUID = user.uid;
   function makeid(length) {
     var result = "";
     var characters =
