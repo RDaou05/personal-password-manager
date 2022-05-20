@@ -254,7 +254,7 @@ async function mainInit() {
                       isLink: suppliedLinkIsThere,
                       website: suppliedEnteredNameOfQuery,
                       pass: suppliedEnteredPasswordOfQuery,
-                      user: suppliedEnteredUsernameOfQuery,
+                      email: suppliedEnteredUsernameOfQuery,
                     };
                     let rawRandomID;
                     function getDecryptedID() {
@@ -404,7 +404,7 @@ async function mainInit() {
                         ).style.cursor = "pointer";
                       }
                       let shownEmail = document.createElement("input");
-                      shownEmail.value = importedData.user;
+                      shownEmail.value = importedData.email;
                       shownEmail.setAttribute("id", `shownEmail${rawRandomID}`);
                       shownEmail.readOnly = true;
                       document
@@ -1131,7 +1131,7 @@ async function mainInit() {
                                                     `strongUpdateDisplayTextName${rawRandomID}`
                                                   ).value;
 
-                                                objectToUpdate.user =
+                                                objectToUpdate.email =
                                                   document.getElementById(
                                                     `strongUpdateDisplayTextEmail${rawRandomID}`
                                                   ).value;
@@ -1454,7 +1454,7 @@ async function mainInit() {
                                     let displayNameForUpdateIcon =
                                       importedData.website;
                                     let displayEmailForUpdateIcon =
-                                      importedData.user;
+                                      importedData.email;
                                     let displayPasswordForUpdateIcon =
                                       importedData.pass;
                                     let displayURLForUpdateIcon =
