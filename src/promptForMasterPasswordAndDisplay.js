@@ -101,7 +101,7 @@ try {
           because if the user decides to update the link, we can just update the object. The
           object will contain the randomID of the query as the key, and the url as the value*/
           let currentEncryptedString = "";
-          const randomStringToBeEncrypted = // See line 124 for details
+          const randomStringToBeEncrypted = // See line 133 for details
             "this is a random string to be decrypted asyr9476387569238789UYduhsicBFEF68";
           mainUser.getIdTokenResult().then((res) => {
             // Checking if user a free trial, premium, or admin
@@ -146,24 +146,10 @@ try {
               collection(db, "users", "filler", userUID, "mpaps", "ps"),
               orderBy("nummy", "desc") // "Nummy" is just the timestamp of creation
             );
-            async function encryptFunction(textToBeEncrypted, finalKey) {
-              let key = finalKey;
-              let data = CryptoJS.AES.encrypt(textToBeEncrypted, key);
-              data = data.toString();
-              return data;
-            }
-
-            async function decryptFunction(textToBeDecrypted, finalKey) {
-              let key = finalKey;
-              let decr = CryptoJS.AES.decrypt(textToBeDecrypted, key);
-              decr = decr.toString(CryptoJS.enc.Utf8);
-
-              return decr;
-            }
 
             async function checkIfEnteredMPIsCorrect(enteredMP) {
               let receivedMPH; // This is the random string that is encrypted with the master pass
-              // See line 124 for more details
+              // See line 133 for more details
               if (currentEncryptedString.trim() == "") {
                 const docSnapGetEncryptedString = await getDocs(refForMSCheck);
                 console.log("got it again on line 144 (getDocs)");
@@ -182,10 +168,10 @@ try {
                 .createHash("sha512")
                 .update(enteredMP)
                 .digest("hex");
-              const decryptedMPString = await decryptFunction(
+              const decryptedMPString = CryptoJS.AES.decrypt(
                 receivedMPH,
                 hashedEnteredMasterPassword
-              ); // Decrypted string (see line 124 for details)
+              ).toString(CryptoJS.enc.Utf8);
               console.log("LOG: ", decryptedMPString);
               if (decryptedMPString.trim().length == 0) {
                 return false;
@@ -213,7 +199,7 @@ try {
             const writeStringEncryptedWithMPToFS = async (
               stringEncryptedWithHash
             ) => {
-              // See line 124 for details
+              // See line 133 for details
               const docRefForUID = await addDoc(refForMSCheck, {
                 mph: stringEncryptedWithHash,
               })
@@ -486,7 +472,7 @@ try {
                           //   console.log("ID?: ", doc.id);
                           // });
                           // const updateMPBatch = writeBatch(db);
-                          // updateMPBatch.update(sourceDoc.ref, objectToUpdate);
+                          // updateMPBatch.update(sourceDocRef, objectToUpdate);
                           // updateMPBatch.commit();
                         });
 
@@ -522,31 +508,63 @@ try {
                         });
 
                         // Add settings option (end)
-                        await getDocs(refForPS).then((docSnapp) => {
-                          console.log("get Docs line 314");
-                          console.log("DADOC ", docSnapp);
-                          docSnapp.forEach((doc) => {
-                            async function runShow(docToRun) {
-                              await startUpShow(docToRun);
-                            }
-                            runShow(doc);
+                        // await getDocs(refForPS).then(async (docSnapp) => {
+                        console.log("get Docs line 314");
+                        // Getting each object of each user query and putting them in an array
+                        // The array gets sent to a cloud function to be decrypted
+                        // The cloud function will return all of the decrypted objects
+                        console.log(
+                          "THE HASSSSSSSSSHHHHHHHHHHH: ",
+                          hashedSetMasterPassValue
+                        );
+                        console.log("(AND UID): ", userUID);
+                        const decryptUserQueriesCF = httpsCallable(
+                          functions,
+                          "decryptUserQueries"
+                        );
+
+                        const finalDecryptedQueryReturn =
+                          await decryptUserQueriesCF({
+                            hashedSetMasterPassValue: hashedSetMasterPassValue,
+                            userUID: userUID,
                           });
+                        const listOfDecryptedObjectsAndIDs =
+                          finalDecryptedQueryReturn.data.finalList;
+                        /* The "listOfDecryptedObjectsAndIDs" is a list with lists containing an object of a doc and its doc id
+                        Ex. 
+                        [
+                          [{user: randomUser, pass: randomPass}, randomID],
+                          [{user: randomUser, pass: randomPass}, randomID],
+                          [{user: randomUser, pass: randomPass}, randomID]
+                        ]
+                        */
+                        listOfDecryptedObjectsAndIDs.forEach(async (e) => {
+                          let docToShow;
+                          let docToShowID;
+                          e.forEach((i) => {
+                            if (typeof i == "object") {
+                              docToShow = i;
+                            } else if (typeof i == "string") {
+                              docToShowID = i;
+                            }
+                          });
+                          const docToShowRef = doc(
+                            db,
+                            "users",
+                            "filler",
+                            userUID,
+                            "mpaps",
+                            "ps",
+                            docToShowID
+                          );
+                          await startUpShow(docToShow, docToShowRef);
                         });
 
-                        async function startUpShow(sourceDoc) {
-                          // console.log(sourceDoc.data());
-                          // console.log(JSON.stringify(sourceDoc.data()));
-                          // console.log(JSON.parse(sourceDoc.data()));
-                          const importedData = JSON.parse(
-                            sourceDoc.data().combinedQueryInfo
-                          );
-                          console.log("THE REFREF IS: ", sourceDoc.ref);
+                        async function startUpShow(sourceDoc, sourceDocRef) {
+                          const importedData = sourceDoc;
+                          console.log("THE REFREF IS: ", sourceDocRef);
                           console.log("IMPORTED DATA IS.... ", importedData);
-                          console.log("Secondary ", sourceDoc.data());
-                          console.log(
-                            "Secondary stringified",
-                            JSON.stringify(sourceDoc.data())
-                          );
+
                           let rawRandomID;
                           function getDecryptedID() {
                             rawRandomID = importedData.random;
@@ -596,10 +614,7 @@ try {
                             async function addLetterBox() {
                               console.log("Its been true");
                               let icon = document.createElement("img");
-                              let websiteLink = await decryptFunction(
-                                importedData.directLink,
-                                hashedSetMasterPassValue
-                              );
+                              let websiteLink = importedData.directLink;
                               if (
                                 websiteLink.substring(0, 5) == "http:" ||
                                 websiteLink.substring(0, 6) == "https:" ||
@@ -632,10 +647,7 @@ try {
                             ];
                             async function addLetterBox() {
                               // console.log("Its been false");
-                              let firstLetterOfAppName = await decryptFunction(
-                                importedData.website,
-                                hashedSetMasterPassValue
-                              );
+                              let firstLetterOfAppName = importedData.website;
                               firstLetterOfAppName =
                                 firstLetterOfAppName[0].toUpperCase();
                               console.log(
@@ -688,10 +700,7 @@ try {
                           }
                           async function showUserAndPass() {
                             let shownAppName = document.createElement("input");
-                            let decryptedShownAppName = await decryptFunction(
-                              importedData.website,
-                              hashedSetMasterPassValue
-                            );
+                            let decryptedShownAppName = importedData.website;
                             shownAppName.value =
                               decryptedShownAppName.charAt(0).toUpperCase() +
                               decryptedShownAppName.slice(1);
@@ -717,10 +726,7 @@ try {
                               ).style.cursor = "pointer";
                             }
                             let shownEmail = document.createElement("input");
-                            shownEmail.value = await decryptFunction(
-                              importedData.user,
-                              hashedSetMasterPassValue
-                            );
+                            shownEmail.value = importedData.email;
                             shownEmail.setAttribute(
                               "id",
                               `shownEmail${rawRandomID}`
@@ -942,10 +948,7 @@ try {
 
                                       document.getElementById(
                                         `delmessage${rawRandomID}`
-                                      ).textContent = `Are you sure you want to delete ${await decryptFunction(
-                                        importedData.website,
-                                        hashedSetMasterPassValue
-                                      )}?`;
+                                      ).textContent = `Are you sure you want to delete ${importedData.website}?`;
 
                                       // Listener to delete query that was added
                                       console.log("listener created");
@@ -955,7 +958,7 @@ try {
                                           console.log(
                                             "Delete button has been clicked"
                                           );
-                                          await deleteDoc(sourceDoc.ref); // Deleting query
+                                          await deleteDoc(sourceDocRef); // Deleting query
                                           console.log("A delete has been made");
 
                                           // Animation to delete query from main page
@@ -1628,7 +1631,7 @@ try {
 
                                                         console.log(
                                                           "ban: ",
-                                                          sourceDoc.ref
+                                                          sourceDocRef
                                                         );
                                                         const updateUserQuery =
                                                           httpsCallable(
@@ -1636,7 +1639,7 @@ try {
                                                             "updateRawData"
                                                           );
                                                         let sourceRef =
-                                                          sourceDoc.ref;
+                                                          sourceDocRef;
 
                                                         console.log(
                                                           "SENDING: ",
@@ -1893,10 +1896,7 @@ try {
                                       // // Done with adding listener to close update tab
                                       const showUpdateScreenIcon = async () => {
                                         let websiteLinkForUpdateIcon =
-                                          await decryptFunction(
-                                            importedData.directLink,
-                                            hashedSetMasterPassValue
-                                          );
+                                          importedData.directLink;
                                         let updateScreenIcon =
                                           document.getElementById(
                                             `updateScreenIcon${rawRandomID}`
@@ -1948,25 +1948,13 @@ try {
                                       const displayAllCurrentInfoUpdate =
                                         async () => {
                                           let displayNameForUpdateIcon =
-                                            await decryptFunction(
-                                              importedData.website,
-                                              hashedSetMasterPassValue
-                                            );
+                                            importedData.website;
                                           let displayEmailForUpdateIcon =
-                                            await decryptFunction(
-                                              importedData.user,
-                                              hashedSetMasterPassValue
-                                            );
+                                            importedData.email;
                                           let displayPasswordForUpdateIcon =
-                                            await decryptFunction(
-                                              importedData.pass,
-                                              hashedSetMasterPassValue
-                                            );
+                                            importedData.pass;
                                           let displayURLForUpdateIcon =
-                                            await decryptFunction(
-                                              importedData.directLink,
-                                              hashedSetMasterPassValue
-                                            );
+                                            importedData.directLink;
                                           document.getElementById(
                                             `updateScreenQueryNameHeader${rawRandomID}`
                                           ).textContent =
@@ -2129,9 +2117,8 @@ try {
                                   // console.log("snap is ", docSnapToDelete);
                                   // );
                                   docSnapToDelete.forEach((doc) => {
-                                    console.log(sourceDoc.data());
-                                    console.log("The ref ", sourceDoc.ref);
-                                    deleteDoc(sourceDoc.ref).then(() => {
+                                    console.log("The ref ", sourceDocRef);
+                                    deleteDoc(sourceDocRef).then(() => {
                                       console.log("Delete doc line 1693");
                                     });
                                   });
@@ -2206,10 +2193,7 @@ try {
 
                           async function websiteRedirectFunction() {
                             // Website Redirect //
-                            let decryptedLink = await decryptFunction(
-                              importedData.directLink,
-                              hashedSetMasterPassValue
-                            );
+                            let decryptedLink = importedData.directLink;
                             openUrlObject[rawRandomID] = decryptedLink;
                             let urlStringBool = importedData.isLink;
                             if (urlStringBool == "true") {
@@ -2343,7 +2327,7 @@ try {
 
                             await writeStringEncryptedWithMPToFS(
                               randomStringEncrypted
-                            ); // See line 124 for details
+                            ); // See line 133 for details
 
                             await writeBlankDataToFS(); // To check if the user has a master pass set up, we check for this data.
                             //

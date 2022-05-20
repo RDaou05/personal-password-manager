@@ -104,21 +104,6 @@ async function mainInit() {
             orderBy("nummy", "desc")
           );
 
-          async function encryptFunction(textToBeEncrypted, finalKey) {
-            let key = finalKey;
-            let data = CryptoJS.AES.encrypt(textToBeEncrypted, key);
-            data = data.toString();
-            return data;
-          }
-
-          async function decryptFunction(textToBeDecrypted, finalKey) {
-            let key = finalKey;
-            let decr = CryptoJS.AES.decrypt(textToBeDecrypted, key);
-            decr = decr.toString(CryptoJS.enc.Utf8);
-
-            return decr;
-          }
-
           async function makeid(length) {
             var result = "";
             var characters =
