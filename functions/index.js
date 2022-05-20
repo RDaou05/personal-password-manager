@@ -3,6 +3,60 @@ const admin = require("firebase-admin");
 const CryptoJS = require("crypto-js");
 admin.initializeApp();
 
+exports.decryptUserQueries = functions.https.onCall(async (data, context) => {
+  try {
+    let listOfDecryptedObjects = [];
+    const db = admin.firestore();
+    const refForUserQueries = db // Collection where encrypted user entries are stored
+      .collection("users")
+      .doc("filler")
+      .collection(data.userUID)
+      .doc("mpaps")
+      .collection("ps")
+      .orderBy("nummy", "desc");
+
+    // Getting secret key for user to add to the end of each encryption
+    let userSecret;
+    const userSecretPath = db // Document of user secret key
+      .collection("users")
+      .doc("filler")
+      .collection(data.userUID)
+      .doc("secKey");
+    let doc = await userSecretPath.get();
+    userSecret = doc.data().secKeyStr;
+    const decryptionKey = data.hashedSetMasterPassValue + userSecret;
+
+    const encryptedUserDocs = await refForUserQueries.get();
+    encryptedUserDocs.forEach((encUserDoc) => {
+      const encUserDocData = JSON.parse(encUserDoc.data().combinedQueryInfo);
+      let decryptedObjectToAppend = {};
+      for (const [key, value] of Object.entries(encUserDocData)) {
+        // Decrypting values from object and putting it in a new decrypted object
+        if (key != "random" && key != "isLink") {
+          // "Random" and "isLink" are in the object, but aren't encrypted
+          decryptedObjectToAppend[key] = CryptoJS.AES.decrypt(
+            value,
+            decryptionKey
+          ).toString(CryptoJS.enc.Utf8);
+        } else if (key == "random" || key == "isLink") {
+          decryptedObjectToAppend[key] = value;
+        }
+      }
+      // Adding the decrypted doc and the ID to the final array of decrypted objects
+      listOfDecryptedObjects.push([decryptedObjectToAppend, encUserDoc.id]);
+    });
+    return {
+      ERROR: "None",
+      finalList: listOfDecryptedObjects,
+    };
+  } catch (err) {
+    return {
+      ERROR: err,
+      finalList: listOfDecryptedObjects,
+    };
+  }
+});
+
 exports.addUserQuery = functions.https.onCall(async (data, context) => {
   try {
     const nummy = admin.firestore.FieldValue.serverTimestamp();
