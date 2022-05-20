@@ -1533,7 +1533,7 @@ try {
                                                           `strongUpdateDisplayTextEmail${rawRandomID}`
                                                         ).value;
 
-                                                      objectToUpdate.user =
+                                                      objectToUpdate.email =
                                                         newEmail;
                                                       console.log(
                                                         "update doc line 1276"
@@ -1597,7 +1597,7 @@ try {
                                                       //
                                                     }
                                                     loadingQueryUpdate().then(
-                                                      () => {
+                                                      async () => {
                                                         /* The "original values" are what we
                                                             are using to determine wether or not
                                                             we should send the update request
@@ -1646,7 +1646,7 @@ try {
                                                           userUID
                                                         );
 
-                                                        updateUserQuery({
+                                                        await updateUserQuery({
                                                           objectToUpdate:
                                                             objectToUpdate,
                                                           hashedSetMasterPassValue:
