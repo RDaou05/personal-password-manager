@@ -105,11 +105,11 @@ async function mainInit() {
           );
 
           async function makeid(length) {
-            var result = "";
-            var characters =
+            let result = "";
+            let characters =
               "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            var charactersLength = characters.length;
-            for (var i = 0; i < length; i++) {
+            let charactersLength = characters.length;
+            for (let i = 0; i < length; i++) {
               result += characters.charAt(
                 Math.floor(Math.random() * charactersLength)
               );
@@ -236,8 +236,8 @@ async function mainInit() {
                     });
                     console.log(finalEncryptedAddedQueryReturn);
 
-                    mostRecentID = // Setting the ID of the new doc that was created
-                      finalEncryptedAddedQueryReturn.data.IDOfNewDoc;
+                    newQueryID = finalEncryptedAddedQueryReturn.data.IDOfNewDoc; // Setting the ID of the new doc that was created
+                    mostRecentID = id; // The random ID
                   }
                   async function startUpShow(
                     suppliedEnteredUsernameOfQuery,
@@ -1230,19 +1230,7 @@ async function mainInit() {
                                                     functions,
                                                     "updateRawData"
                                                   );
-                                                const batch = writeBatch(db);
-                                                batch.update(
-                                                  doc(
-                                                    db,
-                                                    "users",
-                                                    "filler",
-                                                    userUID,
-                                                    "mpaps",
-                                                    "ps",
-                                                    newQueryID
-                                                  ),
-                                                  objectToUpdate
-                                                );
+
                                                 updateUserQuery({
                                                   objectToUpdate:
                                                     objectToUpdate,
