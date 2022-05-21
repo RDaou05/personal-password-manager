@@ -113,7 +113,6 @@ try {
           because if the user decides to update the link, we can just update the object. The
           object will contain the randomID of the query as the key, and the url as the value*/
           let currentEncryptedString = "";
-          const randomStringToBeEncrypted = await generateRandomString(250); // See line 145 for details
           mainUser.getIdTokenResult().then((res) => {
             // Checking if user a free trial, premium, or admin
             console.log("Res is: ", res);
@@ -168,7 +167,14 @@ try {
                 docSnapGetEncryptedString.forEach((doc) => {
                   receivedMPH = doc.data().mph;
                 });
+                /* "currentEncryptedString" is a string stored in the database
+                that has been encrypted with the hash of the master password.
+                If the hash of the master password that the user is trying to login with
+                is able to decrypt the string, that means the entered master password is correct*/
                 currentEncryptedString = receivedMPH;
+                /* We are storing the encrypted string (recievedMPH) as a variable (currentEncryptedString)
+                so we don't have to make a read everytime we want to validate the master password */
+
                 console.log("THE CES: ", currentEncryptedString);
                 console.log("THE MINI RMPH: ", receivedMPH);
               } else {
@@ -185,6 +191,7 @@ try {
                 hashedEnteredMasterPassword
               ).toString(CryptoJS.enc.Utf8);
               console.log("LOG: ", decryptedMPString);
+              // If the string fails to decrypt, it will return a blank string
               if (decryptedMPString.trim().length == 0) {
                 return false;
               } else {
@@ -476,15 +483,68 @@ try {
                             arrayOfChangeMPInputBoxes[1];
                           const reEnterNewMPInputBox =
                             arrayOfChangeMPInputBoxes[2];
+                          /////////////////////////////////
+                          const currentMPInputBoxValue =
+                            enterCurrentMPInputBox.value;
+                          const newMPInputBoxValue = enterNewMPInputBox.value;
+                          //
+                          const reEnterNewMPInputBoxValue =
+                            reEnterNewMPInputBox.value;
 
-                          // Use CF for this
-                          const updateMasterPassword = httpsCallable(
-                            functions,
-                            "updateMasterPassword"
-                          );
-                          await updateMasterPassword({
-                            userUID: userUID,
-                          });
+                          if (
+                            // Checking if user entered the correct current master pass before updating
+                            await checkIfEnteredMPIsCorrect(
+                              currentMPInputBoxValue
+                            )
+                          ) {
+                            if (
+                              newMPInputBoxValue == reEnterNewMPInputBoxValue
+                            ) {
+                              // Checking if the user re-entered the new master password correctly
+                              const hashedCurrentMasterPassword = crypto
+                                .createHash("sha512")
+                                .update(currentMPInputBoxValue)
+                                .digest("hex");
+                              const hashedNewMasterPassword = crypto
+                                .createHash("sha512")
+                                .update(newMPInputBoxValue)
+                                .digest("hex");
+                              const updateMasterPassword = httpsCallable(
+                                functions,
+                                "updateMasterPassword"
+                              );
+                              document.body.style.pointerEvents = "none";
+                              document.body.style.opacity = "0.5";
+                              const updateResult = await updateMasterPassword({
+                                userUID: userUID,
+                                currentMPH: hashedCurrentMasterPassword,
+                                newMPH: hashedNewMasterPassword,
+                              }).then(async () => {
+                                // Making a new random string to test if master pass is correct at login
+                                const newRandomStringToBeEncrypted =
+                                  await generateRandomString(250); // See line 145 for details
+                                currentEncryptedString = CryptoJS.AES.encrypt(
+                                  // Encrypting the random string with the master pass hash as the key
+                                  newRandomStringToBeEncrypted,
+                                  hashedNewMasterPassword
+                                ).toString();
+                                newRandomStringToBeEncrypted = undefined;
+
+                                // Updating that set hashed master password
+                                // Its used to do encrypt and decrypt things
+                                hashedSetMasterPassValue =
+                                  hashedNewMasterPassword;
+
+                                await writeStringEncryptedWithMPToFS(
+                                  currentEncryptedString
+                                );
+
+                                console.log(updateResult);
+                                document.body.style.pointerEvents = "auto";
+                                document.body.style.opacity = "1";
+                              });
+                            }
+                          }
                         });
 
                         // Listener to show and hide password text
@@ -2327,19 +2387,24 @@ try {
                             document.getElementById("passwordStrengthBar")
                               .value == 3
                           ) {
+                            // The strength of the password is determined by the "zxcvbn" library that I imported in the "mainPage.html" file
                             hashedSetMasterPassValue = correctPasswordHash; /* 
                             Just making a variable that has the correct hash of the
-                            master password */
+                            master password so we can reference it when we need to do things
+                            like encrypt or decrypt passwords*/
 
-                            const randomStringEncrypted = CryptoJS.AES.encrypt(
+                            const randomStringToBeEncrypted =
+                              await generateRandomString(250); // See line 145 for details
+                            currentEncryptedString = CryptoJS.AES.encrypt(
                               // Encrypting the random string with the master pass hash as the key
                               randomStringToBeEncrypted,
                               correctPasswordHash
                             ).toString();
+                            randomStringToBeEncrypted = undefined;
 
                             await writeStringEncryptedWithMPToFS(
                               // See line 145 for details
-                              randomStringEncrypted
+                              currentEncryptedString
                             )
                               .then(async () => {
                                 await writeBlankDataToFS(); // To check if the user has a master pass set up, we check for this data
