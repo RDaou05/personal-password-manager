@@ -89,9 +89,21 @@ try {
     const auth = await getAuth();
     const functions = await getFunctions();
     let initiated = false; // Using this to check if the auth token has been refreshed or not
-    onAuthStateChanged(auth, (mainUser) => {
+    onAuthStateChanged(auth, async (mainUser) => {
       if (!initiated) {
         if (mainUser) {
+          async function generateRandomString(length) {
+            let result = "";
+            let characters =
+              "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            let charactersLength = characters.length;
+            for (let i = 0; i < length; i++) {
+              result += characters.charAt(
+                Math.floor(Math.random() * charactersLength)
+              );
+            }
+            return result; // Returns a VERY long random id
+          }
           // Checks if user is signed in
           initiated = true; // Setting this to true makes it so this wont run again when the reauth happens
           const mainUser = auth.currentUser;
@@ -101,8 +113,7 @@ try {
           because if the user decides to update the link, we can just update the object. The
           object will contain the randomID of the query as the key, and the url as the value*/
           let currentEncryptedString = "";
-          const randomStringToBeEncrypted = // See line 133 for details
-            "this is a random string to be decrypted asyr9476387569238789UYduhsicBFEF68";
+          const randomStringToBeEncrypted = await generateRandomString(250); // See line 145 for details
           mainUser.getIdTokenResult().then((res) => {
             // Checking if user a free trial, premium, or admin
             console.log("Res is: ", res);
@@ -129,6 +140,7 @@ try {
             console.log(userUID);
             let originalMarginTop = 0.0;
             let refForMainUID = doc(db, "users", "filler", userUID, "mpaps");
+
             let refForMSCheck = collection(
               /* This collection stores a string that is encrypted with the
             master pass. When the user logs in, I check to see if the master password
@@ -149,7 +161,7 @@ try {
 
             async function checkIfEnteredMPIsCorrect(enteredMP) {
               let receivedMPH; // This is the random string that is encrypted with the master pass
-              // See line 133 for more details
+              // See line 145 for more details
               if (currentEncryptedString.trim() == "") {
                 const docSnapGetEncryptedString = await getDocs(refForMSCheck);
                 console.log("got it again on line 144 (getDocs)");
@@ -199,7 +211,7 @@ try {
             const writeStringEncryptedWithMPToFS = async (
               stringEncryptedWithHash
             ) => {
-              // See line 133 for details
+              // See line 145 for details
               const docRefForUID = await addDoc(refForMSCheck, {
                 mph: stringEncryptedWithHash,
               })
@@ -454,6 +466,7 @@ try {
                             "confirmMasterPasswordChange"
                           )
                         )[0].addEventListener("click", async () => {
+                          // Listener to change master password
                           const arrayOfChangeMPInputBoxes = Array.from(
                             document.getElementsByClassName("changeMPInput")
                           );
@@ -464,16 +477,14 @@ try {
                           const reEnterNewMPInputBox =
                             arrayOfChangeMPInputBoxes[2];
 
-                          // const ds = await getDocs(refForMS);
-                          // console.log("get Docs line 115 ", hashedSetMasterPassValue);
-                          // ds.forEach((doc) => {
-                          //   let receivedMPH = doc.data().mph;
-                          //   console.log(receivedMPH);
-                          //   console.log("ID?: ", doc.id);
-                          // });
-                          // const updateMPBatch = writeBatch(db);
-                          // updateMPBatch.update(sourceDocRef, objectToUpdate);
-                          // updateMPBatch.commit();
+                          // Use CF for this
+                          const updateMasterPassword = httpsCallable(
+                            functions,
+                            "updateMasterPassword"
+                          );
+                          await updateMasterPassword({
+                            userUID: userUID,
+                          });
                         });
 
                         // Listener to show and hide password text
@@ -743,12 +754,9 @@ try {
                             document
                               .getElementById(`mainDiv${rawRandomID}`)
                               .addEventListener("click", async (clickedEvt) => {
-                                // document.getElementById(
-                                //   "editButtonUpdate"
-                                // ).id = `editButtonUpdate${rawRandomID}`;
-
-                                //
                                 if (
+                                  // This if statement checks if a query is clicked
+                                  // If a query is clicked, it will launch an update screen for it
                                   clickedEvt.target.className.includes(
                                     "infoDiv"
                                   ) ||
@@ -767,12 +775,17 @@ try {
                                     let arrayOfExistingUpdateScreens = [];
                                     async function createAndAddUpdatesCheckList() {
                                       Array.from(
+                                        // mc is the main container for the dashboard
                                         Array.from(
                                           document.getElementsByClassName("mc")
                                         )[0].children
                                       ).forEach((eleS) => {
                                         if (eleS.tagName == "SPAN") {
                                           if (eleS.id != "ableToDarken") {
+                                            // If the element is a span, and the ID of it is not "ableToDarken", then the element is an update tab
+                                            // "eleS" will have 2 child elements
+                                            // The first one is the update tab, and the second is the confirm delete popup
+
                                             arrayOfExistingUpdateScreens.push(
                                               Array.from(eleS.children)[0].id
                                             );
@@ -926,6 +939,8 @@ try {
 
                                       /* We are putting in the class "uce" so 
                                 the update tab wil not disapper when the popup gets clicked*/
+
+                                      // This is a "confirm delete" popup when a user deletes a query
                                       let htmlOfConfirmDeletePopup = `
                                 <div id="cdel${rawRandomID}" class="cdel uce">
                                   <h2 id="askConfirmDelete${rawRandomID}" class="askConfirmDelete uce">Delete this item?</h2>
@@ -1049,10 +1064,6 @@ try {
                                           eleani.addEventListener(
                                             "animationend",
                                             (aniEvt) => {
-                                              // console.log(
-                                              //   "ANIIIEND BOXSHADOW: ",
-                                              //   eleani
-                                              // );
                                               if (
                                                 aniEvt.animationName ==
                                                 "updateInputBoxesGlow"
@@ -2272,6 +2283,7 @@ try {
                         }
                       });
                   } else {
+                    // User does NOT have a master password set up
                     document.getElementById("renterMP").style.display =
                       "initial";
 
@@ -2326,11 +2338,15 @@ try {
                             ).toString();
 
                             await writeStringEncryptedWithMPToFS(
+                              // See line 145 for details
                               randomStringEncrypted
-                            ); // See line 133 for details
-
-                            await writeBlankDataToFS(); // To check if the user has a master pass set up, we check for this data.
-                            //
+                            )
+                              .then(async () => {
+                                await writeBlankDataToFS(); // To check if the user has a master pass set up, we check for this data
+                              })
+                              .catch((err) => {
+                                console.log(err);
+                              });
 
                             document.getElementById(
                               "setupMasterPasswordScreen"
