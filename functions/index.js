@@ -121,6 +121,7 @@ exports.addUserQuery = functions.https.onCall(async (data, context) => {
     } catch (err) {
       return {
         ERROR: err,
+        IDOfNewDoc: newQueryPath.id,
         data: data,
         encryptedObj: encryptedObjectToAdd,
         stringifiedEncryptedObject: stringifiedEncryptedObject,
@@ -136,6 +137,7 @@ exports.addUserQuery = functions.https.onCall(async (data, context) => {
 
 exports.updateRawData = functions.https.onCall(async (data, context) => {
   const nummy = admin.firestore.FieldValue.serverTimestamp();
+  const db = admin.firestore();
   const rawObjectToUpdate = data.objectToUpdate;
   const randomID = data.randomID;
   const isLink = data.isLink;
@@ -152,7 +154,7 @@ exports.updateRawData = functions.https.onCall(async (data, context) => {
   userSecret = doc.data().secKeyStr;
 
   const encryptionKey = data.hashedSetMasterPassValue + userSecret;
-  const db = admin.firestore();
+
   const updatePath = db
     .collection("users")
     .doc("filler")
