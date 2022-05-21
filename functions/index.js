@@ -3,6 +3,75 @@ const admin = require("firebase-admin");
 const CryptoJS = require("crypto-js");
 admin.initializeApp();
 
+exports.updateMasterPassword = functions.https.onCall(async (data, context) => {
+  const db = admin.firestore();
+  // Getting secret key for user to add to the end of each encryption
+  let userSecret;
+  const userSecretPath = db
+    .collection("users")
+    .doc("filler")
+    .collection(data.userUID)
+    .doc("secKey");
+  let docOfSecret = await userSecretPath.get();
+  userSecret = docOfSecret.data().secKeyStr;
+
+  // Defining encryption/decryption keys
+
+  const currentKey = data.currentMPH + userSecret;
+  const newKey = data.newMPH + userSecret;
+
+  const refForUserQueries = db // Collection where encrypted user entries are stored
+    .collection("users")
+    .doc("filler")
+    .collection(data.userUID)
+    .doc("mpaps")
+    .collection("ps")
+    .orderBy("nummy", "desc");
+  const allUserQueriesWithOldEncryption = await refForUserQueries.get();
+  let listOfOldDe = [];
+  let listOfNewEn = [];
+  allUserQueriesWithOldEncryption.forEach((oldEncryptedUserDoc) => {
+    let decryptedObjectToAppend = {};
+    let newEncryptedObjectToAppend = {};
+    // Remeber that in all of the user objects the keys "isLink" and "random" are never encrypted
+    const oldEncryptedObject = JSON.parse(
+      oldEncryptedUserDoc.data().combinedQueryInfo
+    );
+    for (const [key, value] of Object.entries(oldEncryptedObject)) {
+      // Decrypting values from object and putting it in a new decrypted object
+      if (key != "random" && key != "isLink") {
+        // "Random" and "isLink" are in the object, but aren't supposed to be encrypted
+        decryptedObjectToAppend[key] = CryptoJS.AES.decrypt(
+          value,
+          currentKey
+        ).toString(CryptoJS.enc.Utf8);
+      } else if (key == "random" || key == "isLink") {
+        // Add to object without decrypting
+        decryptedObjectToAppend[key] = value;
+      }
+    }
+    for (const [key, value] of Object.entries(decryptedObjectToAppend)) {
+      // Decrypting values from object and putting it in a new decrypted object
+      if (key != "random" && key != "isLink") {
+        // "Random" and "isLink" are in the object, but aren't supposed to be encrypted
+        newEncryptedObjectToAppend[key] = CryptoJS.AES.encrypt(
+          value,
+          newKey
+        ).toString();
+      } else if (key == "random" || key == "isLink") {
+        // Add to object without encrypting
+        newEncryptedObjectToAppend[key] = value;
+      }
+    }
+    listOfOldDe.push(decryptedObjectToAppend);
+    listOfNewEn.push(newEncryptedObjectToAppend);
+  });
+  return {
+    listOfOldDe: listOfOldDe,
+    listOfNewEn: listOfNewEn,
+  };
+});
+
 exports.decryptUserQueries = functions.https.onCall(async (data, context) => {
   try {
     let listOfDecryptedObjects = [];
