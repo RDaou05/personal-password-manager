@@ -142,8 +142,8 @@ try {
 
             let refForMSCheck = collection(
               /* This collection stores a string that is encrypted with the
-            master pass. When the user logs in, I check to see if the master password
-            the enter can be used to decrypt the string that is stored here. If it can,
+            master pass. When the user logs in, it checks to see if the master password
+            the user entered can be used to decrypt the string that is stored here. If it can,
             that means the master pass they entered is correct. If the decryption returns
             a blank string, that means it is the wrong master password*/
               db,
@@ -505,6 +505,10 @@ try {
                                 .createHash("sha512")
                                 .update(currentMPInputBoxValue)
                                 .digest("hex");
+                              console.log(
+                                "HASH of the 'correct' entered one: ",
+                                hashedCurrentMasterPassword
+                              );
                               const hashedNewMasterPassword = crypto
                                 .createHash("sha512")
                                 .update(newMPInputBoxValue)
@@ -515,19 +519,27 @@ try {
                               );
                               document.body.style.pointerEvents = "none";
                               document.body.style.opacity = "0.5";
-                              const updateResult = await updateMasterPassword({
-                                userUID: userUID,
-                                currentMPH: hashedCurrentMasterPassword,
-                                newMPH: hashedNewMasterPassword,
-                              }).then(async () => {
-                                // Making a new random string to test if master pass is correct at login
-                                const newRandomStringToBeEncrypted =
-                                  await generateRandomString(250); // See line 145 for details
-                                currentEncryptedString = CryptoJS.AES.encrypt(
+
+                              // Making a new random string to test if master pass is correct at login
+                              let newRandomStringToBeEncrypted =
+                                await generateRandomString(250); // See line 145 for details
+                              const newRandomStringEncrypted =
+                                CryptoJS.AES.encrypt(
                                   // Encrypting the random string with the master pass hash as the key
                                   newRandomStringToBeEncrypted,
                                   hashedNewMasterPassword
                                 ).toString();
+                              const updateResult = await updateMasterPassword({
+                                userUID: userUID,
+                                currentMPH: hashedCurrentMasterPassword,
+                                newMPH: hashedNewMasterPassword,
+                                newRandomStringEncrypted:
+                                  newRandomStringEncrypted,
+                              }).then(async () => {
+                                currentEncryptedString =
+                                  newRandomStringEncrypted;
+                                // Encrypting the random string with the master pass hash as the key
+
                                 newRandomStringToBeEncrypted = undefined;
 
                                 // Updating that set hashed master password
@@ -535,13 +547,10 @@ try {
                                 hashedSetMasterPassValue =
                                   hashedNewMasterPassword;
 
-                                await writeStringEncryptedWithMPToFS(
-                                  currentEncryptedString
-                                );
-
-                                console.log(updateResult);
+                                // console.log(updateResult);
                                 document.body.style.pointerEvents = "auto";
                                 document.body.style.opacity = "1";
+                                console.log("DONEDITITITI DONE DONE DONE 👍");
                               });
                             }
                           }
@@ -593,12 +602,12 @@ try {
                           functions,
                           "decryptUserQueries"
                         );
-
                         const finalDecryptedQueryReturn =
                           await decryptUserQueriesCF({
                             hashedSetMasterPassValue: hashedSetMasterPassValue,
                             userUID: userUID,
                           });
+                        console.log(finalDecryptedQueryReturn);
                         const listOfDecryptedObjectsAndIDs =
                           finalDecryptedQueryReturn.data.finalList;
                         /* The "listOfDecryptedObjectsAndIDs" is a list with lists containing an object of a doc and its doc id
@@ -2393,7 +2402,7 @@ try {
                             master password so we can reference it when we need to do things
                             like encrypt or decrypt passwords*/
 
-                            const randomStringToBeEncrypted =
+                            let randomStringToBeEncrypted =
                               await generateRandomString(250); // See line 145 for details
                             currentEncryptedString = CryptoJS.AES.encrypt(
                               // Encrypting the random string with the master pass hash as the key
