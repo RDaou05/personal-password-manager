@@ -30,9 +30,19 @@ exports.updateMasterPassword = functions.https.onCall(async (data, context) => {
   const allUserQueriesWithOldEncryption = await refForUserQueries.get();
   let listOfOldDe = [];
   let listOfNewEn = [];
+  //
+  const batch = db.batch();
+  const passCollection = db
+    .collection("users")
+    .doc("filler")
+    .collection(data.userUID)
+    .doc("mpaps")
+    .collection("ps");
+  //
   allUserQueriesWithOldEncryption.forEach((oldEncryptedUserDoc) => {
     let decryptedObjectToAppend = {};
     let newEncryptedObjectToAppend = {};
+    let completeObjectToWrite = {};
     // Remeber that in all of the user objects the keys "isLink" and "random" are never encrypted
     const oldEncryptedObject = JSON.parse(
       oldEncryptedUserDoc.data().combinedQueryInfo
@@ -65,10 +75,33 @@ exports.updateMasterPassword = functions.https.onCall(async (data, context) => {
     }
     listOfOldDe.push(decryptedObjectToAppend);
     listOfNewEn.push(newEncryptedObjectToAppend);
+    completeObjectToWrite = {
+      combinedQueryInfo: JSON.stringify(newEncryptedObjectToAppend),
+      nummy: oldEncryptedUserDoc.data().nummy, // The timestamp does not change
+    };
+    let newDocRef = passCollection.doc();
+    batch.set(newDocRef, completeObjectToWrite);
+    batch.delete(
+      oldEncryptedUserDoc.ref
+    ); /* We have to delete the doc that was encrypted with the 
+    old master password since we are replacing it */
   });
+  const msCollection = db
+    .collection("users")
+    .doc("filler")
+    .collection(data.userUID)
+    .doc("mpaps")
+    .collection("ms");
+
+  const msDocs = msCollection.get(); // Should only be one
+  // Updating the encrypted string that is used to test if the user is logging in with the correct master pass
+  batch.set(msDocs[0].ref, { mph: data.newRandomStringEncrypted });
+  await batch.commit();
+
   return {
     listOfOldDe: listOfOldDe,
     listOfNewEn: listOfNewEn,
+    USERSEC: userSecret,
   };
 });
 
@@ -121,7 +154,6 @@ exports.decryptUserQueries = functions.https.onCall(async (data, context) => {
   } catch (err) {
     return {
       ERROR: err,
-      finalList: listOfDecryptedObjects,
     };
   }
 });
