@@ -93,15 +93,18 @@ exports.updateMasterPassword = functions.https.onCall(async (data, context) => {
     .doc("mpaps")
     .collection("ms");
 
-  const msDocs = msCollection.get(); // Should only be one
+  const msDocs = await msCollection.get(); // Should only be one
   // Updating the encrypted string that is used to test if the user is logging in with the correct master pass
-  batch.set(msDocs[0].ref, { mph: data.newRandomStringEncrypted });
-  await batch.commit();
+  msDocs.forEach((e) => {
+    batch.update(e.ref, { mph: data.newRandomStringEncrypted });
+  });
 
+  await batch.commit();
   return {
     listOfOldDe: listOfOldDe,
     listOfNewEn: listOfNewEn,
     USERSEC: userSecret,
+    msRef: msDocs[0],
   };
 });
 
