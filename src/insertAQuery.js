@@ -1236,7 +1236,7 @@ async function mainInit() {
                                                     objectToUpdate,
                                                   hashedSetMasterPassValue:
                                                     hashedSetMasterPassValue,
-                                                  sourceRefID: sourceRef.id,
+                                                  sourceRefID: newQueryID,
                                                   userUID: userUID,
                                                   isLink: objectToUpdate.isLink,
                                                   randomID: importedData.random,
