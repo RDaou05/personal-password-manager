@@ -153,10 +153,10 @@ try {
               "mpaps",
               "ms"
             );
-            let refForPS = query(
-              collection(db, "users", "filler", userUID, "mpaps", "ps"),
-              orderBy("nummy", "desc") // "Nummy" is just the timestamp of creation
-            );
+            // let refForPS = query(
+            //   collection(db, "users", "filler", userUID, "mpaps", "ps"),
+            //   orderBy("nummy", "desc") // "Nummy" is just the timestamp of creation
+            // );
 
             async function checkIfEnteredMPIsCorrect(enteredMP) {
               let receivedMPH; // This is the random string that is encrypted with the master pass
@@ -199,38 +199,6 @@ try {
               }
             }
 
-            const writeBlankDataToFS = async () => {
-              // This is for the exists method to work
-              // It wont't regognize the doc if it doesn't have any set data
-              const docRefForUID = await setDoc(refForMainUID, {
-                fillData: "--",
-              })
-                .then(() => {
-                  console.log("set Doc line 160");
-                  alert("Data added successfully");
-                })
-                .catch((err) => {
-                  alert("Error has been logged");
-                  console.log(err);
-                });
-              // WRITE
-            };
-            const writeStringEncryptedWithMPToFS = async (
-              stringEncryptedWithHash
-            ) => {
-              // See line 145 for details
-              const docRefForUID = await addDoc(refForMSCheck, {
-                mph: stringEncryptedWithHash,
-              })
-                .then(() => {
-                  console.log("add Doc line 176");
-                  alert("Data added successfully");
-                })
-                .catch((err) => {
-                  alert("Error has been logged");
-                  console.log(err);
-                });
-            };
             const dimAbleToDarken = () => {
               Array.from(
                 document
@@ -312,6 +280,200 @@ try {
                   console.log("get Doc line 214");
                   console.log("temp is ", tempSnap);
                   console.log("If snap exists or not is ", tempSnap.exists());
+                  async function startUpSettingsListeners() {
+                    console.log("Settings have been started up");
+                    function ieSettingsFunction() {
+                      document
+                        .getElementById("settingsButton")
+                        .addEventListener("click", () => {
+                          document.body.style.userSelect = "none";
+                          document.getElementById(
+                            "settingsScreen"
+                          ).style.userSelect = "auto";
+                          document.body.style.pointerEvents = "none";
+                          document.getElementById(
+                            "headerFlexbox"
+                          ).style.opacity = ".5";
+                          document.getElementById("queryScreen").style.opacity =
+                            ".5";
+                          document.getElementById(
+                            "settingsScreen"
+                          ).style.display = "flex";
+                          document.getElementById(
+                            "settingsScreen"
+                          ).style.pointerEvents = "auto";
+                          document.getElementById(
+                            "settingsScreen"
+                          ).style.opacity = "1";
+                        });
+                      document
+                        .getElementById("closeSettings")
+                        .addEventListener("click", () => {
+                          document.body.style.userSelect = "auto";
+                          document.getElementById(
+                            "settingsScreen"
+                          ).style.userSelect = "none";
+                          document.body.style.pointerEvents = "auto";
+                          document.body.style.opacity = "1";
+                          document.getElementById(
+                            "headerFlexbox"
+                          ).style.opacity = "1";
+                          document.getElementById("queryScreen").style.opacity =
+                            "1";
+                          document.getElementById(
+                            "settingsScreen"
+                          ).style.display = "none";
+                          document.getElementById(
+                            "settingsScreen"
+                          ).style.pointerEvents = "none";
+                          document.getElementById(
+                            "settingsScreen"
+                          ).style.opacity = "1";
+                        });
+                    }
+                    ieSettingsFunction();
+
+                    // CODE UNDERNEATH IS FOR INSIDE THE SETTINGS PAGE
+                    const changeMasterPasswordSettingsButton = Array.from(
+                      document.getElementsByClassName("changeMasterPassword")
+                    )[0];
+                    const closeChangeMasterPasswordTabButton = Array.from(
+                      document.getElementsByClassName(
+                        "closeChangeMasterPasswordWindow"
+                      )
+                    )[0];
+                    const logOutSettingsButton = Array.from(
+                      document.getElementsByClassName("logOutOfPMAccount")
+                    )[0];
+
+                    logOutSettingsButton.addEventListener("click", () => {
+                      document.getElementById("fromPMToMain").click();
+                    });
+
+                    changeMasterPasswordSettingsButton.addEventListener(
+                      "click",
+                      () => {
+                        showChangeMPWindow();
+                      }
+                    );
+
+                    closeChangeMasterPasswordTabButton.addEventListener(
+                      "click",
+                      () => {
+                        hideChangeMPWindow();
+                      }
+                    );
+
+                    Array.from(
+                      document.getElementsByClassName(
+                        "confirmMasterPasswordChange"
+                      )
+                    )[0].addEventListener("click", async () => {
+                      // Listener to change master password
+                      const arrayOfChangeMPInputBoxes = Array.from(
+                        document.getElementsByClassName("changeMPInput")
+                      );
+                      const enterCurrentMPInputBox =
+                        arrayOfChangeMPInputBoxes[0];
+                      const enterNewMPInputBox = arrayOfChangeMPInputBoxes[1];
+                      const reEnterNewMPInputBox = arrayOfChangeMPInputBoxes[2];
+                      /////////////////////////////////
+                      const currentMPInputBoxValue =
+                        enterCurrentMPInputBox.value;
+                      const newMPInputBoxValue = enterNewMPInputBox.value;
+                      //
+                      const reEnterNewMPInputBoxValue =
+                        reEnterNewMPInputBox.value;
+
+                      if (
+                        // Checking if user entered the correct current master pass before updating
+                        await checkIfEnteredMPIsCorrect(currentMPInputBoxValue)
+                      ) {
+                        if (newMPInputBoxValue == reEnterNewMPInputBoxValue) {
+                          // Checking if the user re-entered the new master password correctly
+                          const hashedCurrentMasterPassword = crypto
+                            .createHash("sha512")
+                            .update(currentMPInputBoxValue)
+                            .digest("hex");
+                          console.log(
+                            "HASH of the 'correct' entered one: ",
+                            hashedCurrentMasterPassword
+                          );
+                          const hashedNewMasterPassword = crypto
+                            .createHash("sha512")
+                            .update(newMPInputBoxValue)
+                            .digest("hex");
+                          const updateMasterPassword = httpsCallable(
+                            functions,
+                            "updateMasterPassword"
+                          );
+                          document.body.style.pointerEvents = "none";
+                          document.body.style.opacity = "0.5";
+
+                          // Making a new random string to test if master pass is correct at login
+                          let newRandomStringToBeEncrypted =
+                            await generateRandomString(250); // See line 145 for details
+                          const newRandomStringEncrypted = CryptoJS.AES.encrypt(
+                            // Encrypting the random string with the master pass hash as the key
+                            newRandomStringToBeEncrypted,
+                            hashedNewMasterPassword
+                          ).toString();
+                          const updateResult = await updateMasterPassword({
+                            userUID: userUID,
+                            currentMPH: hashedCurrentMasterPassword,
+                            newMPH: hashedNewMasterPassword,
+                            newRandomStringEncrypted: newRandomStringEncrypted,
+                          });
+                          currentEncryptedString = newRandomStringEncrypted;
+                          // Encrypting the random string with the master pass hash as the key
+
+                          newRandomStringToBeEncrypted = undefined;
+
+                          // Updating that set hashed master password
+                          // Its used to do encrypt and decrypt things
+                          hashedSetMasterPassValue = hashedNewMasterPassword;
+
+                          // console.log(updateResult);
+                          document.body.style.pointerEvents = "auto";
+                          document.body.style.opacity = "1";
+                          console.log("DONEDITITITI DONE DONE DONE 👍");
+
+                          console.log("WG: ", updateResult);
+                        }
+                      }
+                    });
+
+                    // Listener to show and hide password text
+                    Array.from(
+                      document.getElementsByClassName(
+                        "showNewMPPasswordsButton"
+                      )
+                    )[0].addEventListener("click", () => {
+                      /* Here im checking the type of the first input box (out of the three that show up in the change master pass window) 
+                      If it is text I change it to password (and the other way around) I could of checked for any of 
+                      the input boxes, but they would all be the same since im changing the type for them all at once */
+
+                      const currentInputType = Array.from(
+                        document.getElementsByClassName("changeMPInput")
+                      )[0].type;
+                      const arrayOfInputBoxesToCheck = Array.from(
+                        document.getElementsByClassName("changeMPInput")
+                      );
+                      if (currentInputType == "password") {
+                        arrayOfInputBoxesToCheck[0].type = "text";
+                        arrayOfInputBoxesToCheck[1].type = "text";
+                        arrayOfInputBoxesToCheck[2].type = "text";
+                      } else if (currentInputType == "text") {
+                        arrayOfInputBoxesToCheck[0].type = "password";
+                        arrayOfInputBoxesToCheck[1].type = "password";
+                        arrayOfInputBoxesToCheck[2].type = "password";
+                      }
+
+                      document
+                        .getElementById("showPasswordsIcon")
+                        .classList.toggle("fa-eye-slash");
+                    });
+                  }
                   if (tempSnap.exists()) {
                     // If statement checking if user already has a Master Password
                     console.log(tempSnap.data(), " exists!");
@@ -362,6 +524,9 @@ try {
                       if (masterPasswordIsCorrect) {
                         // Master password is correct and user is logged in
 
+                        await startUpSettingsListeners(); /* After user logs in, we start up the
+                        listeners for settings so the user can navigate the settings page */
+
                         const hashedValueOfCorrectMP = crypto
                           .createHash("sha512")
                           .update(rawRequest)
@@ -381,215 +546,7 @@ try {
                         ).style.display = "none";
                         document.body.style.pointerEvents = "auto";
                         document.body.style.opacity = "1";
-                        // Add settings option
-                        function ieSettingsFunction() {
-                          document
-                            .getElementById("settingsButton")
-                            .addEventListener("click", () => {
-                              document.body.style.userSelect = "none";
-                              document.getElementById(
-                                "settingsScreen"
-                              ).style.userSelect = "auto";
-                              document.body.style.pointerEvents = "none";
-                              document.getElementById(
-                                "headerFlexbox"
-                              ).style.opacity = ".5";
-                              document.getElementById(
-                                "queryScreen"
-                              ).style.opacity = ".5";
-                              document.getElementById(
-                                "settingsScreen"
-                              ).style.display = "flex";
-                              document.getElementById(
-                                "settingsScreen"
-                              ).style.pointerEvents = "auto";
-                              document.getElementById(
-                                "settingsScreen"
-                              ).style.opacity = "1";
-                            });
-                          document
-                            .getElementById("closeSettings")
-                            .addEventListener("click", () => {
-                              document.body.style.userSelect = "auto";
-                              document.getElementById(
-                                "settingsScreen"
-                              ).style.userSelect = "none";
-                              document.body.style.pointerEvents = "auto";
-                              document.body.style.opacity = "1";
-                              document.getElementById(
-                                "headerFlexbox"
-                              ).style.opacity = "1";
-                              document.getElementById(
-                                "queryScreen"
-                              ).style.opacity = "1";
-                              document.getElementById(
-                                "settingsScreen"
-                              ).style.display = "none";
-                              document.getElementById(
-                                "settingsScreen"
-                              ).style.pointerEvents = "none";
-                              document.getElementById(
-                                "settingsScreen"
-                              ).style.opacity = "1";
-                            });
-                        }
-                        ieSettingsFunction();
 
-                        // CODE UNDERNEATH IS FOR INSIDE THE SETTINGS PAGE
-                        const changeMasterPasswordSettingsButton = Array.from(
-                          document.getElementsByClassName(
-                            "changeMasterPassword"
-                          )
-                        )[0];
-                        const closeChangeMasterPasswordTabButton = Array.from(
-                          document.getElementsByClassName(
-                            "closeChangeMasterPasswordWindow"
-                          )
-                        )[0];
-                        const logOutSettingsButton = Array.from(
-                          document.getElementsByClassName("logOutOfPMAccount")
-                        )[0];
-
-                        logOutSettingsButton.addEventListener("click", () => {
-                          document.getElementById("fromPMToMain").click();
-                        });
-
-                        changeMasterPasswordSettingsButton.addEventListener(
-                          "click",
-                          () => {
-                            showChangeMPWindow();
-                          }
-                        );
-
-                        closeChangeMasterPasswordTabButton.addEventListener(
-                          "click",
-                          () => {
-                            hideChangeMPWindow();
-                          }
-                        );
-
-                        Array.from(
-                          document.getElementsByClassName(
-                            "confirmMasterPasswordChange"
-                          )
-                        )[0].addEventListener("click", async () => {
-                          // Listener to change master password
-                          const arrayOfChangeMPInputBoxes = Array.from(
-                            document.getElementsByClassName("changeMPInput")
-                          );
-                          const enterCurrentMPInputBox =
-                            arrayOfChangeMPInputBoxes[0];
-                          const enterNewMPInputBox =
-                            arrayOfChangeMPInputBoxes[1];
-                          const reEnterNewMPInputBox =
-                            arrayOfChangeMPInputBoxes[2];
-                          /////////////////////////////////
-                          const currentMPInputBoxValue =
-                            enterCurrentMPInputBox.value;
-                          const newMPInputBoxValue = enterNewMPInputBox.value;
-                          //
-                          const reEnterNewMPInputBoxValue =
-                            reEnterNewMPInputBox.value;
-
-                          if (
-                            // Checking if user entered the correct current master pass before updating
-                            await checkIfEnteredMPIsCorrect(
-                              currentMPInputBoxValue
-                            )
-                          ) {
-                            if (
-                              newMPInputBoxValue == reEnterNewMPInputBoxValue
-                            ) {
-                              // Checking if the user re-entered the new master password correctly
-                              const hashedCurrentMasterPassword = crypto
-                                .createHash("sha512")
-                                .update(currentMPInputBoxValue)
-                                .digest("hex");
-                              console.log(
-                                "HASH of the 'correct' entered one: ",
-                                hashedCurrentMasterPassword
-                              );
-                              const hashedNewMasterPassword = crypto
-                                .createHash("sha512")
-                                .update(newMPInputBoxValue)
-                                .digest("hex");
-                              const updateMasterPassword = httpsCallable(
-                                functions,
-                                "updateMasterPassword"
-                              );
-                              document.body.style.pointerEvents = "none";
-                              document.body.style.opacity = "0.5";
-
-                              // Making a new random string to test if master pass is correct at login
-                              let newRandomStringToBeEncrypted =
-                                await generateRandomString(250); // See line 145 for details
-                              const newRandomStringEncrypted =
-                                CryptoJS.AES.encrypt(
-                                  // Encrypting the random string with the master pass hash as the key
-                                  newRandomStringToBeEncrypted,
-                                  hashedNewMasterPassword
-                                ).toString();
-                              const updateResult = await updateMasterPassword({
-                                userUID: userUID,
-                                currentMPH: hashedCurrentMasterPassword,
-                                newMPH: hashedNewMasterPassword,
-                                newRandomStringEncrypted:
-                                  newRandomStringEncrypted,
-                              }).then(async () => {
-                                currentEncryptedString =
-                                  newRandomStringEncrypted;
-                                // Encrypting the random string with the master pass hash as the key
-
-                                newRandomStringToBeEncrypted = undefined;
-
-                                // Updating that set hashed master password
-                                // Its used to do encrypt and decrypt things
-                                hashedSetMasterPassValue =
-                                  hashedNewMasterPassword;
-
-                                // console.log(updateResult);
-                                document.body.style.pointerEvents = "auto";
-                                document.body.style.opacity = "1";
-                                console.log("DONEDITITITI DONE DONE DONE 👍");
-                              });
-                            }
-                          }
-                        });
-
-                        // Listener to show and hide password text
-                        Array.from(
-                          document.getElementsByClassName(
-                            "showNewMPPasswordsButton"
-                          )
-                        )[0].addEventListener("click", () => {
-                          /* Here im checking the type of the first input box (out of the three that show up in the change master pass window) 
-                          If it is text I change it to password (and the other way around) I could of checked for any of 
-                          the input boxes, but they would all be the same since im changing the type for them all at once */
-
-                          const currentInputType = Array.from(
-                            document.getElementsByClassName("changeMPInput")
-                          )[0].type;
-                          const arrayOfInputBoxesToCheck = Array.from(
-                            document.getElementsByClassName("changeMPInput")
-                          );
-                          if (currentInputType == "password") {
-                            arrayOfInputBoxesToCheck[0].type = "text";
-                            arrayOfInputBoxesToCheck[1].type = "text";
-                            arrayOfInputBoxesToCheck[2].type = "text";
-                          } else if (currentInputType == "text") {
-                            arrayOfInputBoxesToCheck[0].type = "password";
-                            arrayOfInputBoxesToCheck[1].type = "password";
-                            arrayOfInputBoxesToCheck[2].type = "password";
-                          }
-
-                          document
-                            .getElementById("showPasswordsIcon")
-                            .classList.toggle("fa-eye-slash");
-                        });
-
-                        // Add settings option (end)
-                        // await getDocs(refForPS).then(async (docSnapp) => {
-                        console.log("get Docs line 314");
                         // Getting each object of each user query and putting them in an array
                         // The array gets sent to a cloud function to be decrypted
                         // The cloud function will return all of the decrypted objects
@@ -610,6 +567,7 @@ try {
                         console.log(finalDecryptedQueryReturn);
                         const listOfDecryptedObjectsAndIDs =
                           finalDecryptedQueryReturn.data.finalList;
+
                         /* The "listOfDecryptedObjectsAndIDs" is a list with lists containing an object of a doc and its doc id
                         Ex. 
                         [
@@ -618,27 +576,6 @@ try {
                           [{user: randomUser, pass: randomPass}, randomID]
                         ]
                         */
-                        listOfDecryptedObjectsAndIDs.forEach(async (e) => {
-                          let docToShow;
-                          let docToShowID;
-                          e.forEach((i) => {
-                            if (typeof i == "object") {
-                              docToShow = i;
-                            } else if (typeof i == "string") {
-                              docToShowID = i;
-                            }
-                          });
-                          const docToShowRef = doc(
-                            db,
-                            "users",
-                            "filler",
-                            userUID,
-                            "mpaps",
-                            "ps",
-                            docToShowID
-                          );
-                          await startUpShow(docToShow, docToShowRef);
-                        });
 
                         async function startUpShow(sourceDoc, sourceDocRef) {
                           const importedData = sourceDoc;
@@ -2138,138 +2075,6 @@ try {
                               .classList.add("toggler");
                             // Password Shower //
                           }
-                          async function trash() {
-                            // Trash Icon //
-                            let trashContainer = document.createElement("div");
-                            trashContainer.setAttribute(
-                              "id",
-                              `trashContainer${rawRandomID}`
-                            );
-                            document
-                              .getElementById(`threeToggles${rawRandomID}`)
-                              .appendChild(trashContainer);
-                            document
-                              .getElementById(`trashContainer${rawRandomID}`)
-                              .classList.add("trashContainer");
-                            let trash = document.createElement("i");
-                            trash.setAttribute("id", `trash${rawRandomID}`);
-                            document
-                              .getElementById(`trashContainer${rawRandomID}`)
-                              .appendChild(trash);
-                            document
-                              .getElementById(`trash${rawRandomID}`)
-                              .setAttribute("class", "far fa-trash-alt");
-                            document
-                              .getElementById(`trash${rawRandomID}`)
-                              .classList.add("trashClass");
-                            if (importedData.isLink == "true") {
-                              document.getElementById(
-                                `trashContainer${rawRandomID}`
-                              ).style.marginTop = "1.2%";
-                            } else {
-                              document.getElementById(
-                                `trashContainer${rawRandomID}`
-                              ).style.marginTop = "0.9%";
-                            }
-                            document
-                              .getElementById(`trashContainer${rawRandomID}`)
-                              .addEventListener("click", () => {
-                                async function deleteOne() {
-                                  // const docRefToDelete = query(
-                                  //   collection(db, userUID, "mpaps", "ps"),
-                                  //   where("random", "==", rawRandomID)
-                                  // );
-                                  const docSnapToDelete = await getDocs(
-                                    query(
-                                      collection(
-                                        db,
-                                        "users",
-                                        "filler",
-                                        userUID,
-                                        "mpaps",
-                                        "ps"
-                                      ),
-                                      where("random", "==", rawRandomID)
-                                    )
-                                  ).then(() => {
-                                    console.log("get Docs line 1655");
-                                  });
-                                  // console.log("snap is ", docSnapToDelete);
-                                  // );
-                                  docSnapToDelete.forEach((doc) => {
-                                    console.log("The ref ", sourceDocRef);
-                                    deleteDoc(sourceDocRef).then(() => {
-                                      console.log("Delete doc line 1693");
-                                    });
-                                  });
-                                  // console.log("plain ", docRefToDelete);
-                                  // console.log("plainData ", docRefToDelete.data());
-                                  // deleteDoc(docRefToDelete);
-                                }
-                                deleteOne();
-                                document.getElementById(
-                                  `mainDiv${rawRandomID}`
-                                ).style.animation = "fadeAway 0.3s ease";
-                                document
-                                  .getElementById(`mainDiv${rawRandomID}`)
-                                  .addEventListener("animationend", (mid) => {
-                                    console.log(mid);
-                                    if (mid.animationName == "fadeAway")
-                                      document.getElementById(
-                                        `mainDiv${rawRandomID}`
-                                      ).style.display = "none";
-                                  });
-                              });
-                            document
-                              .getElementById(`trashContainer${rawRandomID}`)
-                              .classList.add("toggler");
-                            // Trash Icon //
-                          }
-                          async function copyButtonFunction() {
-                            let copyContainer = document.createElement("div");
-                            copyContainer.setAttribute(
-                              "id",
-                              `copyContainer${rawRandomID}`
-                            );
-                            document
-                              .getElementById(`threeToggles${rawRandomID}`)
-                              .appendChild(copyContainer);
-                            document
-                              .getElementById(`copyContainer${rawRandomID}`)
-                              .classList.add("copyContainer");
-                            let copy = document.createElement("i");
-                            copy.setAttribute("id", `copy${rawRandomID}`);
-                            document
-                              .getElementById(`copyContainer${rawRandomID}`)
-                              .appendChild(copy);
-                            document
-                              .getElementById(`copy${rawRandomID}`)
-                              .setAttribute("class", "far fa-copy");
-                            document
-                              .getElementById(`copy${rawRandomID}`)
-                              .classList.add("copyClass");
-                            if (importedData.isLink == "true") {
-                              document.getElementById(
-                                `copyContainer${rawRandomID}`
-                              ).style.marginTop = "1.2%";
-                            } else {
-                              document.getElementById(
-                                `copyContainer${rawRandomID}`
-                              ).style.marginTop = "0.9%";
-                            }
-                            document
-                              .getElementById(`copyContainer${rawRandomID}`)
-                              .addEventListener("click", () => {
-                                navigator.clipboard.writeText(
-                                  document.getElementById(
-                                    `hiddenPasswordInputBox${rawRandomID}`
-                                  ).value
-                                );
-                              });
-                            document
-                              .getElementById(`copyContainer${rawRandomID}`)
-                              .classList.add("toggler");
-                          }
 
                           async function websiteRedirectFunction() {
                             // Website Redirect //
@@ -2314,15 +2119,34 @@ try {
                             await websiteRedirectFunction();
                             await requestUpdateQueryFunction();
                             await eyeToggleAddFunction();
-                            await copyButtonFunction();
-                            await trash();
                           }
                           activate();
                         }
+
+                        listOfDecryptedObjectsAndIDs.forEach(async (e) => {
+                          // Going through dercypted documents and displaying them on the dashboard
+                          let docToShow;
+                          let docToShowID;
+                          e.forEach((i) => {
+                            if (typeof i == "object") {
+                              docToShow = i;
+                            } else if (typeof i == "string") {
+                              docToShowID = i;
+                            }
+                          });
+                          const docToShowRef = doc(
+                            db,
+                            "users",
+                            "filler",
+                            userUID,
+                            "mpaps",
+                            "ps",
+                            docToShowID
+                          );
+                          await startUpShow(docToShow, docToShowRef);
+                        });
                       } else {
-                        // document.getElementById(
-                        //   "newAndEnterMasterPasswordField"
-                        // ).style.backgroundColor = "#3d333c";
+                        // User entered an incorrect master password
                         document.getElementById(
                           "newAndEnterMasterPasswordField"
                         ).style.borderBottom = "1px solid rgb(132, 66, 66)";
@@ -2411,16 +2235,17 @@ try {
                             ).toString();
                             randomStringToBeEncrypted = undefined;
 
-                            await writeStringEncryptedWithMPToFS(
-                              // See line 145 for details
-                              currentEncryptedString
-                            )
-                              .then(async () => {
-                                await writeBlankDataToFS(); // To check if the user has a master pass set up, we check for this data
-                              })
-                              .catch((err) => {
-                                console.log(err);
-                              });
+                            const batch = writeBatch(db);
+                            batch.set(doc(refForMSCheck), {
+                              mph: currentEncryptedString, // See line 145 for details
+                            });
+                            batch.set(refForMainUID, {
+                              fillData: "--",
+                            });
+                            await batch.commit();
+                            await startUpSettingsListeners(); /* After user makes their
+                              account, we start up the listeners for settings so the user can 
+                              navigate the settings page */
 
                             document.getElementById(
                               "setupMasterPasswordScreen"
@@ -2457,7 +2282,6 @@ try {
                           ).style.marginTop = "4%";
                         }
                       });
-                    //----------------------Adding master password----------------------//
                   }
                 })
                 .catch((err) => {
@@ -2506,71 +2330,6 @@ try {
                   "auto";
               }
             });
-            // Array.from(
-            //   document.getElementsByClassName("updateQueryScreen")
-            // ).forEach((ele) => {
-            //   ele.addEventListener("animationend", (anii) => {
-            //     console.log("is NOT ididididid ", anii.target.style.id);
-            //     if (anii.animationName == "pushOutUpdateTab") {
-            //       console.log("is idididid ", anii.target.style.id);
-            //       document.getElementById(
-            //         `updateQueryScreen${anii.target.style.id}`
-            //       ).style.width = "40%";
-            //     }
-            //   });
-            // });
-
-            // Array.from(
-            //   document.getElementsByClassName("updateQueryScreen")
-            // ).forEach((ele) => {
-            //   ele.addEventListener("animationend", (op) => {
-            //     console.log("anii was ", op);
-            //     if (op.animationName == "updateTabToDark") {
-            //       updateQueryScreen.style.backgroundColor = "#0b0b0b";
-            //     }
-            //   });
-            // });
-            // Array.from(
-            //   document.getElementsByClassName("updateQueryScreen")
-            // ).forEach((ele) => {
-            //   ele.addEventListener("animationend", (op) => {
-            //     console.log("anii was ", op);
-            //     if (op.animationName == "updateTabToNormal") {
-            //       document.getElementById(
-            //         "updateQueryScreen"
-            //       ).style.backgroundColor = "#0c1213";
-            //     }
-            //   });
-            // });
-
-            // Array.from(
-            //   document.getElementsByClassName("strongUpdateDisplayText")
-            // ).forEach((displayTextInputEle) => {
-            //   displayTextInputEle.addEventListener("animationend", (op) => {
-            //     if (op.animationName == "updateInputBoxesNormal") {
-            //       displayTextInputEle.style.boxShadow =
-            //         "0px 10px 30px 5px rgba(0, 0, 0.15)";
-            //     }
-            //   });
-            // });
-            // Array.from(
-            //   document.getElementsByClassName("strongUpdateDisplayText")
-            // ).forEach((displayTextInputEle) => {
-            //   displayTextInputEle.addEventListener("animationend", (op) => {
-            //     if (op.animationName == "updateInputBoxesGlow") {
-            //       displayTextInputEle.style.boxShadow =
-            //         "0px 0px 12px 1px rgb(255, 255, 255)";
-            //     }
-            //   });
-            // });
-            // document
-            //   .getElementById("updateQueryScreen")
-            //   .addEventListener("animationend", (anii) => {
-            //     if (anii.animationName == "pushOutUpdateTab") {
-            //       document.getElementById("updateQueryScreen").style.width = "40%";
-            //     }
-            //   });
-            // Animation end listeners //
           };
           init();
         } else {
