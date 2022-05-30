@@ -1,24 +1,94 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const CryptoJS = require("crypto-js");
+const speakeasy = require("speakeasy");
 admin.initializeApp();
 
-exports.updateMasterPassword = functions.https.onCall(async (data, context) => {
+exports.checkIfMFATokenIsCorrect = functions.https.onCall(
+  async (data, context) => {
+    const db = admin.firestore();
+    // Getting secret key for user to add to the end of the decryption key
+    let userSecret;
+    const userSecretPath = db
+      .collection("users")
+      .doc("filler")
+      .collection(data.userUID)
+      .doc("secKey");
+    let doc = await userSecretPath.get();
+    userSecret = doc.data().secKeyStr;
+    const decryptionKey = data.hashedSetMasterPassValue + userSecret;
+
+    const usersUID = data.userUID;
+    const enteredMFAToken = data.enteredMFAToken;
+
+    const refForMFADoc = db
+      .collection("users")
+      .doc("filler")
+      .collection(usersUID)
+      .doc("mfa");
+    const mfaDocData = await refForMFADoc.get();
+    const mfaSecretHex = mfaDocData.data().hex;
+    const decryptedMFASecretHex = CryptoJS.AES.decrypt(
+      mfaSecretHex,
+      decryptionKey
+    ).toString(CryptoJS.enc.Utf8);
+
+    const mfaIsCorrect = speakeasy.totp.verify({
+      secret: decryptedMFASecretHex,
+      encoding: "hex",
+      token: enteredMFAToken,
+    });
+    if (mfaIsCorrect) {
+      return { enteredMFAIsCorrect: true };
+    } else {
+      return { enteredMFAIsCorrect: false };
+    }
+  }
+);
+
+exports.disableMFA = functions.https.onCall(async (data, context) => {
+  const usersUID = data.userUID;
   const db = admin.firestore();
-  // Getting secret key for user to add to the end of each encryption
+  const p1 = db
+    .collection("users")
+    .doc("filler")
+    .collection(usersUID)
+    .doc("mfa")
+    .update({ hex: "" });
+  return Promise.all([p1]);
+});
+
+exports.enableMFA = functions.https.onCall(async (data, context) => {
+  const db = admin.firestore();
+
+  // Getting secret key for user to add to the end of the encryption key
   let userSecret;
   const userSecretPath = db
     .collection("users")
     .doc("filler")
     .collection(data.userUID)
     .doc("secKey");
-  let docOfSecret = await userSecretPath.get();
-  userSecret = docOfSecret.data().secKeyStr;
+  let doc = await userSecretPath.get();
+  userSecret = doc.data().secKeyStr;
+  const encryptionKey = data.hashedSetMasterPassValue + userSecret;
 
-  // Defining encryption/decryption keys
+  const encryptedMFASecretHex = CryptoJS.AES.encrypt(
+    data.mfaSecretHex,
+    encryptionKey
+  ).toString();
 
-  const currentKey = data.currentMPH + userSecret;
-  const newKey = data.newMPH + userSecret;
+  const usersUID = data.userUID;
+  const p1 = db
+    .collection("users")
+    .doc("filler")
+    .collection(usersUID)
+    .doc("mfa")
+    .update({ hex: encryptedMFASecretHex });
+  return Promise.all([p1]);
+});
+
+exports.updateMasterPassword = functions.https.onCall(async (data, context) => {
+  const db = admin.firestore();
 
   const refForUserQueries = db // Collection where encrypted user entries are stored
     .collection("users")
@@ -30,62 +100,104 @@ exports.updateMasterPassword = functions.https.onCall(async (data, context) => {
   const allUserQueriesWithOldEncryption = await refForUserQueries.get();
   let listOfOldDe = [];
   let listOfNewEn = [];
-  //
+
   const batch = db.batch();
-  const passCollection = db
+  // Getting secret key for user to add to the end of each encryption
+  const userSecretPath = db
     .collection("users")
     .doc("filler")
     .collection(data.userUID)
-    .doc("mpaps")
-    .collection("ps");
-  //
-  allUserQueriesWithOldEncryption.forEach((oldEncryptedUserDoc) => {
-    let decryptedObjectToAppend = {};
-    let newEncryptedObjectToAppend = {};
-    let completeObjectToWrite = {};
-    // Remeber that in all of the user objects the keys "isLink" and "random" are never encrypted
-    const oldEncryptedObject = JSON.parse(
-      oldEncryptedUserDoc.data().combinedQueryInfo
-    );
-    for (const [key, value] of Object.entries(oldEncryptedObject)) {
-      // Decrypting values from object and putting it in a new decrypted object
-      if (key != "random" && key != "isLink") {
-        // "Random" and "isLink" are in the object, but aren't supposed to be encrypted
-        decryptedObjectToAppend[key] = CryptoJS.AES.decrypt(
-          value,
-          currentKey
-        ).toString(CryptoJS.enc.Utf8);
-      } else if (key == "random" || key == "isLink") {
-        // Add to object without decrypting
-        decryptedObjectToAppend[key] = value;
+    .doc("secKey");
+  let docOfSecret = await userSecretPath.get();
+  const userSecret = docOfSecret.data().secKeyStr;
+
+  // Defining encryption/decryption keys
+
+  const currentKey = data.currentMPH + userSecret;
+  const newKey = data.newMPH + userSecret;
+  if (allUserQueriesWithOldEncryption.length > 0) {
+    // This if statement converts all user passwords to be encrypted with the new master pass
+
+    const passCollection = db
+      .collection("users")
+      .doc("filler")
+      .collection(data.userUID)
+      .doc("mpaps")
+      .collection("ps");
+    //
+    allUserQueriesWithOldEncryption.forEach((oldEncryptedUserDoc) => {
+      let decryptedObjectToAppend = {};
+      let newEncryptedObjectToAppend = {};
+      let completeObjectToWrite = {};
+      // Remeber that in all of the user objects the keys "isLink" and "random" are never encrypted
+      const oldEncryptedObject = JSON.parse(
+        oldEncryptedUserDoc.data().combinedQueryInfo
+      );
+      for (const [key, value] of Object.entries(oldEncryptedObject)) {
+        // Decrypting values from object and putting it in a new decrypted object
+        if (key != "random" && key != "isLink") {
+          // "Random" and "isLink" are in the object, but aren't supposed to be encrypted
+          decryptedObjectToAppend[key] = CryptoJS.AES.decrypt(
+            value,
+            currentKey
+          ).toString(CryptoJS.enc.Utf8);
+        } else if (key == "random" || key == "isLink") {
+          // Add to object without decrypting
+          decryptedObjectToAppend[key] = value;
+        }
       }
-    }
-    for (const [key, value] of Object.entries(decryptedObjectToAppend)) {
-      // Decrypting values from object and putting it in a new decrypted object
-      if (key != "random" && key != "isLink") {
-        // "Random" and "isLink" are in the object, but aren't supposed to be encrypted
-        newEncryptedObjectToAppend[key] = CryptoJS.AES.encrypt(
-          value,
-          newKey
-        ).toString();
-      } else if (key == "random" || key == "isLink") {
-        // Add to object without encrypting
-        newEncryptedObjectToAppend[key] = value;
+      for (const [key, value] of Object.entries(decryptedObjectToAppend)) {
+        // Decrypting values from object and putting it in a new decrypted object
+        if (key != "random" && key != "isLink") {
+          // "Random" and "isLink" are in the object, but aren't supposed to be encrypted
+          newEncryptedObjectToAppend[key] = CryptoJS.AES.encrypt(
+            value,
+            newKey
+          ).toString();
+        } else if (key == "random" || key == "isLink") {
+          // Add to object without encrypting
+          newEncryptedObjectToAppend[key] = value;
+        }
       }
-    }
-    listOfOldDe.push(decryptedObjectToAppend);
-    listOfNewEn.push(newEncryptedObjectToAppend);
-    completeObjectToWrite = {
-      combinedQueryInfo: JSON.stringify(newEncryptedObjectToAppend),
-      nummy: oldEncryptedUserDoc.data().nummy, // The timestamp does not change
-    };
-    let newDocRef = passCollection.doc();
-    batch.set(newDocRef, completeObjectToWrite);
-    batch.delete(
-      oldEncryptedUserDoc.ref
-    ); /* We have to delete the doc that was encrypted with the 
+      listOfOldDe.push(decryptedObjectToAppend);
+      listOfNewEn.push(newEncryptedObjectToAppend);
+      completeObjectToWrite = {
+        combinedQueryInfo: JSON.stringify(newEncryptedObjectToAppend),
+        nummy: oldEncryptedUserDoc.data().nummy, // The timestamp does not change
+      };
+      let newDocRef = passCollection.doc();
+      batch.set(newDocRef, completeObjectToWrite);
+      batch.delete(
+        oldEncryptedUserDoc.ref
+      ); /* We have to delete the doc that was encrypted with the 
     old master password since we are replacing it */
-  });
+    });
+  }
+
+  // If user has MFA enabled, we have to make sure that we re-encrypt the hex key as well
+  const refForMFADoc = db
+    .collection("users")
+    .doc("filler")
+    .collection(data.userUID)
+    .doc("mfa");
+  const mfaDoc = await refForMFADoc.get();
+  if (mfaDoc.data().hex.trim() != "") {
+    const currentEncryptedHex = mfaDoc.data().hex;
+    const currentDecryptedHex = CryptoJS.AES.decrypt(
+      currentEncryptedHex,
+      currentKey
+    ).toString(CryptoJS.enc.Utf8);
+
+    // Encrypt decrypted hex with new master pass key
+
+    const newEncryptedHex = CryptoJS.AES.encrypt(
+      currentDecryptedHex,
+      newKey
+    ).toString();
+
+    batch.update(refForMFADoc, { hex: newEncryptedHex });
+  }
+
   const msCollection = db
     .collection("users")
     .doc("filler")
@@ -120,7 +232,7 @@ exports.decryptUserQueries = functions.https.onCall(async (data, context) => {
       .collection("ps")
       .orderBy("nummy", "desc");
 
-    // Getting secret key for user to add to the end of each encryption
+    // Getting secret key for user to add to the end of the encryption key
     let userSecret;
     const userSecretPath = db // Document of user secret key
       .collection("users")
@@ -166,7 +278,7 @@ exports.addUserQuery = functions.https.onCall(async (data, context) => {
     const nummy = admin.firestore.FieldValue.serverTimestamp();
     const db = admin.firestore();
 
-    // Getting secret key for user to add to the end of each encryption
+    // Getting secret key for user to add to the end of the encryption key
     let userSecret;
     const userSecretPath = db
       .collection("users")
@@ -224,7 +336,7 @@ exports.addUserQuery = functions.https.onCall(async (data, context) => {
       };
     } catch (err) {
       return {
-        ERROR: err,
+        ERROR: "Something went wrong",
         IDOfNewDoc: newQueryPath.id,
         data: data,
         encryptedObj: encryptedObjectToAdd,
@@ -393,5 +505,11 @@ exports.giveSignUpRoles = functions.auth.user().onCreate((user) => {
     .catch((err) => {
       return err;
     });
-  return Promise.all([p1, p2]);
+  const p3 = db
+    .collection("users")
+    .doc("filler")
+    .collection(usersUID)
+    .doc("mfa")
+    .set({ hex: "" });
+  return Promise.all([p1, p2, p3]);
 });
