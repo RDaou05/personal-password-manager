@@ -547,8 +547,7 @@ body {
 }
 
 .addPasswordScreen input {
-  border: 2px solid #0c7a75;
-  /* transition: 0.2s; */
+  border: 3px solid #5e6161;
 }
 
 .addPasswordScreen input:focus {
@@ -575,7 +574,6 @@ body {
 }
 
 .confirmQuery:hover {
-  /* box-shadow: 0 0 15px rgb(1 255 242); */
   opacity: 1;
   transition: all ease-in-out 0.1s;
 }
@@ -584,21 +582,33 @@ body {
   position: absolute;
   color: #13817c;
   right: 14%;
-  bottom: 45%;
+  bottom: 40.7%;
   font-size: 17px;
 }
 
-#closeAdd {
-  color: #00fff3;
-  font-size: 30px;
+#addPasswordText {
+  color: white;
+  font-family: "Montserrat", sans-serif;
   text-align: center;
-  float: right;
+  margin-bottom: 0;
+}
+
+#closeAdd {
+  position: absolute;
+  right: 3%;
+  top: 3%;
+  padding: 2% 3% 2% 3%;
+  border: 1px solid #707070;
+  border-radius: 10vh;
+  background-color: #242424;
+  color: white;
+  font-size: 1rem;
   cursor: pointer;
 }
 
 #closeAdd:hover {
-  filter: drop-shadow(0 30px 30px #000000);
-  transition: all ease-in-out 0.1s;
+  background-color: #504f4f;
+  transition: 0.2s;
 }
 
 .changeMasterPasswordScreen {
@@ -704,17 +714,21 @@ body {
 }
 
 #closeSettings {
-  color: #00fff3;
-  font-size: 30px;
-  cursor: pointer;
-  top: 7px;
   position: absolute;
-  right: 7px;
+  right: 2%;
+  top: 2%;
+  padding: 1% 1.4% 1% 1.4%;
+  border: 1px solid #707070;
+  border-radius: 10vh;
+  background-color: #3e3e3e;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
 }
 
 #closeSettings:hover {
-  filter: drop-shadow(0 30px 30px #000000);
-  transition: all ease-in-out 0.1s;
+  background-color: #504f4f;
+  transition: 0.2s;
 }
 
 .settingsScreen {
@@ -826,6 +840,8 @@ body {
 .mfa {
   border-top-left-radius: 1vh;
   border-top-right-radius: 1vh;
+  display: flex;
+  justify-content: space-between;
 }
 
 .autolock {
@@ -1321,23 +1337,243 @@ tfoot:before {
   margin-right: 4%;
 }
 
-/* @media screen and (min-width: 635px) {
-  .tholder {
-    margin-top: 2.5%;
-  }
+/*  */
+
+#changeTooWeakError {
+  font-family: "Open Sans", sans-serif;
+  color: #bf3b3b;
+  margin: 0;
+  margin-top: 9%;
+  font-size: 1.1rem;
+  display: none;
+  align-self: center;
 }
 
-@media screen and (min-width: 800px) {
-  .tholder {
-    margin-top: 2%;
-  }
+#changeDontMatchError {
+  font-family: "Open Sans", sans-serif;
+  color: #bf3b3b;
+  margin: 0;
+  margin-top: 9%;
+  font-size: 1.1rem;
+  display: none;
+  align-self: center;
 }
 
-@media screen and (min-width: 990px) {
-  .tholder {
-    margin-top: 1.5%;
-  }
-} */
+#changeHasToBeDifferentError {
+  font-family: "Open Sans", sans-serif;
+  color: #bf3b3b;
+  margin: 0;
+  margin-top: 9%;
+  font-size: 1.1rem;
+  display: none;
+  align-self: center;
+}
+
+#changeIncorrectPasswordError {
+  font-family: "Open Sans", sans-serif;
+  color: #bf3b3b;
+  margin: 0;
+  margin-top: 9%;
+  font-size: 1.1rem;
+  display: none;
+  align-self: center;
+}
+
+.buttonToEnableOrDisable {
+  border-radius: 8vh;
+  background-color: #1a1c20;
+  width: 19%;
+  border: 2px solid #363b45;
+  padding: 1.5%;
+  align-self: center;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  font-family: "Open Sans", sans-serif;
+}
+
+.buttonToEnableOrDisable:hover {
+  background-color: #4f5562;
+  transition: 0.2s;
+}
+
+#textToConfirmMPForMFA {
+  color: white;
+  font-family: "Open Sans", sans-serif;
+  margin-top: 9%;
+  margin-bottom: 6%;
+}
+
+.popupAskForMPToEnableMFA {
+  display: none;
+  z-index: 2;
+  flex-direction: column;
+  position: absolute;
+  left: 50%;
+  top: 39%;
+  transform: translate(-50%, -50%);
+  background-color: #585454;
+  border-radius: 1vh;
+  box-shadow: rgb(0 0 0 / 25%) 0px 54px 55px, rgb(0 0 0 / 12%) 0px -12px 30px,
+    rgb(0 0 0 / 12%) 0px 4px 6px, rgb(0 0 0 / 17%) 0px 12px 13px,
+    rgb(0 0 0 / 9%) 0px -3px 5px;
+  padding: 3%;
+}
+
+#confirmMPForMFAInput {
+  background-color: #5c615c;
+  border: 3px solid grey;
+  border-radius: 0.5vh;
+  padding: 3%;
+  color: white;
+  font-weight: bold;
+  letter-spacing: 1px;
+  font-family: "Open Sans", sans-serif;
+}
+
+#showPassBeingConfirmed {
+  background-color: #212121;
+  border: 2px solid #4b4d4b;
+  border-radius: 0.5vh;
+  padding: 3%;
+  margin-top: 4%;
+  color: white;
+  font-weight: bold;
+  font-family: "Open Sans", sans-serif;
+  cursor: pointer;
+}
+
+#confirmMPForMFAButton {
+  background-color: teal;
+  border: 2px solid #4b4d4b;
+  border-radius: 0.5vh;
+  padding: 3%;
+  margin-top: 1%;
+  color: white;
+  font-weight: bold;
+  font-family: "Open Sans", sans-serif;
+  cursor: pointer;
+}
+
+#buttonToCloseConfirmMPForMFAPopup {
+  position: absolute;
+  right: 4%;
+  top: 4%;
+  padding: 2% 3% 2% 3%;
+  border: 1px solid #707070;
+  border-radius: 10vh;
+  background-color: #3e3e3e;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+#buttonToCloseConfirmMPForMFAPopup:hover {
+  background-color: #504f4f;
+  transition: 0.2s;
+}
+
+/*  */
+
+.popupWithMFAInformation {
+  display: none;
+  z-index: 2;
+  flex-direction: column;
+  position: absolute;
+  left: 50%;
+  top: 39%;
+  transform: translate(-50%, -50%);
+  background-color: #585454;
+  border-radius: 1vh;
+  box-shadow: rgb(0 0 0 / 25%) 0px 54px 55px, rgb(0 0 0 / 12%) 0px -12px 30px,
+    rgb(0 0 0 / 12%) 0px 4px 6px, rgb(0 0 0 / 17%) 0px 12px 13px,
+    rgb(0 0 0 / 9%) 0px -3px 5px;
+  padding: 3%;
+}
+
+.qrcodeWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+#qrcodeForMFA {
+  width: 250px;
+  height: 250px;
+  border-radius: 2vh;
+}
+
+#mfaCode {
+  padding: 0%;
+  color: black;
+  font-family: "Open Sans", sans-serif;
+  letter-spacing: 1px;
+}
+
+/*  */
+
+#buttonToCloseConfirmMFAForDisableMFAPopup {
+  position: absolute;
+  right: 4%;
+  top: 4%;
+  padding: 2% 3% 2% 3%;
+  border: 1px solid #707070;
+  border-radius: 10vh;
+  background-color: #3e3e3e;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+#buttonToCloseConfirmMFAForDisableMFAPopup:hover {
+  background-color: #504f4f;
+  transition: 0.2s;
+}
+
+#textToConfirmMFAToDisableMFA {
+  color: white;
+  font-family: "Open Sans", sans-serif;
+  margin-top: 9%;
+  margin-bottom: 6%;
+}
+
+.popupAskForMFAToDisableMFA {
+  display: none;
+  z-index: 2;
+  flex-direction: column;
+  position: absolute;
+  left: 50%;
+  top: 39%;
+  transform: translate(-50%, -50%);
+  background-color: #585454;
+  border-radius: 1vh;
+  box-shadow: rgb(0 0 0 / 25%) 0px 54px 55px, rgb(0 0 0 / 12%) 0px -12px 30px,
+    rgb(0 0 0 / 12%) 0px 4px 6px, rgb(0 0 0 / 17%) 0px 12px 13px,
+    rgb(0 0 0 / 9%) 0px -3px 5px;
+  padding: 3%;
+}
+
+#confirmMFAToDisableMFAButton {
+  background-color: teal;
+  border: 2px solid #4b4d4b;
+  border-radius: 0.5vh;
+  padding: 3%;
+  margin-top: 1%;
+  color: white;
+  font-weight: bold;
+  font-family: "Open Sans", sans-serif;
+  cursor: pointer;
+}
+
+#confirmMFAToDisableMFAInput {
+  background-color: #5c615c;
+  border: 3px solid grey;
+  border-radius: 0.5vh;
+  padding: 3%;
+  color: white;
+  font-weight: bold;
+  letter-spacing: 1px;
+  font-family: "Open Sans", sans-serif;
+}
 
 @media screen and (min-width: 1000px) {
   body {
@@ -1356,15 +1592,3 @@ tfoot:before {
     margin-top: 6%;
   }
 }
-
-/* @media screen and (min-width: 1440px) {
-  .tholder {
-    margin-top: 1.3%;
-  }
-}
-
-@media screen and (min-width: 1554px) {
-  .tholder {
-    margin-top: 1.2%;
-  }
-} */

@@ -26,6 +26,40 @@
   <body>
     <div class="mc">
       <a href="#top" id="scrollToTop"></a>
+      <span id="popups">
+        <!-- <div class="popupAskToDisableMFA">
+            <p id="askToDisable">Are you sure you want to disable MFA?</p>
+            <button id="closeMFAPopup">Cancel</button>
+            <button id="ContinueMFAChange">Disable</button>
+          </div> -->
+        <div class="popupAskForMPToEnableMFA">
+          <button id="buttonToCloseConfirmMPForMFAPopup">&#x2715;</button>
+          <h2 id="textToConfirmMPForMFA">Confirm your master password</h2>
+          <input type="password" id="confirmMPForMFAInput" />
+          <button id="showPassBeingConfirmed">Show password</button>
+          <button id="confirmMPForMFAButton">Confirm</button>
+        </div>
+        <div class="popupAskForMFAToDisableMFA">
+          <button id="buttonToCloseConfirmMFAForDisableMFAPopup">
+            &#x2715;
+          </button>
+          <h2 id="textToConfirmMFAToDisableMFA">Enter your MFA code</h2>
+          <input type="text" id="confirmMFAToDisableMFAInput" />
+          <button id="confirmMFAToDisableMFAButton">Confirm</button>
+        </div>
+        <div class="popupWithMFAInformation">
+          <div class="mfaContent">
+            <div class="qrcodeWrapper">
+              <img src="" id="qrcodeForMFA" />
+            </div>
+            <div class="boxForMFACode"><p id="mfaCode"></p></div>
+            <!-- src of image will be set with javascript after qrcode is made -->
+            <!-- same thing for the mfa code -->
+            <input type="text" id="enterConfirmMFACode" />
+            <button id="confirmMFAConfirmationButton">Confirm</button>
+          </div>
+        </div>
+      </span>
       <span id="ableToDarken">
         <div class="headerFlexbox" id="headerFlexbox">
           <i class="fas fa-cog" id="settingsButton"></i>
@@ -34,16 +68,33 @@
         </div>
         <div class="queryScreen" id="queryScreen"></div>
         <div class="settingsScreen" id="settingsScreen">
-          <i class="far fa-times-circle" id="closeSettings"></i>
+          <button id="closeSettings">&#x2715;</button>
           <div class="changeMasterPasswordScreen">
             <h3 class="changeMasterPasswordHeader">Change Master Password</h3>
             <div class="changeMPInputsContainer">
-              <input type="password" class="changeMPCurrentMP changeMPInput" />
-              <input type="password" class="changeMPNewMP changeMPInput" />
               <input
                 type="password"
-                class="changeMPRenterNewMP changeMPInput"
+                placeholder="Current Master Password"
+                class="changeMPCurrentMP changeMPInput"
               />
+              <input
+                type="password"
+                placeholder="New Master Password"
+                class="changeMPNewMP changeMPInput newPass"
+              />
+              <input
+                type="password"
+                placeholder="Confirm New Master Password"
+                class="changeMPRenterNewMP changeMPInput newPass"
+              />
+              <h2 id="changeTooWeakError">Password is too weak</h2>
+              <h2 id="changeDontMatchError">Passwords don't match</h2>
+              <h2 id="changeHasToBeDifferentError">
+                New password has to be different
+              </h2>
+              <h2 id="changeIncorrectPasswordError">
+                Current master password is incorrect
+              </h2>
             </div>
             <div class="changeMPFooter">
               <button class="showNewMPPasswordsButton">
@@ -82,11 +133,12 @@
             <div class="securitySettingsSection">
               <h3 class="securitySettingsHeader">Security</h3>
               <div class="securitySettings">
-                <button class="mfa securitySettingsButtons">
+                <div class="mfa securitySettingsButtons">
                   <p class="settingsButtonText">
-                    Enable Multi-Factor Authentication (MFA)
+                    Multi-Factor Authentication (MFA)
                   </p>
-                </button>
+                  <button class="buttonToEnableOrDisable"></button>
+                </div>
                 <button class="autolock securitySettingsButtons">
                   <p class="settingsButtonText">
                     Change time to automatically lock the app after inactivity
@@ -98,7 +150,8 @@
         </div>
 
         <div class="addPasswordScreen" id="addPasswordScreen">
-          <i class="far fa-times-circle" id="closeAdd"></i>
+          <button id="closeAdd">&#x2715;</button>
+          <h2 id="addPasswordText">Add Password</h2>
           <i class="far fa-eye" id="eyeForAdd"></i>
           <input
             type="text"
@@ -209,40 +262,16 @@
         ).value;
         let bar = document.getElementById("passwordStrengthBar");
         let result = zxcvbn(enteredWantedNewMasterPassword);
-        bar.value = result.score;
+        bar.value = result.score; // Changing meter bar to show password strength
         let amountOfGuesses = result.guesses;
-        console.log(
-          "Bar val is ",
-          bar.value,
-          "Result score is ",
-          result.score,
-          "Time crack is ",
-          result.crack_time_seconds,
-          "Result guesses ",
-          result.guesses
-        );
       });
     document.getElementById("renterMP").addEventListener("keyup", (evt) => {
-      console.log(
-        "Its in normal mode because display is ",
-        document.getElementById("reenterPasswordStrengthBar").style.display
-      );
       let enteredWantedNewMasterPassword =
         document.getElementById("renterMP").value;
       let bar = document.getElementById("reenterPasswordStrengthBar");
       let result = zxcvbn(enteredWantedNewMasterPassword);
-      bar.value = result.score;
+      bar.value = result.score; // Changing meter bar to show password strength
       let amountOfGuesses = result.guesses;
-      console.log(
-        "Bar val is ",
-        bar.value,
-        "Result score is ",
-        result.score,
-        "Time crack is ",
-        result.crack_time_seconds,
-        "Result guesses ",
-        result.guesses
-      );
     });
   </script>
   <script
