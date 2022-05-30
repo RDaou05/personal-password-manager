@@ -42,6 +42,9 @@ import {
 
 const crypto = require("crypto");
 const CryptoJS = require("crypto-js");
+const zxcvbn = require("zxcvbn");
+const speakeasy = require("speakeasy");
+const qrcode = require("qrcode");
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -170,7 +173,7 @@ try {
                 /* "currentEncryptedString" is a string stored in the database
                 that has been encrypted with the hash of the master password.
                 If the hash of the master password that the user is trying to login with
-                is able to decrypt the string, that means the entered master password is correct*/
+                is able to decrypt the string, that means the entered master password is correct */
                 currentEncryptedString = receivedMPH;
                 /* We are storing the encrypted string (recievedMPH) as a variable (currentEncryptedString)
                 so we don't have to make a read everytime we want to validate the master password */
@@ -186,11 +189,18 @@ try {
                 .createHash("sha512")
                 .update(enteredMP)
                 .digest("hex");
-              const decryptedMPString = CryptoJS.AES.decrypt(
-                receivedMPH,
-                hashedEnteredMasterPassword
-              ).toString(CryptoJS.enc.Utf8);
-              console.log("LOG: ", decryptedMPString);
+
+              let decryptedMPString;
+              try {
+                decryptedMPString = CryptoJS.AES.decrypt(
+                  receivedMPH,
+                  hashedEnteredMasterPassword
+                ).toString(CryptoJS.enc.Utf8);
+                console.log("LOG: ", decryptedMPString);
+              } catch {
+                decryptedMPString = "";
+              }
+
               // If the string fails to decrypt, it will return a blank string
               if (decryptedMPString.trim().length == 0) {
                 return false;
@@ -267,22 +277,116 @@ try {
             const hideChangeMPWindow = () => {
               changeMPWindow.style.animation = "pullInMPTab 0.3s ease";
             };
-            // Testing security rules here
 
-            // getDoc(
-            //   doc(db, "users", "filler", "RNxt4drrCLg2QSVA8KbQhcCuvLp1", "r")
-            // ).then((tempSnap) => {
-            //   console.log("YOHOHOHOH ", tempSnap);
-            // });
             const checkIfUIDExistsInFS = async () => {
               getDoc(refForMainUID)
                 .then((tempSnap) => {
                   console.log("get Doc line 214");
                   console.log("temp is ", tempSnap);
                   console.log("If snap exists or not is ", tempSnap.exists());
+                  let mfaCurrentlyEnabled;
+                  let receivedMFASecretHex;
                   async function startUpSettingsListeners() {
                     console.log("Settings have been started up");
-                    function ieSettingsFunction() {
+
+                    const resetUpdateMasterPasswordTab = async () => {
+                      // This function is for the tab to update the master password
+                      /* When its called, it returns the input boxes to the normal color 
+                      incase they turned red from an error */
+                      // It will also make sure all error messages are hidden
+
+                      Array.from(
+                        document.getElementsByClassName("changeMPInput")
+                      ).forEach((e) => {
+                        // Clearing input fields
+                        e.value = "";
+                        // Resetting input box backgrounds incase they turned red
+                        e.style.backgroundColor = "#30343c";
+                      });
+                      // Hiding all error messages
+                      document.getElementById(
+                        "changeTooWeakError"
+                      ).style.display = "none";
+                      document.getElementById(
+                        "changeHasToBeDifferentError"
+                      ).style.display = "none";
+                      document.getElementById(
+                        "changeDontMatchError"
+                      ).style.display = "none";
+                      document.getElementById(
+                        "changeIncorrectPasswordError"
+                      ).style.display = "none";
+                    };
+                    const updateTextOfSettingsButtons = async () => {
+                      // This function changes the text of the settings buttons
+                      /* For example, for the button to change the mfa, this function
+                      will check if the user has mfa enabled or disabled. If it's disabled,
+                      it will say "Enable MFA". If it's enabled, it will say "Disable MFA" */
+
+                      const mfaDoc = await getDoc(
+                        doc(db, "users", "filler", userUID, "mfa")
+                      );
+                      receivedMFASecretHex = mfaDoc.data().hex;
+                      if (receivedMFASecretHex.trim() != "") {
+                        mfaCurrentlyEnabled = true;
+                      } else {
+                        mfaCurrentlyEnabled = false;
+                      }
+
+                      console.log("ITS: ", mfaCurrentlyEnabled);
+                      console.log("RECIVED HEX IS: ", receivedMFASecretHex);
+
+                      const buttonToEnableOrDisableMFA = Array.from(
+                        document.getElementsByClassName(
+                          "buttonToEnableOrDisable"
+                        )
+                      )[0];
+
+                      if (mfaCurrentlyEnabled) {
+                        // If mfa is enabled, give option to disable
+                        buttonToEnableOrDisableMFA.textContent = "Disable";
+                        // Just to make sure pointer events are working incase user opens them
+                        Array.from(
+                          document.getElementsByClassName(
+                            "popupAskForMFAToDisableMFA"
+                          )
+                        )[0].style.pointerEvents = "auto";
+                      } else {
+                        buttonToEnableOrDisableMFA.textContent = "Enable";
+                        // Just to make sure pointer events are working incase user opens them
+                        Array.from(
+                          document.getElementsByClassName(
+                            "popupAskForMPToEnableMFA"
+                          )
+                        )[0].style.pointerEvents = "auto";
+                        Array.from(
+                          document.getElementsByClassName(
+                            "popupWithMFAInformation"
+                          )
+                        )[0].style.pointerEvents = "auto";
+                      }
+                    };
+                    const lowerOpacityOfPopupElements = (classOfPopup) => {
+                      // This is for making the popup opacity lower while things are loading
+                      Array.from(
+                        document.getElementsByClassName(classOfPopup)
+                      )[0].childNodes.forEach((e) => {
+                        if (e.id != undefined) {
+                          e.style.opacity = "0.3";
+                        }
+                      });
+                    };
+                    const higherOpacityOfPopupElements = (classOfPopup) => {
+                      // This makes elements of the popup back to normal after process is done loading
+                      Array.from(
+                        document.getElementsByClassName(classOfPopup)
+                      )[0].childNodes.forEach((e) => {
+                        if (e.id != undefined) {
+                          e.style.opacity = "1";
+                        }
+                      });
+                    };
+                    async function openAndCloseSettingsFunction() {
                       document
                         .getElementById("settingsButton")
                         .addEventListener("click", () => {
@@ -303,12 +407,19 @@ try {
                             "settingsScreen"
                           ).style.pointerEvents = "auto";
                           document.getElementById(
+                            "popups"
+                          ).style.pointerEvents = "auto";
+                          // Allow user to click on popups as well (Ex. Popup to enable MFA)
+
+                          document.getElementById(
                             "settingsScreen"
                           ).style.opacity = "1";
                         });
                       document
                         .getElementById("closeSettings")
                         .addEventListener("click", () => {
+                          resetUpdateMasterPasswordTab(); /* Resetting update
+                          master pass tab just incase its been used */
                           document.body.style.userSelect = "auto";
                           document.getElementById(
                             "settingsScreen"
@@ -331,148 +442,676 @@ try {
                           ).style.opacity = "1";
                         });
                     }
-                    ieSettingsFunction();
 
                     // CODE UNDERNEATH IS FOR INSIDE THE SETTINGS PAGE
-                    const changeMasterPasswordSettingsButton = Array.from(
-                      document.getElementsByClassName("changeMasterPassword")
-                    )[0];
-                    const closeChangeMasterPasswordTabButton = Array.from(
-                      document.getElementsByClassName(
-                        "closeChangeMasterPasswordWindow"
-                      )
-                    )[0];
-                    const logOutSettingsButton = Array.from(
-                      document.getElementsByClassName("logOutOfPMAccount")
-                    )[0];
 
-                    logOutSettingsButton.addEventListener("click", () => {
-                      document.getElementById("fromPMToMain").click();
-                    });
+                    async function startLogoutButtonListeners() {
+                      const logOutSettingsButton = Array.from(
+                        document.getElementsByClassName("logOutOfPMAccount")
+                      )[0];
 
-                    changeMasterPasswordSettingsButton.addEventListener(
-                      "click",
-                      () => {
-                        showChangeMPWindow();
-                      }
-                    );
+                      logOutSettingsButton.addEventListener("click", () => {
+                        document.getElementById("fromPMToMain").click();
+                      });
+                    }
 
-                    closeChangeMasterPasswordTabButton.addEventListener(
-                      "click",
-                      () => {
-                        hideChangeMPWindow();
-                      }
-                    );
+                    async function startChangeMasterPasswordListeners() {
+                      // Make color of new master pass change while typing depending on password strength level
+                      const scoreColorObject = {
+                        0: "red",
+                        1: "red",
+                        2: "orange",
+                        3: "yellow",
+                        4: "lime",
+                      };
 
-                    Array.from(
-                      document.getElementsByClassName(
-                        "confirmMasterPasswordChange"
-                      )
-                    )[0].addEventListener("click", async () => {
-                      // Listener to change master password
-                      const arrayOfChangeMPInputBoxes = Array.from(
-                        document.getElementsByClassName("changeMPInput")
-                      );
-                      const enterCurrentMPInputBox =
-                        arrayOfChangeMPInputBoxes[0];
-                      const enterNewMPInputBox = arrayOfChangeMPInputBoxes[1];
-                      const reEnterNewMPInputBox = arrayOfChangeMPInputBoxes[2];
-                      /////////////////////////////////
-                      const currentMPInputBoxValue =
-                        enterCurrentMPInputBox.value;
-                      const newMPInputBoxValue = enterNewMPInputBox.value;
-                      //
-                      const reEnterNewMPInputBoxValue =
-                        reEnterNewMPInputBox.value;
+                      const inputBoxForNewMP = Array.from(
+                        document.getElementsByClassName("changeMPNewMP")
+                      )[0];
+                      const inputBoxForConfirmingNewMP = Array.from(
+                        document.getElementsByClassName("changeMPRenterNewMP")
+                      )[0];
 
-                      if (
-                        // Checking if user entered the correct current master pass before updating
-                        await checkIfEnteredMPIsCorrect(currentMPInputBoxValue)
-                      ) {
-                        if (newMPInputBoxValue == reEnterNewMPInputBoxValue) {
-                          // Checking if the user re-entered the new master password correctly
-                          const hashedCurrentMasterPassword = crypto
-                            .createHash("sha512")
-                            .update(currentMPInputBoxValue)
-                            .digest("hex");
+                      inputBoxForNewMP.addEventListener("keyup", () => {
+                        const scoreOfCurrentInputBoxValue = zxcvbn(
+                          inputBoxForNewMP.value
+                        ).score;
+                        inputBoxForNewMP.style.color =
+                          scoreColorObject[scoreOfCurrentInputBoxValue];
+                        console.log(
+                          "Keyed up: ",
+                          scoreColorObject[scoreOfCurrentInputBoxValue]
+                        );
+                      });
+
+                      inputBoxForConfirmingNewMP.addEventListener(
+                        "keyup",
+                        () => {
+                          const scoreOfConfirmCurrentInputBoxValue = zxcvbn(
+                            inputBoxForConfirmingNewMP.value
+                          ).score;
+                          inputBoxForConfirmingNewMP.style.color =
+                            scoreColorObject[
+                              scoreOfConfirmCurrentInputBoxValue
+                            ];
                           console.log(
-                            "HASH of the 'correct' entered one: ",
-                            hashedCurrentMasterPassword
+                            "Keyed up: ",
+                            scoreColorObject[scoreOfConfirmCurrentInputBoxValue]
                           );
-                          const hashedNewMasterPassword = crypto
-                            .createHash("sha512")
-                            .update(newMPInputBoxValue)
-                            .digest("hex");
-                          const updateMasterPassword = httpsCallable(
-                            functions,
-                            "updateMasterPassword"
-                          );
-                          document.body.style.pointerEvents = "none";
-                          document.body.style.opacity = "0.5";
-
-                          // Making a new random string to test if master pass is correct at login
-                          let newRandomStringToBeEncrypted =
-                            await generateRandomString(250); // See line 145 for details
-                          const newRandomStringEncrypted = CryptoJS.AES.encrypt(
-                            // Encrypting the random string with the master pass hash as the key
-                            newRandomStringToBeEncrypted,
-                            hashedNewMasterPassword
-                          ).toString();
-                          const updateResult = await updateMasterPassword({
-                            userUID: userUID,
-                            currentMPH: hashedCurrentMasterPassword,
-                            newMPH: hashedNewMasterPassword,
-                            newRandomStringEncrypted: newRandomStringEncrypted,
-                          });
-                          currentEncryptedString = newRandomStringEncrypted;
-                          // Encrypting the random string with the master pass hash as the key
-
-                          newRandomStringToBeEncrypted = undefined;
-
-                          // Updating that set hashed master password
-                          // Its used to do encrypt and decrypt things
-                          hashedSetMasterPassValue = hashedNewMasterPassword;
-
-                          // console.log(updateResult);
-                          document.body.style.pointerEvents = "auto";
-                          document.body.style.opacity = "1";
-                          console.log("DONEDITITITI DONE DONE DONE 👍");
-
-                          console.log("WG: ", updateResult);
                         }
-                      }
-                    });
-
-                    // Listener to show and hide password text
-                    Array.from(
-                      document.getElementsByClassName(
-                        "showNewMPPasswordsButton"
-                      )
-                    )[0].addEventListener("click", () => {
-                      /* Here im checking the type of the first input box (out of the three that show up in the change master pass window) 
-                      If it is text I change it to password (and the other way around) I could of checked for any of 
-                      the input boxes, but they would all be the same since im changing the type for them all at once */
-
-                      const currentInputType = Array.from(
-                        document.getElementsByClassName("changeMPInput")
-                      )[0].type;
-                      const arrayOfInputBoxesToCheck = Array.from(
-                        document.getElementsByClassName("changeMPInput")
                       );
-                      if (currentInputType == "password") {
-                        arrayOfInputBoxesToCheck[0].type = "text";
-                        arrayOfInputBoxesToCheck[1].type = "text";
-                        arrayOfInputBoxesToCheck[2].type = "text";
-                      } else if (currentInputType == "text") {
-                        arrayOfInputBoxesToCheck[0].type = "password";
-                        arrayOfInputBoxesToCheck[1].type = "password";
-                        arrayOfInputBoxesToCheck[2].type = "password";
-                      }
 
+                      const changeMasterPasswordSettingsButton = Array.from(
+                        document.getElementsByClassName("changeMasterPassword")
+                      )[0];
+                      const closeChangeMasterPasswordTabButton = Array.from(
+                        document.getElementsByClassName(
+                          "closeChangeMasterPasswordWindow"
+                        )
+                      )[0];
+
+                      changeMasterPasswordSettingsButton.addEventListener(
+                        "click",
+                        () => {
+                          showChangeMPWindow();
+                        }
+                      );
+
+                      closeChangeMasterPasswordTabButton.addEventListener(
+                        "click",
+                        () => {
+                          hideChangeMPWindow(); // Hides tab
+                          resetUpdateMasterPasswordTab(); // Resets tab settings
+                        }
+                      );
+
+                      Array.from(
+                        document.getElementsByClassName(
+                          "confirmMasterPasswordChange"
+                        )
+                      )[0].addEventListener("click", async () => {
+                        // Listener to change master password
+                        const arrayOfChangeMPInputBoxes = Array.from(
+                          document.getElementsByClassName("changeMPInput")
+                        );
+                        const enterCurrentMPInputBox =
+                          arrayOfChangeMPInputBoxes[0];
+                        const enterNewMPInputBox = arrayOfChangeMPInputBoxes[1];
+                        const reEnterNewMPInputBox =
+                          arrayOfChangeMPInputBoxes[2];
+                        /////////////////////////////////
+                        const currentMPInputBoxValue =
+                          enterCurrentMPInputBox.value;
+                        const newMPInputBoxValue = enterNewMPInputBox.value;
+                        //
+                        const reEnterNewMPInputBoxValue =
+                          reEnterNewMPInputBox.value;
+
+                        if (
+                          // Checking if user entered the correct current master pass before updating
+                          await checkIfEnteredMPIsCorrect(
+                            currentMPInputBoxValue
+                          )
+                        ) {
+                          if (
+                            // Checking if the user re-entered the new master password correctly
+                            newMPInputBoxValue == reEnterNewMPInputBoxValue
+                          ) {
+                            if (
+                              // Checking if the user just re-entered their current master pass
+                              // Can't change master pass to current master pass
+                              currentMPInputBoxValue != newMPInputBoxValue
+                            ) {
+                              const zxcvbnOfNewRequestedMasterPass =
+                                zxcvbn(newMPInputBoxValue);
+
+                              if (
+                                // Checking if new pass is strong enough
+                                zxcvbnOfNewRequestedMasterPass.score >= 3
+                              ) {
+                                // Clearing all input fields (we already have the values stored as variables, so its fine)
+                                enterCurrentMPInputBox.value = "";
+                                enterNewMPInputBox.value = "";
+                                reEnterNewMPInputBox.value = "";
+                                //
+
+                                const hashedCurrentMasterPassword = crypto
+                                  .createHash("sha512")
+                                  .update(currentMPInputBoxValue)
+                                  .digest("hex");
+                                console.log(
+                                  "HASH of the 'correct' entered one: ",
+                                  hashedCurrentMasterPassword
+                                );
+                                const hashedNewMasterPassword = crypto
+                                  .createHash("sha512")
+                                  .update(newMPInputBoxValue)
+                                  .digest("hex");
+                                const updateMasterPassword = httpsCallable(
+                                  functions,
+                                  "updateMasterPassword"
+                                );
+                                document.body.style.pointerEvents = "none";
+                                document.body.style.opacity = "0.5";
+
+                                // Making a new random string to test if master pass is correct at login
+                                let newRandomStringToBeEncrypted =
+                                  await generateRandomString(250); // See line 145 for details
+                                const newRandomStringEncrypted =
+                                  CryptoJS.AES.encrypt(
+                                    // Encrypting the random string with the master pass hash as the key
+                                    newRandomStringToBeEncrypted,
+                                    hashedNewMasterPassword
+                                  ).toString();
+                                const updateResult = await updateMasterPassword(
+                                  {
+                                    userUID: userUID,
+                                    currentMPH: hashedCurrentMasterPassword,
+                                    newMPH: hashedNewMasterPassword,
+                                    newRandomStringEncrypted:
+                                      newRandomStringEncrypted,
+                                  }
+                                );
+                                currentEncryptedString =
+                                  newRandomStringEncrypted;
+                                // Encrypting the random string with the master pass hash as the key
+
+                                newRandomStringToBeEncrypted = undefined;
+
+                                // Updating that set hashed master password
+                                // Its used to do encrypt and decrypt things
+                                hashedSetMasterPassValue =
+                                  hashedNewMasterPassword;
+
+                                // console.log(updateResult);
+                                document.body.style.pointerEvents = "auto";
+                                document.body.style.opacity = "1";
+                                console.log("DONEDITITITI DONE DONE DONE 👍");
+
+                                console.log("WG: ", updateResult);
+                              } else {
+                                document.getElementById(
+                                  "changeTooWeakError"
+                                ).style.display = "flex";
+                                document.getElementById(
+                                  "changeHasToBeDifferentError"
+                                ).style.display = "none";
+                                document.getElementById(
+                                  "changeDontMatchError"
+                                ).style.display = "none";
+                                document.getElementById(
+                                  "changeIncorrectPasswordError"
+                                ).style.display = "none";
+                              }
+                            } else {
+                              // Do NOT execute request to change password
+                              // Will waste reads and writes
+                              document.getElementById(
+                                "changeTooWeakError"
+                              ).style.display = "none";
+                              document.getElementById(
+                                "changeHasToBeDifferentError"
+                              ).style.display = "flex";
+                              document.getElementById(
+                                "changeDontMatchError"
+                              ).style.display = "none";
+                              document.getElementById(
+                                "changeIncorrectPasswordError"
+                              ).style.display = "none";
+                            }
+                          } else {
+                            const newPassAndConfirmNewPassInputBoxes =
+                              Array.from(
+                                document.getElementsByClassName("newPass")
+                              );
+                            newPassAndConfirmNewPassInputBoxes.forEach((e) => {
+                              e.style.backgroundColor = "#7a1c1c";
+                            });
+                            document.getElementById(
+                              "changeTooWeakError"
+                            ).style.display = "none";
+                            document.getElementById(
+                              "changeHasToBeDifferentError"
+                            ).style.display = "none";
+                            document.getElementById(
+                              "changeIncorrectPasswordError"
+                            ).style.display = "none";
+                            document.getElementById(
+                              "changeDontMatchError"
+                            ).style.display = "flex";
+                          }
+                        } else {
+                          console.log("BRRR");
+                          document.getElementById(
+                            "changeTooWeakError"
+                          ).style.display = "none";
+                          document.getElementById(
+                            "changeHasToBeDifferentError"
+                          ).style.display = "none";
+                          document.getElementById(
+                            "changeIncorrectPasswordError"
+                          ).style.display = "flex";
+                          document.getElementById(
+                            "changeDontMatchError"
+                          ).style.display = "none";
+                        }
+                      });
+
+                      // Listener to show and hide password text
+                      Array.from(
+                        document.getElementsByClassName(
+                          "showNewMPPasswordsButton"
+                        )
+                      )[0].addEventListener("click", () => {
+                        /* Here im checking the type of the first input box (out of the three that show up in the change master pass window) 
+  If it is text I change it to password (and the other way around) I could of checked for any of 
+  the input boxes, but they would all be the same since im changing the type for them all at once */
+
+                        const currentInputType = Array.from(
+                          document.getElementsByClassName("changeMPInput")
+                        )[0].type;
+                        const arrayOfInputBoxesToCheck = Array.from(
+                          document.getElementsByClassName("changeMPInput")
+                        );
+                        if (currentInputType == "password") {
+                          arrayOfInputBoxesToCheck[0].type = "text";
+                          arrayOfInputBoxesToCheck[1].type = "text";
+                          arrayOfInputBoxesToCheck[2].type = "text";
+                        } else if (currentInputType == "text") {
+                          arrayOfInputBoxesToCheck[0].type = "password";
+                          arrayOfInputBoxesToCheck[1].type = "password";
+                          arrayOfInputBoxesToCheck[2].type = "password";
+                        }
+
+                        document
+                          .getElementById("showPasswordsIcon")
+                          .classList.toggle("fa-eye-slash");
+                      });
+                    }
+
+                    async function startMFAListeners() {
+                      const mfaSettingsButton = Array.from(
+                        document.getElementsByClassName(
+                          "buttonToEnableOrDisable"
+                        )
+                      )[0];
+                      mfaSettingsButton.addEventListener("click", () => {
+                        if (mfaCurrentlyEnabled == false) {
+                          // Show screen to enable MFA
+                          // Dimming background of popup
+                          // The popup doesn't get affected because all the popups aren't in the main settings div
+                          Array.from(
+                            document.getElementsByClassName(
+                              "popupAskForMPToEnableMFA"
+                            )
+                          )[0].style.display = "flex";
+                          Array.from(
+                            document.getElementsByClassName("mainSettings")
+                          )[0].style.opacity = "0.3";
+                          document.getElementById(
+                            "closeSettings"
+                          ).style.opacity = "0.3";
+                        } else if (mfaCurrentlyEnabled == true) {
+                          // Show screen to disable MFA
+                          // Dimming background of popup
+                          // The popup doesn't get affected because all the popups aren't in the main settings div
+                          Array.from(
+                            document.getElementsByClassName(
+                              "popupAskForMFAToDisableMFA"
+                            )
+                          )[0].style.display = "flex";
+                          Array.from(
+                            document.getElementsByClassName("mainSettings")
+                          )[0].style.opacity = "0.3";
+                          document.getElementById(
+                            "closeSettings"
+                          ).style.opacity = "0.3";
+                        }
+                      });
+                      // Listeners for inside popups
+
+                      let mfaSecretHex;
+                      // Listeners for popup to enable MFA
                       document
-                        .getElementById("showPasswordsIcon")
-                        .classList.toggle("fa-eye-slash");
-                    });
+                        .getElementById("showPassBeingConfirmed")
+                        .addEventListener("click", () => {
+                          const confirmMPForMFASetInputBox =
+                            document.getElementById("confirmMPForMFAInput");
+                          const showPassConfirmMPForMFAButton =
+                            document.getElementById("showPassBeingConfirmed");
+
+                          if (confirmMPForMFASetInputBox.type == "password") {
+                            confirmMPForMFASetInputBox.type = "text";
+                            showPassConfirmMPForMFAButton.textContent =
+                              "Hide password";
+                          } else {
+                            confirmMPForMFASetInputBox.type = "password";
+                            showPassConfirmMPForMFAButton.textContent =
+                              "Show password";
+                          }
+                        });
+                      document
+                        .getElementById("buttonToCloseConfirmMPForMFAPopup")
+                        .addEventListener("click", () => {
+                          // Close out of the popup that confirms the master password
+                          Array.from(
+                            document.getElementsByClassName(
+                              "popupAskForMPToEnableMFA"
+                            )
+                          )[0].style.display = "none";
+                          Array.from(
+                            document.getElementsByClassName("mainSettings")
+                          )[0].style.opacity = "1";
+                          document.getElementById(
+                            "closeSettings"
+                          ).style.opacity = "1";
+
+                          // Making anything that may have turn red from an error go back to normal
+                          const inputBoxForMP = document.getElementById(
+                            "confirmMPForMFAInput"
+                          );
+                          inputBoxForMP.value = "";
+                          inputBoxForMP.style.backgroundColor = "#5c615c";
+                          inputBoxForMP.style.border = "3px solid grey";
+                          document.getElementById(
+                            "settingsScreen"
+                          ).style.pointerEvents = "auto";
+                        });
+                      document
+                        .getElementById("confirmMPForMFAButton")
+                        .addEventListener("click", async () => {
+                          lowerOpacityOfPopupElements(
+                            "popupAskForMPToEnableMFA"
+                          );
+                          Array.from(
+                            // Cant click on anything on the popup until done confirming master password entry
+                            document.getElementsByClassName(
+                              "popupAskForMPToEnableMFA"
+                            )
+                          )[0].style.pointerEvents = "none";
+                          const enteredMP = document.getElementById(
+                            "confirmMPForMFAInput"
+                          ).value;
+                          const masterPasswordIsCorrect =
+                            await checkIfEnteredMPIsCorrect(enteredMP);
+                          if (masterPasswordIsCorrect) {
+                            // Master password has been confirmed
+                            // Reset the value of the input box just incase it gets re-opened later
+                            document.getElementById(
+                              "confirmMPForMFAInput"
+                            ).value = "";
+                            // Hide the popup for confirming master password
+                            Array.from(
+                              document.getElementsByClassName(
+                                "popupAskForMPToEnableMFA"
+                              )
+                            )[0].style.display = "none";
+                            // Generating mfa information
+                            let mfaSecret = speakeasy.generateSecret({
+                              name: "Personal PM",
+                            });
+
+                            console.log(mfaSecret);
+
+                            const mfaCode = mfaSecret.base32;
+                            mfaSecretHex = mfaSecret.hex;
+                            document.getElementById("mfaCode").textContent =
+                              mfaCode;
+
+                            qrcode.toDataURL(
+                              mfaSecret.otpauth_url,
+                              (err, data) => {
+                                console.log(data);
+                                const imgElementToStoreQrcode =
+                                  document.getElementById("qrcodeForMFA");
+                                // Make this data as the src of image (will show qrcode)
+                                imgElementToStoreQrcode.src = data;
+                              }
+                            );
+
+                            // Show popup with mfa information
+                            Array.from(
+                              document.getElementsByClassName(
+                                "popupWithMFAInformation"
+                              )
+                            )[0].style.display = "flex";
+                          } else {
+                            const inputBoxForConfirmingMP =
+                              document.getElementById("confirmMPForMFAInput");
+                            // Making them red
+                            inputBoxForConfirmingMP.style.backgroundColor =
+                              "#823030";
+                            inputBoxForConfirmingMP.style.border =
+                              "3px solid #3a1c1c";
+                            // Remember to make the go back to normal if the user closes out of the popup
+                            Array.from(
+                              // Turning pointer events back on so the user can re-enter the master password
+                              document.getElementsByClassName(
+                                "popupAskForMPToEnableMFA"
+                              )
+                            )[0].style.pointerEvents = "auto";
+                          }
+                          higherOpacityOfPopupElements(
+                            "popupAskForMPToEnableMFA"
+                          );
+                        });
+                      document
+                        .getElementById("confirmMFAConfirmationButton")
+                        .addEventListener("click", async () => {
+                          // Checks if the user entered the correct MFA confirmation code
+                          // Turn off pointer events while confirming code
+                          Array.from(
+                            document.getElementsByClassName(
+                              "popupWithMFAInformation"
+                            )
+                          )[0].style.pointerEvents = "none";
+
+                          const enteredMfaConfirmationCode =
+                            document.getElementById(
+                              "enterConfirmMFACode"
+                            ).value;
+                          const mfaIsCorrect = speakeasy.totp.verify({
+                            secret: mfaSecretHex,
+                            encoding: "hex",
+                            token: enteredMfaConfirmationCode,
+                          });
+                          if (mfaIsCorrect) {
+                            // User confirmed the MFA code correctly
+                            // Store the hex in database using cloud function
+
+                            const enableMFA = httpsCallable(
+                              functions,
+                              "enableMFA"
+                            );
+                            const enableMFACF = await enableMFA({
+                              mfaSecretHex: mfaSecretHex,
+                              hashedSetMasterPassValue:
+                                hashedSetMasterPassValue,
+                              userUID: userUID,
+                            });
+                            console.log(enableMFACF);
+                            await updateTextOfSettingsButtons();
+                            // Clear input box with MFA code
+                            document.getElementById(
+                              "enterConfirmMFACode"
+                            ).value = "";
+                            // Hide MFA popup
+                            Array.from(
+                              document.getElementsByClassName(
+                                "popupWithMFAInformation"
+                              )
+                            )[0].style.display = "none";
+
+                            // Allow pointer events for main settings screen again (and changing opacity to normal)
+                            document.getElementById(
+                              "settingsScreen"
+                            ).style.pointerEvents = "auto";
+                            document.getElementById(
+                              "settingsScreen"
+                            ).style.opacity = "1";
+                            Array.from(
+                              document.getElementsByClassName("mainSettings")
+                            )[0].style.opacity = "1";
+                            document.getElementById(
+                              "closeSettings"
+                            ).style.opacity = "1";
+                          } else {
+                            // Turn pointer events back on so they can try again
+                            Array.from(
+                              document.getElementsByClassName(
+                                "popupWithMFAInformation"
+                              )
+                            )[0].style.pointerEvents = "auto";
+                          }
+                        });
+
+                      // Listeners for popup to disable MFA
+                      document
+                        .getElementById(
+                          "buttonToCloseConfirmMFAForDisableMFAPopup"
+                        )
+                        .addEventListener("click", () => {
+                          // Close out of the popup that confirms the MFA token to disable MFA
+                          Array.from(
+                            document.getElementsByClassName(
+                              "popupAskForMFAToDisableMFA"
+                            )
+                          )[0].style.display = "none";
+                          Array.from(
+                            document.getElementsByClassName("mainSettings")
+                          )[0].style.opacity = "1";
+                          document.getElementById(
+                            "closeSettings"
+                          ).style.opacity = "1";
+
+                          // Making anything that may have turn red from an error go back to normal
+                          const inputBoxForMFA = document.getElementById(
+                            "confirmMFAToDisableMFAInput"
+                          );
+                          inputBoxForMFA.value = "";
+                          inputBoxForMFA.style.backgroundColor = "#5c615c";
+                          inputBoxForMFA.style.border = "3px solid grey";
+                          document.getElementById(
+                            "settingsScreen"
+                          ).style.pointerEvents = "auto";
+                        });
+                      document
+                        .getElementById("confirmMFAToDisableMFAButton")
+                        .addEventListener("click", async () => {
+                          lowerOpacityOfPopupElements(
+                            "popupAskForMFAToDisableMFA"
+                          );
+                          // Don't allow any clicking while checking so the user doesn't spam the confirm button
+                          Array.from(
+                            document.getElementsByClassName(
+                              "popupAskForMFAToDisableMFA"
+                            )
+                          )[0].style.pointerEvents = "none";
+
+                          const inputBoxForMFA = document.getElementById(
+                            "confirmMFAToDisableMFAInput"
+                          );
+                          const whatToDoIfMFAIsRightOrWrong = async (
+                            mfaMatched
+                          ) => {
+                            // This function will adjust the UI depending on if the mfa was entered correctly or not
+                            // It can also call the CF that disables MFA
+
+                            if (mfaMatched) {
+                              // Call CF to disable MFA
+                              const disableMFACF = httpsCallable(
+                                functions,
+                                "disableMFA"
+                              );
+                              const disableMFAReturn = await disableMFACF({
+                                userUID: userUID,
+                              });
+                              console.log(disableMFAReturn);
+                              await updateTextOfSettingsButtons();
+
+                              Array.from(
+                                document.getElementsByClassName(
+                                  "popupAskForMFAToDisableMFA"
+                                )
+                              )[0].style.display = "none";
+                              Array.from(
+                                document.getElementsByClassName("mainSettings")
+                              )[0].style.opacity = "1";
+                              document.getElementById(
+                                "closeSettings"
+                              ).style.opacity = "1";
+
+                              // Making anything that may have turn red from an error go back to normal
+                              const inputBoxForMFA = document.getElementById(
+                                "confirmMFAToDisableMFAInput"
+                              );
+                              inputBoxForMFA.value = "";
+                              inputBoxForMFA.style.backgroundColor = "#5c615c";
+                              inputBoxForMFA.style.border = "3px solid grey";
+                              document.getElementById(
+                                "settingsScreen"
+                              ).style.pointerEvents = "auto";
+                            } else if (mfaMatched == false) {
+                              const inputBoxForMFA = document.getElementById(
+                                "confirmMFAToDisableMFAInput"
+                              );
+                              // Making them red
+                              inputBoxForMFA.style.backgroundColor = "#823030";
+                              inputBoxForMFA.style.border = "3px solid #3a1c1c";
+
+                              // Allow clicks again so the user can try again
+                              Array.from(
+                                document.getElementsByClassName(
+                                  "popupAskForMFAToDisableMFA"
+                                )
+                              )[0].style.pointerEvents = "auto";
+                            }
+                            higherOpacityOfPopupElements(
+                              "popupAskForMFAToDisableMFA"
+                            );
+                          };
+                          if (mfaSecretHex != undefined) {
+                            /* The variable "mfaSecretHex" is the secret we need
+                            in order to verify the user's mfa token. If this is defined,
+                            that means the user is trying to disable mfa in the
+                            same session they enabled it. If this isn't defined,
+                            that means the user enabled mfa in a different session,
+                            meaning we don't have the secret stored. So we would have
+                            to make a read to the database to get it */
+
+                            const mfaIsCorrect = speakeasy.totp.verify({
+                              secret: mfaSecretHex,
+                              encoding: "hex",
+                              token: inputBoxForMFA.value,
+                            });
+                            await whatToDoIfMFAIsRightOrWrong(mfaIsCorrect);
+                          } else {
+                            // Have to get "mfaSecretHex" from the database
+                            // Use CF for this because the hex is encrypted with the master password hash + user's secret
+                            // Use CF to determine wether user entered the correct MFA
+                            const checkMFACF = httpsCallable(
+                              functions,
+                              "checkIfMFATokenIsCorrect"
+                            );
+                            const checkMFACFReturn = await checkMFACF({
+                              userUID: userUID,
+                              hashedSetMasterPassValue:
+                                hashedSetMasterPassValue,
+                              enteredMFAToken: inputBoxForMFA.value,
+                            });
+                            console.log(checkMFACFReturn);
+                            const mfaIsCorrect =
+                              checkMFACFReturn.data.enteredMFAIsCorrect;
+                            await whatToDoIfMFAIsRightOrWrong(mfaIsCorrect);
+                          }
+                        });
+                    }
+
+                    await openAndCloseSettingsFunction();
+                    await updateTextOfSettingsButtons();
+                    await startLogoutButtonListeners();
+                    await startChangeMasterPasswordListeners();
+                    await startMFAListeners();
                   }
                   if (tempSnap.exists()) {
                     // If statement checking if user already has a Master Password
