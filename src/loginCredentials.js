@@ -105,19 +105,6 @@ document
       });
   });
 
-// document.getElementById("realIcon").addEventListener("click", () => {
-//   signOut(auth)
-//     .then(() => {
-//       console.log("Sign out successful");
-//     })
-//     .catch((error) => {
-//       // An error happened.
-//     });
-//   const clearGoogleAuth = () => {
-//     gapi.auth2.getAuthInstance().disconnect();
-//   };
-// });
-
 document.body.addEventListener("click", (e) => {
   if (
     !e.target.classList.contains("emailInputBox") &&

@@ -2,16 +2,49 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 		
+    
     // match /{document=**} {
-    // 	allow read, write: if true;
+    // 	allow read, write: if false
     // }
-    match /users/filler/{useruid}/stat/pla/{checkplaid} { //probably change later
-    	allow read, write
+    match /users/filler/{userUID}/mpaps/limits/numofq {
+    	allow write: if true
     }
-    match /users/filler/{useruid}/mpaps/{path=**} {
-    	allow read, write: if uidIsAMatch(useruid) && isSignedIn()
+    match /users/filler/{userUID}/secKey {
+    	allow read: if true
     }
-
+    match /users/filler/{userUID}/mfa {
+    	allow read: if true
+    }
+    match /users/filler/{userId}/mpaps/ps/{passQuery} {
+    	allow read: if isSignedIn() && uidIsAMatch(userId)
+      allow create: if isSignedIn() &&
+      uidIsAMatch(userId)
+      // incomingData().pass.size() < 500 &&
+      // incomingData().user.size() < 500 && 
+      // incomingData().website.size() < 500 && 
+      // incomingData().directLink.size() < 500
+      allow update: if isSignedIn() &&
+      uidIsAMatch(userId) 
+      // incomingData().pass.size() < 500 &&
+      // incomingData().user.size() < 500 && 
+      // incomingData().website.size() < 500 && 
+      // incomingData().directLink.size() < 500
+      allow delete: if isSignedIn() &&
+      uidIsAMatch(userId)
+    }
+    match /users/filler/{userId}/mpaps/ms/{fillerID} {
+    	allow read: if isSignedIn() && uidIsAMatch(userId)
+      allow write: if isSignedIn() && uidIsAMatch(userId) && incomingData().mph.size() == 364
+    }
+    
+    match /users/filler/{userId}/mpaps {
+    	allow read: if isSignedIn() && uidIsAMatch(userId)
+      allow write: if isSignedIn() && uidIsAMatch(userId) && incomingData().fillData == "--"
+		}
+    match /users/filler/{userId}/mfa {
+    	allow read: if isSignedIn() && uidIsAMatch(userId)
+      allow write: if (isSignedIn() && uidIsAMatch(userId)) && (incomingData().enabled == true || incomingData().enabled == false)
+		}
 
     
     /// Functions ///
@@ -20,16 +53,30 @@ service cloud.firestore {
     	return request.auth != null
     }
     
-    function uidIsAMatch(uidArg) {
-    	return uidArg == request.auth.uid
+    function uidIsAMatch(uidPar) {
+    	return uidPar == request.auth.uid
     }
     
     function isEmailVerified() {
     	return request.auth.token.email_verified
     }
     
-    function getPLADOC() {
-    	return get(/databases/$(database)/documents/$(request.auth.uid)/stat/pla).data
+    function isFreeTrial() {
+    	return request.auth.token.ft == true
+    }
+    function isPaidMember() {
+    	return request.auth.token.p == true
+    }
+    function isAdmin() {
+    	return request.auth.token.a == true
+    }
+    
+    function existingData() {
+    	return resource.data
+    }
+    
+    function incomingData() {
+    	return request.resource.data
     }
   }
 }
