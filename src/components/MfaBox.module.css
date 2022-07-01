@@ -1,0 +1,75 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap");
+
+.mainMfaBox {
+  display: flex;
+  flex-direction: column;
+  background-color: #282d34;
+  box-shadow: 0 14px 20px rgb(0 0 0 / 80%);
+  border-radius: 1vh;
+  align-items: center;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.mfaInputComponent {
+  background-color: #282d34;
+  border: none;
+  border-left: 2px solid grey;
+  border-top: 2px solid grey;
+  border-bottom: 2px solid grey;
+  padding: 3%;
+  font-size: 2rem;
+  color: white;
+  width: 5%;
+}
+
+.mfaInputComponent:nth-child(6) {
+  border-right: 2px solid grey;
+}
+
+.mfaForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.inputContainer {
+  margin-top: 5%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.inputContainer input {
+  text-align: center;
+}
+
+#mfaHeader {
+  font-family: "Montserrat", sans-serif;
+  color: white;
+}
+
+.confirmCode {
+  margin-top: 3%;
+  cursor: pointer;
+  background-color: grey;
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  font-weight: 800;
+  border: none;
+  box-shadow: 0 5px 8px rgb(0 0 0 / 80%);
+  font-size: 1.3rem;
+  padding: 3% 8% 3% 8%;
+  align-self: center;
+}
+
+#logout {
+  margin-top: 3%;
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  font-weight: 800;
+  font-size: 1.3rem;
+}

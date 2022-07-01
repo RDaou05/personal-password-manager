@@ -1,0 +1,407 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap");
+
+*:focus {
+  outline: 0 !important;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  margin: auto;
+  max-width: 38rem;
+  padding-bottom: 400%;
+  overflow: hidden;
+}
+
+#container {
+  display: flex;
+  margin-top: 7%;
+  flex-direction: column;
+  width: 100%;
+  padding-right: 47%;
+}
+
+#realIcon {
+  width: auto;
+  height: 58px;
+  -webkit-filter: drop-shadow(5px 5px 5px #222);
+  filter: drop-shadow(5px 5px 5px #222);
+}
+
+.keyImage {
+  text-align: center;
+  margin-bottom: 6%;
+}
+
+.redirectAppButtons {
+  padding: 4%;
+  border-radius: 1vh;
+  border: none;
+  outline: none;
+  text-align: center;
+  margin-top: 4%;
+  box-shadow: 0 8px 15px rgb(0 0 0 / 33%);
+}
+
+#backToLoginLinkContainer {
+  text-align: center;
+  margin-top: 9%;
+}
+
+.backToLoginLink {
+  font-weight: 900;
+  font-family: "Montserrat", sans-serif;
+  font-size: 17px;
+  user-select: none;
+  text-decoration: none;
+  background: linear-gradient(to right, #fedb37 0%, #fdb931 8%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.backToLoginLink:hover {
+  opacity: 0.7;
+  margin-top: 0.5%;
+  transition: all ease-in-out 0.1s;
+}
+
+#keyPMIcon {
+  font-size: 22px;
+  float: left;
+  padding-left: 2%;
+}
+
+#pmButtonText {
+  color: black;
+  font-family: "Montserrat", sans-serif;
+  font-weight: bolder;
+  font-size: 19px;
+  margin: 0;
+  margin-right: 3%;
+}
+
+#docLockerIcon {
+  font-size: 22px;
+  float: left;
+  padding-left: 2%;
+}
+
+#lockerButtonText {
+  color: black;
+  font-family: "Montserrat", sans-serif;
+  font-weight: bolder;
+  font-size: 19px;
+  margin: 0;
+  margin-right: 3%;
+}
+
+#nameHeader {
+  background: linear-gradient(to right, #fedb37 0%, #fdb931 8%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: "Montserrat", sans-serif;
+  margin-left: 34%;
+  margin-top: 0;
+}
+
+#takeToPMButton {
+  min-width: 300px;
+  min-height: 60px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 22px;
+  text-transform: uppercase;
+  letter-spacing: 1.3px;
+  font-weight: 700;
+  color: #313133;
+  background: rgb(0 255 203 / 64%);
+  background-image: none;
+  border: none;
+  transition: all 0.2s ease-in-out 0s;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+  padding: 10px;
+}
+
+#takeToPMButton::before {
+  content: "";
+  border-radius: 1000px;
+  min-width: calc(300px + 12px);
+  min-height: calc(60px + 12px);
+  /* border: 6px solid #00ffcb; */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: all 0.2s ease-in-out 0s;
+}
+
+#takeToPMButton:hover,
+#takeToPMButton:focus {
+  color: #313133;
+  transform: translateY(-2px);
+  background-position: right center;
+}
+
+#takeToPMButton::after {
+  content: "";
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  /* border: 6px solid #00ffcb; */
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* animation: ring 1.5s infinite; */
+}
+
+#takeToPMButton:hover::after,
+#takeToPMButton:focus::after {
+  animation: none;
+  display: none;
+}
+
+/*  */
+/*  */
+/*  */
+
+#takeToLockerButton {
+  min-width: 300px;
+  min-height: 60px;
+  margin-top: 5%;
+  font-family: "Montserrat", sans-serif;
+  font-size: 22px;
+  text-transform: uppercase;
+  letter-spacing: 1.3px;
+  font-weight: 700;
+  color: #313133;
+  background: #8e2de2;
+  background-image: none;
+  border: none;
+  transition: all 0.2s ease-in-out 0s;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+  padding: 10px;
+}
+
+#takeToLockerButton::before {
+  content: "";
+  border-radius: 1000px;
+  min-width: calc(300px + 12px);
+  min-height: calc(60px + 12px);
+  /* border: 6px solid #00ffcb; */
+  box-shadow: 0 0 60px rgba(0, 255, 203, 0.64);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: all 0.2s ease-in-out 0s;
+}
+
+#takeToLockerButton:hover,
+#takeToLockerButton:focus {
+  color: #313133;
+  transform: translateY(-2px);
+}
+
+#takeToLockerButton::after {
+  content: "";
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  /* border: 6px solid #00ffcb; */
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* animation: ring 1.5s infinite; */
+}
+
+#takeToLockerButton:hover::after,
+#takeToLockerButton:focus::after {
+  animation: none;
+  display: none;
+}
+
+/* */
+
+button#takeToPMButton {
+  margin-top: 6%;
+}
+
+.showPUIButtonContainer {
+  position: absolute;
+  top: 0%;
+  right: 0%;
+  margin: 2% 1% 0 0;
+}
+
+.showPUIButton {
+  margin: 10px;
+  padding: 15px 45px;
+  cursor: pointer;
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 10vh;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px;
+  background-image: none;
+  background-color: #05807f;
+}
+
+.showPUIButton {
+  text-transform: uppercase;
+  transition: 0.5s;
+  background-size: 200% auto;
+}
+
+.showPUIButton:hover {
+  background-position: right center; /* change the direction of the change here */
+}
+
+.exitPreviewContainer {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  margin: 2% 0 0 1%;
+}
+
+.exitPreview {
+  margin: 10px;
+  padding: 15px 45px;
+  cursor: pointer;
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 10vh;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px;
+}
+
+.exitPreview {
+  background-image: none;
+  background-color: #05807f;
+}
+.exitPreview {
+  text-transform: uppercase;
+  transition: 0.5s;
+  background-size: 200% auto;
+  cursor: pointer;
+}
+
+.exitPreview:hover {
+  background-position: right center; /* change the direction of the change here */
+}
+
+.upgradeToPContainer {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  margin: 2% 1% 0 1%;
+}
+
+.upgradeToP {
+  margin: 10px;
+  padding: 15px 45px;
+  cursor: pointer;
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 10vh;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px;
+}
+
+.upgradeToP {
+  background-image: linear-gradient(to right, #8e2de2, #4a00e0);
+}
+
+.upgradeToP {
+  text-transform: uppercase;
+  transition: 0.5s;
+  background-size: 200% auto;
+  cursor: pointer;
+}
+
+.upgradeToP:hover {
+  background-position: right center; /* change the direction of the change here */
+}
+
+#showLayoutsText {
+  margin: 0;
+  margin-right: -8%;
+}
+
+#crownIcon {
+  position: absolute;
+  font-size: 18.5px;
+  left: 9%;
+  top: 26%;
+}
+
+#lockIconUpgrade {
+  font-size: 18.5px;
+  left: 10%;
+  position: absolute;
+  top: 28%;
+}
+
+#upgradeButtonText {
+  margin: 0;
+  margin-right: -8%;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.themeSelectorContainer {
+  background-color: #282d34;
+  box-shadow: 0 14px 20px rgb(0 0 0 / 80%);
+  z-index: 2;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+#closeThemeSelector {
+  position: absolute;
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  right: 1.5%;
+  top: 2%;
+  margin: 0;
+  cursor: pointer;
+}
+
+#themeSelectorHeader {
+  text-align: center;
+  font-family: "Montserrat", sans-serif;
+  color: white;
+}
+
+.backgroundGridContainer {
+  box-sizing: border-box;
+  padding: 5%;
+  align-items: stretch;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 3%;
+  row-gap: 17%;
+}
+
+.backgroundGridItem {
+  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  box-shadow: 0 8px 17px rgb(0 0 0 / 80%);
+  height: auto;
+  cursor: pointer;
+}

@@ -14,6 +14,11 @@ body {
   overflow: hidden;
 }
 
+.supportEmail {
+  margin: 0;
+  color: rgb(0, 255, 213);
+}
+
 .mainBodyContainer {
   display: grid;
 }
@@ -84,7 +89,7 @@ body {
   height: 9vh;
   cursor: pointer;
   background-color: #13817c;
-  border-radius: 6vh;
+  border-radius: 0.5vh;
   opacity: 0.8;
   border: none;
   box-shadow: 0 7px 7px rgb(0 0 0 / 80%);
@@ -168,7 +173,7 @@ body {
 
 .googleSignInContainer {
   text-align: center;
-  margin-top: 5%;
+  margin-top: 6%;
 }
 
 #googleSignInButton {
@@ -176,11 +181,11 @@ body {
   color: #4285f4;
   border: none;
   width: 81%;
-  height: 40px;
+  height: 8.4vh;
   opacity: 0.8;
   cursor: pointer;
   padding-right: 5%;
-  border-radius: 4vh;
+  border-radius: 0.5vh;
   box-shadow: 0 7px 7px rgba(0, 0, 0, 0.8);
   padding-top: 1.5%;
 }
@@ -211,7 +216,7 @@ h4#lgwg {
   display: inline-block;
   margin-bottom: 6%;
   margin-top: 0;
-  color: gray;
+  color: rgb(63, 63, 63);
   font-size: 16px;
   margin-left: 2%;
 }
@@ -225,7 +230,7 @@ h4#lgwg {
   position: absolute;
   text-align: center;
   padding: 5%;
-  top: 30%;
+  top: 23%;
 }
 
 .errorHasOccuredBox {
@@ -242,10 +247,6 @@ h4#lgwg {
 
 #accountDisabledMessage h4 {
   margin: 5px;
-}
-
-.supportEmail {
-  color: rgb(0, 255, 213);
 }
 
 #accountDisabledMessage h4:nth-child(1) {

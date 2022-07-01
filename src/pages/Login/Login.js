@@ -1,16 +1,20 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import classes from "./Login.module.css";
 import logo from "../../images/lockIcon.png";
 import googleLogo from "../../images/google.png";
 import { Link, useNavigate } from "react-router-dom";
-import Signup from "../Signup/Signup";
-import AppSelector from "../AppSelector/AppSelector";
-import { signInToPersonalPMAccount, googleSignIn } from "../../firebase";
+import Signup from "../Signup/Signup.js";
+import AppSelector from "../AppSelector/AppSelector.js";
+import { signInToPersonalPMAccount, googleSignIn } from "../../firebase.js";
+import { async } from "@firebase/util";
 
 const Login = () => {
   const [accountDisabledBoxState, accountDisabledBoxSetstate] = useState(false);
   const [errorHasOccuredBoxState, errorHasOccuredBoxSetState] = useState(false);
   let navigate = useNavigate();
+
+  // This might be changed in the app selector page, so if they go back to the login, the color could be different
+  // This makes sure that it says grey
 
   const sendToAppSelectorPage = () => {
     document.body.style.opacity = "1";
@@ -122,8 +126,7 @@ const Login = () => {
   };
 
   // Making login page unresizeable
-  const gui = require("nw.gui");
-  let win = gui.Window.get();
+  let win = nw.Window.get();
   win.setResizable(true);
   win.unmaximize();
   win.leaveFullscreen();
@@ -134,7 +137,7 @@ const Login = () => {
     <div id={classes.accountDisabledMessage}>
       <h4>Account has been disabled.</h4>
       <h4>Please contact</h4>
-      <h4 className="supportEmail">personal.pm.help.email@gmail.com</h4>
+      <h4 className={classes.supportEmail}>personal.pm.help.email@gmail.com</h4>
       <h4>if you weren't aware of this</h4>
       <button
         id={classes.continueAccountDisabled}
@@ -154,7 +157,7 @@ const Login = () => {
         An error has occurred signing in
       </h3>
       <h4 id={classes.pcText}>Please contact</h4>
-      <h4 className="supportEmail">personal.pm.help.email@gmail.com</h4>
+      <h4 className={classes.supportEmail}>personal.pm.help.email@gmail.com</h4>
       <h4 id={classes.ifYouWerentAwareText}>if you need any assistance</h4>
       <button
         id={classes.continueErrorHasOccurred}
@@ -167,6 +170,21 @@ const Login = () => {
       </button>
     </div>
   );
+
+  useEffect(() => {
+    async function signInWithEnter(e) {
+      if (e.key === "Enter") {
+        await signInUser(
+          document.getElementById("emailInpBox").value,
+          document.getElementById("inpBox").value
+        );
+      }
+    }
+    document.addEventListener("keydown", signInWithEnter);
+    return () => {
+      document.removeEventListener("keydown", signInWithEnter);
+    };
+  });
 
   return (
     <div className={classes.mainBodyContainer}>

@@ -1,29 +1,47 @@
 {
-  "name": "personal-pm",
+  "name": "nw-react",
   "version": "0.1.0",
+  "main": "main.js",
+  "homepage": ".",
+  "node-remote": [
+    "http://localhost:3042",
+    "file://*"
+  ],
   "private": true,
-  "dependencies": {
+  "devDependencies": {
+    "@otplib/preset-browser": "^12.0.1",
     "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^11.2.7",
-    "@testing-library/user-event": "^12.8.3",
-    "firebase": "^9.8.3",
-    "firebase-tools": "^11.1.0",
-    "nw-react-scripts": "4.0.4",
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0",
+    "@testing-library/react": "^13.3.0",
+    "@testing-library/user-event": "^13.5.0",
+    "concurrently": "^7.2.2",
+    "firebase": "^9.8.4",
+    "nw": "0.66.0-sdk",
+    "qrcode": "^1.5.0",
+    "react": "^18.2.0",
+    "react-devtools": "^4.24.7",
+    "react-dom": "^18.2.0",
     "react-router-dom": "^6.3.0",
-    "web-vitals": "^1.1.2"
+    "react-scripts": "5.0.1",
+    "wait-on": "^6.0.1",
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "nw-react-scripts start",
-    "build": "nw-react-scripts build",
-    "test": "nw-react-scripts test",
-    "eject": "nw-react-scripts eject"
+    "dev": "concurrently \"npm start\" \"wait-on http://localhost:3042 && set NWJS_START_URL=http://localhost:3042 && nw --enable-logging=stderr .\"",
+    "dev-tools": "concurrently \"react-devtools\" \"set REACT_APP_DEVTOOLS=enabled && npm start\" \"wait-on http://localhost:3042 && set NWJS_START_URL=http://localhost:3042 && nw --enable-logging=stderr .\"",
+    "dev:linux": "concurrently \"export REACT_APP_DEVTOOLS=enabled; npm start\" \"wait-on http://localhost:3042 && export NWJS_START_URL=http://localhost:3042; nw --enable-logging=stderr --remote-debugging-port=3043 .\"",
+    "dev-tools:linux": "concurrently \"react-devtools\" \"npm start\" \"wait-on http://localhost:3042 && export NWJS_START_URL=http://localhost:3042; nw --enable-logging=stderr .\"",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
+    "globals": {
+      "nw": true
+    },
     "extends": [
-      "nw-react-app",
-      "nw-react-app/jest"
+      "react-app",
+      "react-app/jest"
     ]
   },
   "browserslist": {
@@ -37,19 +55,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "main": "index.html",
-  "nwBuilder": {
-    "//": "https://github.com/nwjs-community/nw-builder",
-    "platforms": [
-      "osx64",
-      "win32",
-      "win64"
-    ],
-    "version": "latest",
-    "flavor": "normal",
-    "buildDir": "./build",
-    "cacheDir": "./cache",
-    "macIcns": "./src/logo.icns"
   }
 }

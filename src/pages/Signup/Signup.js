@@ -2,7 +2,7 @@ import React from "react";
 import classes from "./Signup.module.css";
 import logo from "../../images/lockIcon.png";
 import { Link, useNavigate } from "react-router-dom";
-import { signInToPersonalPMAccount } from "../../firebase";
+import { signInToPersonalPMAccount } from "../../firebase.js";
 
 const Signup = () => {
   let navigate = useNavigate();
