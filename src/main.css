@@ -903,17 +903,6 @@ body {
   transition: all ease-in-out 0.2s;
 }
 
-/* .newMasterPasswordField:focus {
-  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
-  border: 3px solid rgb(1 255 242);
-  transition: all ease-in-out 0.2s;
-}
-.newMasterPasswordField:hover {
-  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
-  border: 3px solid rgb(1 255 242);
-  transition: all ease-in-out 0.2s;
-} */
-
 .renterMP {
   background-color: transparent;
   outline: none;

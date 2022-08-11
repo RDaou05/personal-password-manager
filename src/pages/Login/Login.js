@@ -3,12 +3,14 @@ import classes from "./Login.module.css";
 import logo from "../../images/lockIcon.png";
 import googleLogo from "../../images/google.png";
 import { Link, useNavigate } from "react-router-dom";
-import Signup from "../Signup/Signup.js";
-import AppSelector from "../AppSelector/AppSelector.js";
+import { onAuthStateChanged } from "firebase/auth";
+import { signOutUser, firebaseAuth } from "../../firebase.js";
 import { signInToPersonalPMAccount, googleSignIn } from "../../firebase.js";
-import { async } from "@firebase/util";
 
 const Login = () => {
+  // window.history.pushState(null, window.document.title, window.location.href);
+  // This makes it so the user can't click the back or forward arrow on the mouse
+
   const [accountDisabledBoxState, accountDisabledBoxSetstate] = useState(false);
   const [errorHasOccuredBoxState, errorHasOccuredBoxSetState] = useState(false);
   let navigate = useNavigate();
@@ -229,16 +231,16 @@ const Login = () => {
           </button>
         </div>
         <div className={classes.googleSignInContainer}>
-          <a className={classes.googleSignInButtonHref} href="#">
-            <button
-              id={classes.googleSignInButton}
-              type="button"
-              onClick={signInUserWithGoogle}
-            >
-              <img src={googleLogo} id={classes.googleIcon} />
-              <h4 id={classes.lgwg}>Login with google</h4>
-            </button>
-          </a>
+          {/* <a className={classes.googleSignInButtonHref} href="#"> */}
+          <button
+            id={classes.googleSignInButton}
+            type="button"
+            onClick={signInUserWithGoogle}
+          >
+            <img src={googleLogo} id={classes.googleIcon} />
+            <h4 id={classes.lgwg}>Login with google</h4>
+          </button>
+          {/* </a> */}
         </div>
         <div className={classes.forgotContainer}>
           <a href="#" className={classes.forgotPass} id={classes.forgotPass}>

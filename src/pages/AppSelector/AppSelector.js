@@ -17,10 +17,15 @@ import normalThemePic from "../../images/themes/normal.png";
 import purpleBlueThemePic from "../../images/themes/purple-blue.png";
 import purpleClassyThemePic from "../../images/themes/purple-classy.png";
 import MfaBox from "../../components/MfaBox.js";
+import { onAuthStateChanged } from "firebase/auth";
 
 const AppSelector = () => {
+  console.log("rendered");
+  // window.history.pushState(null, window.document.title, window.location.href);
+  // This makes it so the user can't click the back or forward arrow on the mouse
+
   let navigate = useNavigate();
-  const userUID = firebaseAuth.currentUser.uid;
+  // const userUID = firebaseAuth.currentUser.uid;
   const [mfaIsEnabledState, setMfaIsEnabledState] = useState();
   const [mfaBoxState, setMfaBoxState] = useState();
   const [mfaPassedState, setMfaPassedState] = useState(false);
@@ -31,24 +36,28 @@ const AppSelector = () => {
   const [mfaKeyState, setMfaKeyState] = useState();
 
   useLayoutEffect(() => {
-    const rDoc = doc(FSDB, "users", "filler", userUID, "r");
-    return onSnapshot(rDoc, (snap) => {
-      console.log("ROLE: ");
-      if (
-        snap.data().memb == "ft" ||
-        snap.data().memb == "p" ||
-        snap.data().memb == "a"
-      ) {
-        setRoleState(snap.data().memb);
-      } else {
-        // If any state is undefined, nothing will render
-        setRoleState(undefined);
-      }
+    return onAuthStateChanged(firebaseAuth, (user) => {
+      console.log("on auth 1");
+      const rDoc = doc(FSDB, "users", "filler", user.uid, "r");
+      return onSnapshot(rDoc, (snap) => {
+        console.log("ROLE: ");
+        if (
+          snap.data().memb == "ft" ||
+          snap.data().memb == "p" ||
+          snap.data().memb == "a"
+        ) {
+          setRoleState(snap.data().memb);
+        } else {
+          // If any state is undefined, nothing will render
+          setRoleState(undefined);
+        }
+      });
     });
-  }, [userUID]);
+  }, []);
   useLayoutEffect(() => {
-    async function checkForMFA() {
-      const mfaDoc = doc(FSDB, "users", "filler", userUID, "mfa");
+    return onAuthStateChanged(firebaseAuth, async (user) => {
+      console.log("on auth 2");
+      const mfaDoc = doc(FSDB, "users", "filler", user.uid, "mfa");
       return onSnapshot(mfaDoc, (snap) => {
         const mfaKey = snap.data().hex.trim();
         if (mfaKey == "") {
@@ -63,9 +72,9 @@ const AppSelector = () => {
           setMfaKeyState(mfaKey);
         }
       });
-    }
-    checkForMFA();
-  }, [userUID]);
+    });
+  }, []);
+
   useLayoutEffect(() => {
     // If the user is role "p" or "a", we are checking local storage to see if they already have a set theme
     if (roleState == "a" || roleState == "p") {
@@ -100,13 +109,12 @@ const AppSelector = () => {
     }
   }, [roleState]);
   useEffect(() => {
-    // Signin user out when they press "Control + L"
+    // Signout user out when they press "Control + L"
     const signOutWithKeyPress = async (evt) => {
       if (evt.ctrlKey && evt.keyCode == 76) {
         if (!inPreviewState) {
           await signOutUser();
           sendToLoginPage();
-          console.log("OIOIO");
         }
       }
     };
@@ -139,19 +147,11 @@ const AppSelector = () => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   // Making sure that once they log out, they will have to enter MFA check again if they log back in
-
-  //   // Note: This only matters if they log out and log back in while the window is open
-  //   // If they close the window, they will have to enter MFA check either way
-
-  //   return () => {
-  //     if (mfaIsEnabledState) {
-  //       setMfaPassedState(false);
-  //       setMfaBoxState(true);
-  //     }
-  //   };
-  // }, [mfaPassedState, mfaBoxState, mfaIsEnabledState]);
+  const [firebaseEmail, setFirebaseEmailState] = useState();
+  onAuthStateChanged(firebaseAuth, (user) => {
+    console.log("on auth 3");
+    setFirebaseEmailState(user.email);
+  });
 
   const errorHasOccuredBox = (
     // This error box shows when a state is undefined
@@ -174,17 +174,21 @@ const AppSelector = () => {
         }}
         replace={true}
       >
-        Log out • {firebaseAuth.currentUser.email}
+        Log out • {firebaseEmail}
       </Link>
     </div>
   );
   const themeSelectorPopup = (
     <div className={classes.themeSelectorContainer}>
+      {console.log(
+        "THEME SELECTOR SHOWED .......................................................\n......................"
+      )}
       <h1
         id={classes.closeThemeSelector}
         onClick={() => {
           // Hides theme selector window after clicking on "X" button
           setThemeSelectState(false);
+          console.log("CLOSED from x button");
         }}
       >
         x
@@ -205,6 +209,7 @@ const AppSelector = () => {
             }
             setClassesState(aminClasses);
             setThemeSelectState(false); // Hides window after user selects an image
+            console.log("CLOSED amin");
             document.body.style.backgroundImage =
               "linear-gradient(to left, #8e2de2, #4a00e0)";
           }}
@@ -223,6 +228,7 @@ const AppSelector = () => {
             }
             setClassesState(premiumPurpleClasses);
             setThemeSelectState(false); // Hides window after user selects an image
+            console.log("CLOSED premium p");
             document.body.style.backgroundImage =
               "linear-gradient(to right, #0f0c29, #302b63, #24243e)";
           }}
@@ -238,6 +244,7 @@ const AppSelector = () => {
             }
             setInPreviewState(false);
             setThemeSelectState(false); // Hides window after user selects an image
+            console.log("CLOSED normal");
             setClassesState(normalClasses);
             document.body.style.backgroundImage =
               "linear-gradient(to bottom right, #053f45, #0b817b)";
@@ -257,6 +264,7 @@ const AppSelector = () => {
             }
             setClassesState(frostClasses);
             setThemeSelectState(false); // Hides window after user selects an image
+            console.log("CLOSED frost");
             document.body.style.backgroundImage =
               "linear-gradient(to right, #000428, #004e92)";
           }}
@@ -275,6 +283,7 @@ const AppSelector = () => {
             }
             setClassesState(blackClasses);
             setThemeSelectState(false); // Hides window after user selects an image
+            console.log("CLOSED black");
             document.body.style.backgroundImage =
               "linear-gradient(to right, black 12%, #434343 95%)";
           }}
@@ -293,6 +302,7 @@ const AppSelector = () => {
             }
             setClassesState(greyClasses);
             setThemeSelectState(false); // Hides window after user selects an image
+            console.log("CLOSED grey");
             document.body.style.backgroundImage = "none";
             document.body.style.backgroundColor = "#282d34";
           }}
@@ -323,6 +333,7 @@ const AppSelector = () => {
             className={classes.showPUIButton}
             onClick={() => {
               setThemeSelectState(true);
+              console.log("CLOSED not closed");
             }}
           >
             <span id={classes.crownIcon}>👑</span>
@@ -344,6 +355,9 @@ const AppSelector = () => {
         <button
           id={classes.takeToPMButton}
           className={classes.redirectAppButtons}
+          onClick={() => {
+            navigate("/pm", { replace: true });
+          }}
         >
           <i className="fas fa-key" id={classes.keyPMIcon}></i>
           <p id={classes.pmButtonText}>Password Manager</p>
@@ -355,19 +369,17 @@ const AppSelector = () => {
           <i className="fas fa-folder" id={classes.docLockerIcon}></i>
           <p id={classes.lockerButtonText}>Personal Locker</p>
         </button>
-        <a href="mainPage.html" id={classes.takeToPMLinkHidden}></a>
-        <a href="locker.html" id={classes.takeToLockerLinkHidden}></a>
-        <a href="login.html" id={classes.fromMainToLogin}></a>
       </div>
     </div>
   );
   const sendToLoginPage = () => {
-    navigate("/", { replace: false });
+    navigate("/", { replace: true });
   };
   // Making app selector page resizeable
   let win = nw.Window.get();
   win.setResizable(true);
   win.resizeTo(1020, 570);
+
   return (
     <div>
       {mfaIsEnabledState != undefined &&
@@ -378,12 +390,13 @@ const AppSelector = () => {
       themeSelectState != undefined &&
       classes != undefined ? (
         <div id="appSelectorMain">
-          {themeSelectState && mfaPassedState ? themeSelectorPopup : null}
+          {themeSelectState && mfaPassedState
+            ? themeSelectorPopup
+            : console.log("theme POP is null")}
           {mfaIsEnabledState && !mfaPassedState ? ( // Showing the MFA box if mfa is enabled and the mfa check hasn't been passed
             <MfaBox
-              email={firebaseAuth.currentUser.email}
+              email={firebaseEmail}
               onMfaCorrect={() => {
-                console.log("oi");
                 setMfaPassedState(true);
                 setMfaBoxState(false);
               }}
@@ -411,7 +424,7 @@ const AppSelector = () => {
                 }}
                 replace={true}
               >
-                Log out • {firebaseAuth.currentUser.email}
+                Log out • {firebaseEmail}
               </Link>
             </div>
           ) : null}
@@ -423,7 +436,10 @@ const AppSelector = () => {
             mfaIsEnabledState,
             "\n",
             "PASSED STATE: ",
-            mfaPassedState
+            mfaPassedState,
+            "\n",
+            "THEME BOX STATE: ",
+            themeSelectState
           )}
         </div>
       ) : (

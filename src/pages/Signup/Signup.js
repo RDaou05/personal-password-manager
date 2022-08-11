@@ -5,6 +5,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { signInToPersonalPMAccount } from "../../firebase.js";
 
 const Signup = () => {
+  // window.history.pushState(null, window.document.title, window.location.href);
+  // This makes it so the user can't click the back or forward arrow on the mouse
+
   let navigate = useNavigate();
 
   return (

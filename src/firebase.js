@@ -31,7 +31,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth();
+const auth = getAuth(app);
 const functions = getFunctions();
 const db = getFirestore();
 
@@ -189,12 +189,25 @@ const checkForMFA = async () => {
   }
 };
 
+const checkIfMasterPasswordExists = async () => {
+  let refForMainUID = doc(db, "users", "filler", auth.currentUser.uid, "mpaps");
+  const tempSnap = await getDoc(refForMainUID);
+  const tempSnapExists = tempSnap.exists();
+  console.log("temp snap exists: ", tempSnapExists);
+  if (tempSnapExists) {
+    return true;
+  } else if (!tempSnapExists) {
+    return false;
+  }
+};
+
 export {
   signInToPersonalPMAccount,
   createPersonalPMAccount,
   googleSignIn,
   signOutUser,
   checkForMFA,
+  checkIfMasterPasswordExists,
 };
 
 export {
