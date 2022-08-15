@@ -8,9 +8,18 @@ import {
   signOut,
 } from "firebase/auth";
 
-import { doc, getFirestore, getDoc } from "firebase/firestore";
+import {
+  doc,
+  getFirestore,
+  getDoc,
+  writeBatch,
+  collection,
+  getDocs,
+} from "firebase/firestore";
 
 import { getFunctions, httpsCallable } from "firebase/functions";
+
+const CryptoJS = require("crypto-js");
 
 // import {
 //   initializeAppCheck,
@@ -201,6 +210,109 @@ const checkIfMasterPasswordExists = async () => {
   }
 };
 
+const generateRandomString = (length) => {
+  let result = "";
+  let characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result; // Returns a VERY long random id
+};
+
+const hashString = async (str) => {
+  // Couldn't resolve a polyfill error with the CryptoJS module so I used this instead
+  // Hashes string with sha-512
+  // From stackoverflow: https://stackoverflow.com/questions/55926281/how-do-i-hash-a-string-using-javascript-with-sha512-algorithm
+  const buf = await crypto.subtle.digest(
+    "SHA-512",
+    new TextEncoder("utf-8").encode(str)
+  );
+  return Array.prototype.map
+    .call(new Uint8Array(buf), (x) => ("00" + x.toString(16)).slice(-2))
+    .join("");
+};
+
+const uploadMasterPassword = async (requestedMasterPassword) => {
+  const refForMSCheck = collection(
+    /* This collection stores a string that is encrypted with the
+  master pass. When the user logs in, it checks to see if the hash of the master password
+  the user entered can be used to decrypt the string that is stored here. If it can,
+  that means the master pass they entered is correct. If the decryption returns
+  a blank string or an error, that means it is the wrong master password */
+    db,
+    "users",
+    "filler",
+    auth.currentUser.uid,
+    "mpaps",
+    "ms"
+  );
+  let refForMainUID = doc(db, "users", "filler", auth.currentUser.uid, "mpaps");
+
+  const masterPassHash = await hashString(requestedMasterPassword);
+
+  const randomStringToBeEncrypted = generateRandomString(250); // See line 220 for details
+  const randomEncryptedString = CryptoJS.AES.encrypt(
+    // Encrypting the random string with the master pass hash as the key
+    randomStringToBeEncrypted,
+    masterPassHash
+  ).toString();
+
+  const batch = writeBatch(db);
+  batch.set(doc(refForMSCheck), {
+    mph: randomEncryptedString, // See line 220 for details
+  });
+  batch.set(refForMainUID, {
+    // We are using the .exists() method to check if the user already has a master pass setup or not. Adding this will make the .exists() method return true
+    fillData: "--",
+  });
+  await batch.commit();
+};
+
+const checkifMasterPasswordIsCorrect = async (requestedMasterPassword) => {
+  let receivedMPH;
+  let randomDecryptedString;
+  /* receivedMPH is a string stored in the database that has been encrypted
+  with the hash of the master password. If the hash of the master password that the user is trying to login with
+  is able to decrypt the string, that means the entered master password is correct */
+
+  const refForMSCheck = collection(
+    /* This collection stores a string that is encrypted with the
+  master pass. When the user logs in, it checks to see if the hash of the master password
+  the user entered can be used to decrypt the string that is stored here. If it can,
+  that means the master pass they entered is correct. If the decryption returns
+  a blank string or an error, that means it is the wrong master password */
+    db,
+    "users",
+    "filler",
+    auth.currentUser.uid,
+    "mpaps",
+    "ms"
+  );
+
+  const docSnapGetEncryptedString = await getDocs(refForMSCheck);
+  docSnapGetEncryptedString.forEach((doc) => {
+    receivedMPH = doc.data().mph;
+  });
+  const masterPasswordHash = await hashString(requestedMasterPassword);
+  try {
+    randomDecryptedString = CryptoJS.AES.decrypt(
+      // Encrypting the random string with the master pass hash as the key
+      receivedMPH,
+      masterPasswordHash
+    ).toString(CryptoJS.enc.Utf8);
+  } catch (err) {
+    console.log(err, masterPasswordHash);
+    return false;
+  }
+  if (randomDecryptedString.trim() == "") {
+    return false;
+  } else {
+    return true;
+  }
+};
+
 export {
   signInToPersonalPMAccount,
   createPersonalPMAccount,
@@ -208,6 +320,10 @@ export {
   signOutUser,
   checkForMFA,
   checkIfMasterPasswordExists,
+  uploadMasterPassword,
+  generateRandomString,
+  hashString,
+  checkifMasterPasswordIsCorrect,
 };
 
 export {
