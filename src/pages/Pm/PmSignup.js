@@ -2,6 +2,7 @@ import { React, useEffect, useState } from "react";
 import classes from "./Pm.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import zxcvbn from "zxcvbn";
+import { uploadMasterPassword } from "../../firebase";
 
 const PmSignup = () => {
   const navigate = useNavigate();
@@ -20,8 +21,6 @@ const PmSignup = () => {
   win.leaveFullscreen();
   win.resizeTo(1020, 570);
   win.setResizable(false);
-
-  const createMasterPassword = () => {};
 
   const checkIfPasswordIsOk = (enteredPass, confirmEnteredPass) => {
     if (enteredPass == confirmEnteredPass) {
@@ -116,6 +115,7 @@ const PmSignup = () => {
           console.log(passwordCheckResults);
           if (passwordCheckResults == "true") {
             console.log("Works");
+            uploadMasterPassword(passwordState);
           } else {
             setErrorMakingPasswordState(true);
             setPasswordErrorMessage(passwordCheckResults);
