@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, useLayoutEffect } from "react";
 import classes from "./Login.module.css";
 import logo from "../../images/lockIcon.png";
 import googleLogo from "../../images/google.png";
@@ -14,6 +14,13 @@ const Login = () => {
   const [accountDisabledBoxState, accountDisabledBoxSetstate] = useState(false);
   const [errorHasOccuredBoxState, errorHasOccuredBoxSetState] = useState(false);
   let navigate = useNavigate();
+
+  useEffect(() => {
+    document.body.style.background = "rgb(40, 45, 52)";
+    // return () => {
+    //   cleanup
+    // };
+  }, []);
 
   // This might be changed in the app selector page, so if they go back to the login, the color could be different
   // This makes sure that it says grey
@@ -44,11 +51,9 @@ const Login = () => {
       const signInReturn = await signInToPersonalPMAccount(email, password);
       if (typeof signInReturn === "string") {
         if (signInReturn.slice(0, 5) === "error") {
-          console.log("BOOM 0");
           // Error has occured
           document.body.style.opacity = "1";
           const errorCode = signInReturn.substring(7).trim();
-          console.log(`ERROR CODE: ${errorCode}`);
           if (
             errorCode === "auth/invalid-email" ||
             errorCode === "auth/user-not-found"
@@ -88,14 +93,11 @@ const Login = () => {
 
           // No errors
           sendToAppSelectorPage();
-          console.log("BOOM 1");
         }
       } else {
         // No errors
         sendToAppSelectorPage();
-        console.log("BOOM 2");
       }
-      console.log(signInReturn);
     }
   };
   const signInUserWithGoogle = async () => {
@@ -105,7 +107,6 @@ const Login = () => {
       if (googleSignInReturn.slice(0, 5) === "error") {
         document.body.style.opacity = "1";
         const errorCode = googleSignInReturn.substring(7).trim();
-        console.log(errorCode);
         if (errorCode == "auth/user-disabled") {
           document.getElementById("ableToDim").style.opacity = "0.3";
           accountDisabledBoxSetstate(true);
@@ -132,6 +133,7 @@ const Login = () => {
   win.setResizable(true);
   win.unmaximize();
   win.leaveFullscreen();
+  win.setMinimumSize(392, 518);
   win.resizeTo(392, 518);
   win.setResizable(false);
 

@@ -155,3 +155,13 @@ body {
   bottom: 22%;
   color: rgb(132, 66, 66);
 }
+
+.errorMessage {
+  font-weight: bolder;
+  font-family: "Montserrat", sans-serif;
+  pointer-events: none;
+  user-select: none;
+  margin: auto;
+  margin-top: 9%;
+  font-size: 1.3rem;
+}

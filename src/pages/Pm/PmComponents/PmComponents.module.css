@@ -1,0 +1,670 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap");
+
+.addPasswordPopup {
+  position: absolute;
+  padding: 10px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #383636;
+  border-radius: 1.5vh;
+  box-shadow: 0px 10px 30px 5px rgb(0 0 0);
+}
+
+.addPasswordInputBoxes {
+  border: 3px solid #5e6161;
+  box-shadow: 0px 10px 30px 5px rgb(0 0 0);
+  background-color: #000;
+  border-radius: 1vh;
+  outline: none;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: "Montserrat", sans-serif;
+  padding: 2.5%;
+  padding-left: 14%;
+  padding-right: 14%;
+  text-align: center;
+  opacity: 0.5;
+  margin: 0% 0% 6% 8%;
+  width: 55%;
+  height: 8%;
+}
+
+.addPasswordInputBoxes:focus {
+  border: 3px solid #133174;
+  transition: 0.2s ease;
+}
+
+#addPasswordHeader {
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  text-align: center;
+  margin-bottom: 7%;
+}
+
+.confirmAddPasswordButton {
+  color: white;
+  background-color: #13244a;
+  border-radius: 1vh;
+  border: none;
+  padding: 2%;
+  opacity: 0.8;
+  font-size: 19px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1%;
+  margin-left: 8.5%;
+  width: 83%;
+  height: 9%;
+  margin-bottom: 3%;
+}
+.confirmAddPasswordButton:hover {
+  opacity: 1;
+  transition: all ease-in-out 0.1s;
+}
+
+.eye {
+  color: #1d3b7e;
+  font-size: 1.5rem;
+  position: absolute;
+  top: 54.5%;
+  right: 13%;
+}
+
+#closeAddPasswordPopup {
+  position: absolute;
+  right: 3%;
+  top: 3%;
+  padding: 2% 2.5% 2% 2.5%;
+  border: 1px solid #707070;
+  border-radius: 10vh;
+  background-color: #242424;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+#closeAddPasswordPopup:hover {
+  background-color: #504f4f;
+  transition: 0.2s;
+}
+
+.updateTab {
+  z-index: 4;
+  background-color: #0c1213;
+  position: absolute;
+  overflow-y: scroll;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 40%;
+  display: none;
+  box-shadow: 0 50px 80px rgb(0 0 0 / 80%);
+}
+
+#updateTabTitle {
+  font-family: "Montserrat", sans-serif;
+  color: white;
+}
+
+/* .updateQueryInputContainer {
+  width: 70%;
+  margin-left: 10%;
+} */
+
+.updateQueryInput {
+  background-color: #151922;
+  border-radius: 0.5vh;
+  padding: 4%;
+  margin-top: 1%;
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  margin-right: 0%;
+  width: -webkit-fill-available;
+  text-overflow: ellipsis;
+  outline: none;
+  border: none;
+  font-size: 15px;
+  padding: 4%;
+  box-shadow: 0px 10px 30px 5px rgb(0, 0, 0);
+}
+
+.updateQueryInputSubheaders {
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  opacity: 0.7;
+  margin-right: 1%;
+  float: right;
+  font-size: 99%;
+}
+
+/* .updateFlexContainer {
+  display: flex;
+} */
+
+/*  */
+/*  */
+/*  */
+/*  */
+
+.queryInfoTable {
+  margin: auto;
+  margin-top: 7%;
+  border-collapse: collapse;
+  width: 82%;
+}
+
+.queryInfoTable tbody:before {
+  line-height: 4em;
+  content: ".";
+}
+
+.queryInfoTable tbody {
+  line-height: 2rem;
+}
+
+.queryInfoTable thead tr td {
+  text-align: center;
+  width: 100%;
+}
+
+.queryInfoTable tfoot tr td {
+  text-align: center;
+}
+
+.queryInfoTable tfoot tr {
+  text-align: center;
+  line-height: 80px;
+}
+
+tfoot:before {
+  /* line-height: 4em; */
+  content: ".";
+}
+
+.updateScreenIcon {
+  border-radius: 1vh;
+}
+
+.updateScreenQueryNameHeader {
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  margin-bottom: 0;
+}
+
+.strongUpdateDisplayText {
+  background-color: #151922;
+  border-radius: 0.5vh;
+  padding: 4%;
+  margin-top: 1%;
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  margin-right: 0;
+  width: -webkit-fill-available;
+  text-overflow: ellipsis;
+  outline: none;
+  border: none;
+  font-size: 15px;
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+}
+
+.strongUpdateDisplayText:hover {
+  background-color: #2f353d;
+  transition: all ease-in-out 0.2s;
+}
+
+.smallUpdateDisplayText {
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  opacity: 0.7;
+  margin-right: 1%;
+  float: right;
+  font-size: 99%;
+}
+
+.editButtonUpdate {
+  background-color: #2f353d;
+  border: 2px black solid;
+  border-radius: 0.5vh;
+  font-family: "Montserrat", sans-serif;
+  font-size: 25px;
+  width: -webkit-fill-available;
+  text-overflow: ellipsis;
+  color: white;
+  padding: 2%;
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+}
+
+.editButtonUpdate:hover {
+  cursor: pointer;
+  opacity: 0.8;
+  transition: all ease 0.3s;
+}
+
+.saveButtonUpdate {
+  background-color: #036875;
+  border: 2px black solid;
+  border-radius: 0.5vh;
+  font-family: "Montserrat", sans-serif;
+  font-size: 25px;
+  width: -webkit-fill-available;
+  text-overflow: ellipsis;
+  color: white;
+  padding: 2%;
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+}
+
+.saveButtonUpdate:hover {
+  cursor: pointer;
+  opacity: 0.8;
+  transition: all ease 0.3s;
+}
+
+.cancelButtonUpdate {
+  background-color: #2f353d;
+  border: 2px black solid;
+  border-radius: 0.5vh;
+  font-family: "Montserrat", sans-serif;
+  font-size: 25px;
+  width: -webkit-fill-available;
+  text-overflow: ellipsis;
+  color: white;
+  padding: 2%;
+  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+}
+
+.cancelButtonUpdate:hover {
+  cursor: pointer;
+  opacity: 0.8;
+  transition: all ease 0.3s;
+}
+
+.deleteQueryButton {
+  background-color: transparent;
+  border: 2px solid rgb(132, 66, 66);
+  border-radius: 9vh;
+  font-family: "Montserrat", sans-serif;
+  font-size: 19px;
+  width: -webkit-fill-available;
+  text-overflow: ellipsis;
+  color: rgb(132, 66, 66);
+  font-weight: 900;
+  padding: 2%;
+  float: left;
+  cursor: pointer;
+  box-shadow: 0px 10px 30px 5px rgb(0 0 0);
+}
+
+.deleteQueryButton:hover {
+  margin-top: -0.5%;
+  transition: 0.2s all ease;
+}
+
+.deleteQueryPopup {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0px 10px 30px 5px rgb(0 0 0);
+  border-radius: 0.5vh;
+  padding: 10px;
+  background-color: #403b3b;
+  z-index: 10;
+}
+
+#confirmDeleteText {
+  color: white;
+  font-family: "Montserrat", sans-serif;
+}
+
+#finalDeleteButton {
+  cursor: pointer;
+  float: right;
+  background-color: #0c1213;
+  color: red;
+  font-weight: bolder;
+  border-radius: 10vh;
+  font-size: medium;
+  padding: 0.5rem;
+  border: 2px solid #0c1213;
+  font-family: "Montserrat", sans-serif;
+}
+
+#finalCancelButton {
+  cursor: pointer;
+  float: left;
+  background-color: #0c1213;
+  color: white;
+  font-weight: bolder;
+  border-radius: 10vh;
+  font-size: medium;
+  padding: 0.5rem;
+  border: 2px solid #0c1213;
+  font-family: "Montserrat", sans-serif;
+}
+
+.confirmDeleteWrapper {
+  margin: 30px;
+  margin-bottom: 80px;
+}
+
+.popupAskForMP {
+  z-index: 2;
+  flex-direction: column;
+  position: absolute;
+  left: 50%;
+  top: 39%;
+  transform: translate(-50%, -50%);
+  background-color: #585454;
+  border-radius: 1vh;
+  box-shadow: rgb(0 0 0 / 25%) 0px 54px 55px, rgb(0 0 0 / 12%) 0px -12px 30px,
+    rgb(0 0 0 / 12%) 0px 4px 6px, rgb(0 0 0 / 17%) 0px 12px 13px,
+    rgb(0 0 0 / 9%) 0px -3px 5px;
+  padding: 3%;
+  display: flex;
+}
+
+#buttonToCloseConfirmMP {
+  position: absolute;
+  right: 4%;
+  top: 4%;
+  padding: 2% 3% 2% 3%;
+  border: 1px solid #707070;
+  border-radius: 10vh;
+  background-color: #3e3e3e;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+#buttonToCloseConfirmMP:hover {
+  background-color: #504f4f;
+  transition: 0.2s;
+}
+
+#textToConfirmMP {
+  color: white;
+  font-family: "Open Sans", sans-serif;
+  margin-top: 9%;
+  margin-bottom: 6%;
+}
+
+#confirmMP {
+  background-color: #5c615c;
+  border: 3px solid grey;
+  border-radius: 0.5vh;
+  padding: 3%;
+  color: white;
+  font-weight: bold;
+  letter-spacing: 0.15rem;
+  font-size: 1rem;
+  font-family: "Open Sans", sans-serif;
+}
+
+#showPassBeingConfirmed {
+  background-color: #212121;
+  border: 2px solid #4b4d4b;
+  border-radius: 0.5vh;
+  padding: 3%;
+  margin-top: 4%;
+  color: white;
+  font-weight: bold;
+  font-family: "Open Sans", sans-serif;
+  cursor: pointer;
+}
+
+#confirmMPForMFAButton {
+  background-color: teal;
+  border: 2px solid #4b4d4b;
+  border-radius: 0.5vh;
+  padding: 3%;
+  margin-top: 1%;
+  color: white;
+  font-weight: bold;
+  font-family: "Open Sans", sans-serif;
+  cursor: pointer;
+}
+
+.popupWithMFAInformation {
+  z-index: 2;
+  flex-direction: column;
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  background-color: #585454;
+  border-radius: 1vh;
+  box-shadow: rgb(0 0 0 / 25%) 0px 54px 55px, rgb(0 0 0 / 12%) 0px -12px 30px,
+    rgb(0 0 0 / 12%) 0px 4px 6px, rgb(0 0 0 / 17%) 0px 12px 13px,
+    rgb(0 0 0 / 9%) 0px -3px 5px;
+  padding: 3%;
+}
+
+.qrcodeWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+#qrcodeForMFA {
+  width: 300px;
+  height: 300px;
+  border-radius: 2vh;
+}
+
+#mfaCode {
+  padding: 0%;
+  color: black;
+  font-family: "Open Sans", sans-serif;
+  letter-spacing: 1px;
+  font-size: 1.5rem;
+  margin-bottom: 0;
+  text-decoration: underline;
+}
+
+#enterConfirmMFACode {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid #00a2a2;
+  font-size: 1.5rem;
+  color: white;
+  text-align: center;
+  font-size: 2rem;
+  line-height: 2;
+}
+
+#enterConfirmMFACode::placeholder {
+  color: white;
+  opacity: 0.7;
+}
+
+#confirmMFAConfirmationButton {
+  color: white;
+  background-color: teal;
+  border: 3px solid grey;
+  margin-top: 4%;
+  padding: 2%;
+  border-radius: 0vh;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+#closeSettings {
+  position: absolute;
+  right: 3%;
+  top: 3%;
+  padding: 1% 2% 1.5% 2%;
+  border: 1px solid #707070;
+  border-radius: 10vh;
+  background-color: #242424;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+#mfaInstructions {
+  font-family: "Open Sans", sans-serif;
+  color: white;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.changeMasterPasswordScreen {
+  display: flex;
+  z-index: 2;
+  flex-direction: column;
+  align-self: center;
+  justify-self: center;
+  background: #1b1b1b;
+  width: 33%;
+  height: 80%;
+  padding: 3%;
+  justify-content: space-evenly;
+  position: absolute;
+  left: 31%;
+  top: 6%;
+}
+
+.changeMasterPasswordHeader {
+  color: white;
+  margin-top: 0;
+  text-align: center;
+  font-family: "Open Sans", sans-serif;
+}
+
+.changeMPInputsContainer {
+  flex-direction: column;
+  display: flex;
+}
+
+.changeMPCurrentMP {
+  border: none;
+  border-top-right-radius: 1vh;
+  border-top-left-radius: 1vh;
+  border: none;
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 900;
+  font-size: 15px;
+  padding: 5%;
+  background-color: #30343c;
+}
+
+.changeMPNewMP {
+  border: none;
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 900;
+  font-size: 15px;
+  padding: 5%;
+  border-top: 1px solid #746e6e;
+  background-color: #30343c;
+}
+
+.changeMPRenterNewMP {
+  border-bottom-right-radius: 1vh;
+  border-bottom-left-radius: 1vh;
+  flex-direction: column;
+  border: none;
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 900;
+  font-size: 15px;
+  padding: 5%;
+  border-top: 1px solid #746e6e;
+  background-color: #30343c;
+}
+
+#changeTooWeakError {
+  font-family: "Open Sans", sans-serif;
+  color: #bf3b3b;
+  margin: 0;
+  margin-top: 9%;
+  font-size: 1.1rem;
+  display: none;
+  align-self: center;
+}
+
+#changeDontMatchError {
+  font-family: "Open Sans", sans-serif;
+  color: #bf3b3b;
+  margin: 0;
+  margin-top: 9%;
+  font-size: 1.1rem;
+  display: none;
+  align-self: center;
+}
+
+#changeHasToBeDifferentError {
+  font-family: "Open Sans", sans-serif;
+  color: #bf3b3b;
+  margin: 0;
+  margin-top: 9%;
+  font-size: 1.1rem;
+  display: none;
+  align-self: center;
+}
+
+#changeIncorrectPasswordError {
+  font-family: "Open Sans", sans-serif;
+  color: #bf3b3b;
+  margin: 0;
+  margin-top: 9%;
+  font-size: 1.1rem;
+  display: none;
+  align-self: center;
+}
+
+.changeMPFooter {
+  display: flex;
+  flex-direction: column;
+}
+
+.showNewMPPasswordsButton {
+  border: none;
+  background: #30343c;
+  opacity: 0.8;
+  border-radius: 0.5vh;
+  padding: 3%;
+  margin-bottom: 1%;
+}
+
+.showPasswordsText {
+  color: white;
+  font-family: "Open Sans", sans-serif;
+  cursor: pointer;
+  margin: 0;
+  font-weight: 600;
+}
+
+.confirmMasterPasswordChange {
+  padding: 3%;
+  border-radius: 0.5vh;
+  border: none;
+  color: white;
+  font-family: "Open Sans", sans-serif;
+  background-color: darkcyan;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.confirmMasterPasswordChange:hover {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+.closeChangeMasterPasswordWindow {
+  padding: 3%;
+  border-radius: 0.5vh;
+  border: none;
+  color: white;
+  font-family: "Open Sans", sans-serif;
+  background-color: #6a1d1d;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  opacity: 0.8;
+}

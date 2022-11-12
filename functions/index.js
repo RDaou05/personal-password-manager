@@ -46,6 +46,22 @@ exports.checkIfMFATokenIsCorrect = functions.https.onCall(
   }
 );
 
+exports.checkIfCodeToEnableMFAIsCorrect = functions.https.onCall(
+  async (data, context) => {
+    // We are doing this with a cloud function because the library speakeasy is NOT compatible with reactjs frontend.
+    const mfaIsCorrect = speakeasy.totp.verify({
+      secret: data.decryptedMFASecretHex,
+      encoding: "hex",
+      token: data.enteredMFAToken,
+    });
+    if (mfaIsCorrect) {
+      return { enteredMFAIsCorrect: true };
+    } else {
+      return { enteredMFAIsCorrect: false };
+    }
+  }
+);
+
 exports.disableMFA = functions.https.onCall(async (data, context) => {
   const usersUID = data.userUID;
   const db = admin.firestore();
@@ -87,6 +103,66 @@ exports.enableMFA = functions.https.onCall(async (data, context) => {
   return Promise.all([p1]);
 });
 
+exports.generateMFA = functions.https.onCall(async (data, context) => {
+  // We are doing this with a cloud function because the library speakeasy is NOT compatible with reactjs frontend.
+  let mfaSecret = speakeasy.generateSecret({
+    name: "Personal PM",
+  });
+
+  const mfaCode = mfaSecret.base32;
+  const mfaSecretHex = mfaSecret.hex;
+  return {
+    mfaSecret: mfaSecret,
+    mfaCode: mfaCode,
+    mfaSecretHex: mfaSecretHex,
+    otpauthURL: mfaSecret.otpauth_url,
+  };
+});
+
+exports.checkIfMasterPasswordIsCorrect = functions.https.onCall(
+  async (data, context) => {
+    const db = admin.firestore();
+    let receivedMPH;
+    let randomDecryptedString;
+    /* receivedMPH is a string stored in the database that has been encrypted
+  with the hash of the master password. If the hash of the master password that the user is trying to login with
+  is able to decrypt the string, that means the entered master password is correct */
+
+    const refForMSCheck = db
+      .collection("users")
+      .doc("filler")
+      .collection(data.userUID)
+      .doc("mpaps")
+      .collection(
+        "ms"
+      ); /* This collection stores a string that is encrypted with the
+      master pass. When the user logs in, it checks to see if the hash of the master password
+      the user entered can be used to decrypt the string that is stored here. If it can,
+      that means the master pass they entered is correct. If the decryption returns
+      a blank string or an error, that means it is the wrong master password */
+
+    const docSnapGetEncryptedString = await refForMSCheck.get();
+    docSnapGetEncryptedString.forEach((doc) => {
+      receivedMPH = doc.data().mph;
+    });
+    const masterPasswordHash = data.requestedMasterPasswordHash;
+    try {
+      randomDecryptedString = CryptoJS.AES.decrypt(
+        // Encrypting the random string with the master pass hash as the key
+        receivedMPH,
+        masterPasswordHash
+      ).toString(CryptoJS.enc.Utf8);
+    } catch (err) {
+      return { masterPasswordIsCorrect: false };
+    }
+    if (randomDecryptedString.trim() == "") {
+      return { masterPasswordIsCorrect: false };
+    } else {
+      return { masterPasswordIsCorrect: true };
+    }
+  }
+);
+
 exports.updateMasterPassword = functions.https.onCall(async (data, context) => {
   const db = admin.firestore();
 
@@ -115,7 +191,8 @@ exports.updateMasterPassword = functions.https.onCall(async (data, context) => {
 
   const currentKey = data.currentMPH + userSecret;
   const newKey = data.newMPH + userSecret;
-  if (allUserQueriesWithOldEncryption.length > 0) {
+
+  if (allUserQueriesWithOldEncryption.size > 0) {
     // This if statement converts all user passwords to be encrypted with the new master pass
 
     const passCollection = db
@@ -124,7 +201,6 @@ exports.updateMasterPassword = functions.https.onCall(async (data, context) => {
       .collection(data.userUID)
       .doc("mpaps")
       .collection("ps");
-    //
     allUserQueriesWithOldEncryption.forEach((oldEncryptedUserDoc) => {
       let decryptedObjectToAppend = {};
       let newEncryptedObjectToAppend = {};
@@ -182,6 +258,7 @@ exports.updateMasterPassword = functions.https.onCall(async (data, context) => {
     .doc("mfa");
   const mfaDoc = await refForMFADoc.get();
   if (mfaDoc.data().hex.trim() != "") {
+    // Check if mfa is enabled with this if statement
     const currentEncryptedHex = mfaDoc.data().hex;
     const currentDecryptedHex = CryptoJS.AES.decrypt(
       currentEncryptedHex,
@@ -217,6 +294,7 @@ exports.updateMasterPassword = functions.https.onCall(async (data, context) => {
     listOfNewEn: listOfNewEn,
     USERSEC: userSecret,
     msRef: msDocs[0],
+    newMPH: data.newMPH,
   };
 });
 
@@ -260,7 +338,11 @@ exports.decryptUserQueries = functions.https.onCall(async (data, context) => {
         }
       }
       // Adding the decrypted doc and the ID to the final array of decrypted objects
-      listOfDecryptedObjects.push([decryptedObjectToAppend, encUserDoc.id]);
+      listOfDecryptedObjects.push([
+        decryptedObjectToAppend,
+        encUserDoc.id,
+        encUserDoc.data().nummy,
+      ]);
     });
     return {
       ERROR: "None",
@@ -332,7 +414,10 @@ exports.addUserQuery = functions.https.onCall(async (data, context) => {
         stringifiedEncryptedObject: stringifiedEncryptedObject,
         newQueryPath: newQueryPath,
         infoArray: infoArray,
+        nummy: nummy,
         rawObjectToAdd: rawObjectToAdd,
+        random: randomID,
+        isLink: isLink,
       };
     } catch (err) {
       return {
@@ -344,6 +429,9 @@ exports.addUserQuery = functions.https.onCall(async (data, context) => {
         newQueryPath: newQueryPath,
         infoArray: infoArray,
         rawObjectToAdd: rawObjectToAdd,
+        nummy: nummy,
+        random: randomID,
+        isLink: isLink,
       };
     }
   } catch (err) {
@@ -487,24 +575,12 @@ exports.giveSignUpRoles = functions.auth.user().onCreate((user) => {
     .collection(usersUID)
     .doc("r")
     .set({ memb: "ft" });
-  const p2 = admin
-    .auth()
-    .getUser(usersUID)
-    .then(() => {
-      return admin.auth().setCustomUserClaims(usersUID, {
-        ft: true,
-        p: false,
-        a: false,
-      });
-    })
-    .then(() => {
-      return {
-        message: `Success! ${user.email} has been registered with ft`,
-      };
-    })
-    .catch((err) => {
-      return err;
-    });
+  const p2 = db
+    .collection("users")
+    .doc("filler")
+    .collection(usersUID)
+    .doc("disableAccount")
+    .set({ disabled: false }); // If we change this to true, anyone logged in will be logged out and the account will be disabled
   const p3 = db
     .collection("users")
     .doc("filler")
@@ -513,3 +589,21 @@ exports.giveSignUpRoles = functions.auth.user().onCreate((user) => {
     .set({ hex: "" });
   return Promise.all([p1, p2, p3]);
 });
+
+exports.onAccountDisabled = functions.firestore
+  .document("/users/filler/{userUID}/disableAccount")
+  .onUpdate((change, context) => {
+    if (change.after.data().disabled == true) {
+      // The context.params.userUID gets the "userUID" variable from the document path (line 505)
+      admin.auth().updateUser(context.params.userUID, {
+        disabled: true,
+      });
+    } else if (change.after.data().disabled == false) {
+      admin.auth().updateUser(context.params.userUID, {
+        disabled: false,
+      });
+    }
+    return {
+      change: change,
+    };
+  });

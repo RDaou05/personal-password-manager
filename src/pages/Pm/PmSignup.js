@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import zxcvbn from "zxcvbn";
 import { uploadMasterPassword } from "../../firebase";
 
-const PmSignup = () => {
+const PmSignup = (props) => {
   const navigate = useNavigate();
   const [passwordState, setPasswordState] = useState("");
   const [confirmPasswordState, setConfirmPasswordState] = useState("");
@@ -13,14 +13,8 @@ const PmSignup = () => {
   const [passwordErrorMessage, setPasswordErrorMessage] = useState(false);
   const [meterStrengthState, setMeterStrengthState] = useState(0);
   const [renterMeterStrengthState, setRenterMeterStrengthState] = useState(0);
-
-  // Making login page unresizeable
-  let win = nw.Window.get();
-  win.setResizable(true);
-  win.unmaximize();
-  win.leaveFullscreen();
-  win.resizeTo(1020, 570);
-  win.setResizable(false);
+  const [signupButtonDisbaledState, setSignupButtonDisbaledState] =
+    useState(false);
 
   const checkIfPasswordIsOk = (enteredPass, confirmEnteredPass) => {
     if (enteredPass == confirmEnteredPass) {
@@ -104,21 +98,22 @@ const PmSignup = () => {
       <h2 id={classes.passwordErrorMessage}>{passwordErrorMessage}</h2>
 
       <button
+        disabled={signupButtonDisbaledState}
         className={classes.confirmMasterPasswordButton}
-        onClick={() => {
-          console.log(passwordState, confirmPasswordState);
+        onClick={async () => {
+          setSignupButtonDisbaledState(true);
           const passwordCheckResults = checkIfPasswordIsOk(
             passwordState,
             confirmPasswordState
           );
-          // The result will either be "true", or an error message
-          console.log(passwordCheckResults);
+          // The result will either be "true", or an error message as a string
           if (passwordCheckResults == "true") {
-            console.log("Works");
-            uploadMasterPassword(passwordState);
+            const uploadMPReturn = await uploadMasterPassword(passwordState);
+            props.loginPassed(uploadMPReturn.masterPasswordHash);
           } else {
             setErrorMakingPasswordState(true);
             setPasswordErrorMessage(passwordCheckResults);
+            setSignupButtonDisbaledState(false);
           }
         }}
       >
@@ -127,7 +122,7 @@ const PmSignup = () => {
 
       <h1
         to=""
-        className={classes.back}
+        className={classes.backFromSignup}
         onClick={() => {
           navigate("/appselector", { replace: true });
         }}

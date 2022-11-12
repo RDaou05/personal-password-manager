@@ -6,6 +6,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
+  sendEmailVerification,
 } from "firebase/auth";
 
 import {
@@ -15,6 +16,8 @@ import {
   writeBatch,
   collection,
   getDocs,
+  setDoc,
+  deleteDoc,
 } from "firebase/firestore";
 
 import { getFunctions, httpsCallable } from "firebase/functions";
@@ -72,7 +75,12 @@ const signInToPersonalPMAccount = async (email, password) => {
 
 const createPersonalPMAccount = async (email, password) => {
   try {
-    return await createUserWithEmailAndPassword(auth, email, password);
+    return createUserWithEmailAndPassword(auth, email, password).then(
+      async (userCredentials) => {
+        const user = userCredentials.user;
+        return await sendEmailVerification(user);
+      }
+    );
   } catch (err) {
     return `error: ${err.code}`;
   }
@@ -93,6 +101,22 @@ const checkIfMFATokenIsCorrect = async (
   return mfaIsCorrect;
 };
 
+const checkIfCodeToEnableMFAIsCorrect = async (
+  enteredMFAToken,
+  decryptedMFASecretHex
+) => {
+  const checkIfCodeToEnableMFAIsCorrect = httpsCallable(
+    functions,
+    "checkIfCodeToEnableMFAIsCorrect"
+  );
+  const checkIfCodeToEnableMFAIsCorrectCF =
+    await checkIfCodeToEnableMFAIsCorrect({
+      enteredMFAToken: enteredMFAToken,
+      decryptedMFASecretHex: decryptedMFASecretHex,
+    });
+  return checkIfCodeToEnableMFAIsCorrectCF;
+};
+
 const disableMFA = async () => {
   const disableMFACF = httpsCallable(functions, "disableMFA");
   const disableMFAReturn = await disableMFACF({
@@ -111,11 +135,22 @@ const enableMFA = async (mfaSecretHex, hashedSetMasterPassValue) => {
   return enableMFACF;
 };
 
-const updateMasterPassword = async (
-  hashedCurrentMasterPassword,
-  hashedNewMasterPassword,
-  newRandomStringEncrypted
-) => {
+const generateMFA = async () => {
+  const generateMFA = httpsCallable(functions, "generateMFA");
+  const generateMFACF = await generateMFA();
+  return generateMFACF;
+};
+
+const updateMP = async (currentMasterPassword, newMasterPassword) => {
+  const newRandomString = generateRandomString(250);
+
+  const hashedCurrentMasterPassword = await hashString(currentMasterPassword);
+  const hashedNewMasterPassword = await hashString(newMasterPassword);
+  const newRandomStringEncrypted = CryptoJS.AES.encrypt(
+    // Encrypting the random string with the master pass hash as the key
+    newRandomString,
+    hashedNewMasterPassword
+  ).toString();
   const updateMasterPassword = httpsCallable(functions, "updateMasterPassword");
   const updateResult = await updateMasterPassword({
     userUID: auth.currentUser.uid,
@@ -132,7 +167,6 @@ const decryptUserQueries = async (hashedSetMasterPassValue) => {
     hashedSetMasterPassValue: hashedSetMasterPassValue,
     userUID: auth.currentUser.uid,
   });
-  console.log(finalDecryptedQueryReturn);
   const listOfDecryptedObjectsAndIDs = finalDecryptedQueryReturn.data.finalList;
   return listOfDecryptedObjectsAndIDs;
 };
@@ -140,11 +174,10 @@ const decryptUserQueries = async (hashedSetMasterPassValue) => {
 const addUserQuery = async (
   objectToAdd,
   hashedSetMasterPassValue,
-  linkIsThere,
-  id
+  linkIsThere
 ) => {
   const addUserQuery = httpsCallable(functions, "addUserQuery");
-
+  const id = generateRandomString(250);
   const finalEncryptedAddedQueryReturn = await addUserQuery({
     objectToAdd: objectToAdd,
     hashedSetMasterPassValue: hashedSetMasterPassValue,
@@ -158,8 +191,7 @@ const addUserQuery = async (
 const updateUserQuery = async (
   objectToUpdate,
   hashedSetMasterPassValue,
-  sourceRefID,
-  importedData
+  sourceRefID
 ) => {
   const updateUserQuery = httpsCallable(functions, "updateRawData");
 
@@ -169,7 +201,7 @@ const updateUserQuery = async (
     sourceRefID: sourceRefID,
     userUID: auth.currentUser.uid,
     isLink: objectToUpdate.isLink,
-    randomID: importedData.random,
+    randomID: objectToUpdate.random,
   });
 };
 
@@ -189,7 +221,6 @@ const checkForMFA = async () => {
   );
 
   const mfaSecretHex = mfaDoc.data().hex;
-  console.log("SEHE: ", mfaSecretHex);
 
   if (mfaSecretHex.trim() == "") {
     return false;
@@ -202,7 +233,6 @@ const checkIfMasterPasswordExists = async () => {
   let refForMainUID = doc(db, "users", "filler", auth.currentUser.uid, "mpaps");
   const tempSnap = await getDoc(refForMainUID);
   const tempSnapExists = tempSnap.exists();
-  console.log("temp snap exists: ", tempSnapExists);
   if (tempSnapExists) {
     return true;
   } else if (!tempSnapExists) {
@@ -248,7 +278,13 @@ const uploadMasterPassword = async (requestedMasterPassword) => {
     "mpaps",
     "ms"
   );
-  let refForMainUID = doc(db, "users", "filler", auth.currentUser.uid, "mpaps");
+  const refForMainUID = doc(
+    db,
+    "users",
+    "filler",
+    auth.currentUser.uid,
+    "mpaps"
+  );
 
   const masterPassHash = await hashString(requestedMasterPassword);
 
@@ -263,54 +299,44 @@ const uploadMasterPassword = async (requestedMasterPassword) => {
   batch.set(doc(refForMSCheck), {
     mph: randomEncryptedString, // See line 220 for details
   });
+
   batch.set(refForMainUID, {
     // We are using the .exists() method to check if the user already has a master pass setup or not. Adding this will make the .exists() method return true
     fillData: "--",
   });
   await batch.commit();
+  return { masterPasswordHash: masterPassHash };
 };
 
 const checkifMasterPasswordIsCorrect = async (requestedMasterPassword) => {
-  let receivedMPH;
-  let randomDecryptedString;
-  /* receivedMPH is a string stored in the database that has been encrypted
-  with the hash of the master password. If the hash of the master password that the user is trying to login with
-  is able to decrypt the string, that means the entered master password is correct */
+  const checkIfMasterPasswordIsCorrect = httpsCallable(
+    functions,
+    "checkIfMasterPasswordIsCorrect"
+  );
 
-  const refForMSCheck = collection(
-    /* This collection stores a string that is encrypted with the
-  master pass. When the user logs in, it checks to see if the hash of the master password
-  the user entered can be used to decrypt the string that is stored here. If it can,
-  that means the master pass they entered is correct. If the decryption returns
-  a blank string or an error, that means it is the wrong master password */
+  const response = await checkIfMasterPasswordIsCorrect({
+    requestedMasterPasswordHash: await hashString(requestedMasterPassword),
+    userUID: auth.currentUser.uid,
+  });
+
+  if (response.data.masterPasswordIsCorrect) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+const deleteUserQuery = async (id) => {
+  const ref = doc(
     db,
     "users",
     "filler",
     auth.currentUser.uid,
     "mpaps",
-    "ms"
+    "ps",
+    id
   );
-
-  const docSnapGetEncryptedString = await getDocs(refForMSCheck);
-  docSnapGetEncryptedString.forEach((doc) => {
-    receivedMPH = doc.data().mph;
-  });
-  const masterPasswordHash = await hashString(requestedMasterPassword);
-  try {
-    randomDecryptedString = CryptoJS.AES.decrypt(
-      // Encrypting the random string with the master pass hash as the key
-      receivedMPH,
-      masterPasswordHash
-    ).toString(CryptoJS.enc.Utf8);
-  } catch (err) {
-    console.log(err, masterPasswordHash);
-    return false;
-  }
-  if (randomDecryptedString.trim() == "") {
-    return false;
-  } else {
-    return true;
-  }
+  await deleteDoc(ref);
 };
 
 export {
@@ -324,14 +350,17 @@ export {
   generateRandomString,
   hashString,
   checkifMasterPasswordIsCorrect,
+  deleteUserQuery,
 };
 
 export {
   // Cloud functions
   checkIfMFATokenIsCorrect,
+  checkIfCodeToEnableMFAIsCorrect,
   disableMFA,
   enableMFA,
-  updateMasterPassword,
+  generateMFA,
+  updateMP,
   decryptUserQueries,
   addUserQuery,
   updateUserQuery,

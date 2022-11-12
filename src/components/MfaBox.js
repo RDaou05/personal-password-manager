@@ -2,6 +2,7 @@ import React from "react";
 import classes from "./MfaBox.module.css";
 import { toDataURL } from "qrcode";
 import { authenticator } from "@otplib/preset-browser";
+import { checkIfMFATokenIsCorrect } from "../firebase";
 
 const MfaBox = (props) => {
   // dev note: const secret = authenticator.generateSecret(); used to make secret
@@ -19,8 +20,6 @@ const MfaBox = (props) => {
           // Can either be 1, 2, 3, 4, 5, or 6
           // It gets the last character of the input box ID that is being modified
           // The ID can be "mfaInput1", "mfaInput2", "mfaInput3"...
-          console.log("NUM:", inputBoxNumber - 1);
-          console.log("keyPressed:", parseInt(inputBoxNumber) + 1);
           if (keyPressed === null) {
             // Backspace was pressed
             document
@@ -32,10 +31,8 @@ const MfaBox = (props) => {
               .focus();
           }
         }}
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
-          const realMfaCode = authenticator.generate(props.authenticatorKey);
-          console.log("realMfaCode: ", realMfaCode);
           let inputNumberList = [];
 
           for (let index = 0; index < 6; index++) {
@@ -43,12 +40,13 @@ const MfaBox = (props) => {
             // Note: we have to do this because the input area for the mfa is multiple different input boxes combined, so we have to get the value of each of them
             inputNumberList.push(e.target[index].value);
           }
-          console.log(inputNumberList);
-          if (inputNumberList.join("") == realMfaCode) {
-            console.log("YES");
+          const checkIfMFATokenIsCorrectCF = await checkIfMFATokenIsCorrect(
+            props.hashBeingUsedToEncrypt,
+            inputNumberList.join("")
+          );
+          if (checkIfMFATokenIsCorrectCF) {
             props.onMfaCorrect();
           } else {
-            console.log("NOPE ITS: ", realMfaCode);
             for (let index = 0; index < 6; index++) {
               e.target[index].style.borderLeft = "2px solid rgb(189, 35, 35)";
               e.target[index].style.borderTop = "2px solid rgb(189, 35, 35)";

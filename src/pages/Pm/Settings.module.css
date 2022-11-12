@@ -1,0 +1,311 @@
+.changeMPInputsContainer {
+  display: none;
+  flex-direction: column;
+}
+
+.changeMPInput {
+  border: none;
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 900;
+  font-size: 15px;
+  padding: 5%;
+  border-top: 1px solid #746e6e;
+  background-color: #3a3f4a;
+}
+
+.changeMPCurrentMP {
+  border: none;
+  border-top-right-radius: 1vh;
+  border-top-left-radius: 1vh;
+}
+
+.changeMasterPasswordScreen {
+  display: flex;
+  z-index: 2;
+  flex-direction: column;
+  align-self: center;
+  justify-self: center;
+  background: #1b1b1b;
+  width: 0%;
+  height: -webkit-fill-available;
+  padding: 0%;
+  justify-content: space-evenly;
+}
+
+.changeMPRenterNewMP {
+  border-bottom-right-radius: 1vh;
+  border-bottom-left-radius: 1vh;
+}
+
+#changeTooWeakError {
+  font-family: "Open Sans", sans-serif;
+  color: #bf3b3b;
+  margin: 0;
+  margin-top: 9%;
+  font-size: 1.1rem;
+  display: none;
+  align-self: center;
+}
+
+#changeDontMatchError {
+  font-family: "Open Sans", sans-serif;
+  color: #bf3b3b;
+  margin: 0;
+  margin-top: 9%;
+  font-size: 1.1rem;
+  display: none;
+  align-self: center;
+}
+
+#changeHasToBeDifferentError {
+  font-family: "Open Sans", sans-serif;
+  color: #bf3b3b;
+  margin: 0;
+  margin-top: 9%;
+  font-size: 1.1rem;
+  display: none;
+  align-self: center;
+}
+
+#changeIncorrectPasswordError {
+  font-family: "Open Sans", sans-serif;
+  color: #bf3b3b;
+  margin: 0;
+  margin-top: 9%;
+  font-size: 1.1rem;
+  display: none;
+  align-self: center;
+}
+
+.changeMPFooter {
+  display: none;
+  flex-direction: column;
+}
+
+.showNewMPPasswordsButton {
+  border: none;
+  background: #3a3f4a;
+  opacity: 0.8;
+  border-radius: 0.5vh;
+  padding: 3%;
+  margin-bottom: 1%;
+}
+
+.showPasswordsText {
+  color: white;
+  font-family: "Open Sans", sans-serif;
+  cursor: pointer;
+  margin: 0;
+  font-weight: 600;
+}
+
+.confirmMasterPasswordChange {
+  padding: 3%;
+  border-radius: 0.5vh;
+  border: none;
+  color: white;
+  font-family: "Open Sans", sans-serif;
+  background-color: darkcyan;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.closeChangeMasterPasswordWindow {
+  display: none;
+  padding: 3%;
+  border-radius: 0.5vh;
+  border: none;
+  color: white;
+  font-family: "Open Sans", sans-serif;
+  background-color: #3a3f4a;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.mainSettings {
+  padding-top: 3%;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+
+.accountSettingsSection {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-self: center;
+  flex-direction: column;
+}
+
+.accountSettingsHeader {
+  color: white;
+  font-size: 22px;
+  font-family: "Open Sans", sans-serif;
+  letter-spacing: 1px;
+}
+
+.accountSettings {
+  display: flex;
+  flex-direction: column;
+}
+
+.upgradeToPremium {
+  border-top-left-radius: 1vh;
+  border-top-right-radius: 1vh;
+  border: none;
+  border-bottom: 1px solid #746e6e;
+  background-image: linear-gradient(to left, #8e2de2, #4a00e0);
+  color: white;
+  font-family: "Open Sans", sans-serif;
+  padding: 2%;
+  cursor: pointer;
+}
+
+.accountSettingsButtons {
+  background-color: #3a3f4a;
+  border: none;
+  border-top: 1px solid #746e6e;
+  color: white;
+  font-family: "Open Sans", sans-serif;
+  padding: 2%;
+  cursor: pointer;
+}
+
+.accountSettingsButtons:hover {
+  opacity: 0.7;
+  transition: all ease 0.2s;
+}
+
+.settingsButtonText {
+  float: left;
+  font-size: 16px;
+  padding-left: 1%;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 900;
+}
+
+.settingsButtonTextLogOut {
+  float: left;
+  font-size: 16px;
+  padding-left: 1%;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 900;
+  color: red;
+}
+
+.changeMasterPassword {
+  border-top: 1px solid #746e6e;
+}
+
+.logOutOfPMAccount {
+  border-bottom-left-radius: 1vh;
+  border-bottom-right-radius: 1vh;
+  border-top: 1px solid #746e6e;
+}
+
+.logOutOfPMAccount p {
+  color: red;
+}
+
+.securitySettingsSection {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-self: center;
+  flex-direction: column;
+}
+
+.securitySettingsHeader {
+  color: white;
+  font-size: 22px;
+  font-family: "Open Sans", sans-serif;
+  letter-spacing: 1px;
+}
+
+.securitySettings {
+  display: flex;
+  flex-direction: column;
+}
+
+.securitySettingsButtons {
+  background-color: #3a3f4a;
+  border: none;
+  color: white;
+  font-family: "Open Sans", sans-serif;
+  padding: 2%;
+  cursor: pointer;
+}
+
+.securitySettingsButtons:hover {
+  opacity: 0.7;
+  transition: all ease 0.2s;
+}
+
+.mfa {
+  border-top-left-radius: 1vh;
+  border-top-right-radius: 1vh;
+  display: flex;
+  justify-content: space-between;
+  background-color: #3a3f4a;
+  border: none;
+  border-top: 1px solid #746e6e;
+  color: white;
+  font-family: "Open Sans", sans-serif;
+  padding: 2%;
+  cursor: pointer;
+}
+
+.buttonToEnableOrDisable {
+  border-radius: 8vh;
+  background-color: #1a1c20;
+  width: 19%;
+  border: 2px solid #363b45;
+  padding: 1.5%;
+  align-self: center;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  font-family: "Open Sans", sans-serif;
+}
+
+.buttonToEnableOrDisable:hover {
+  background-color: #4f5562;
+  transition: 0.2s;
+}
+
+.autolock {
+  border-bottom-left-radius: 1vh;
+  border-bottom-right-radius: 1vh;
+  border-top: 1px solid #746e6e;
+  background-color: #3a3f4a;
+  border: none;
+  border-top: 1px solid #746e6e;
+  color: white;
+  font-family: "Open Sans", sans-serif;
+  padding: 2%;
+  cursor: pointer;
+}
+
+#closeSettings {
+  position: absolute;
+  right: 2%;
+  top: 2%;
+  padding: 1% 1.4% 1% 1.4%;
+  border: 1px solid #707070;
+  border-radius: 10vh;
+  background-color: #3e3e3e;
+  color: white;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+#closeSettings:hover {
+  background-color: #504f4f;
+  transition: 0.2s;
+}

@@ -1,0 +1,87 @@
+html {
+  min-height: 100vh;
+}
+
+.headerContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin: 2%;
+}
+
+#pmTitle {
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  display: flex;
+  justify-self: center;
+  font-size: 2.5rem;
+}
+
+#addPasswordButton {
+  border-radius: 4vh;
+  color: white;
+  background-color: #0b817b;
+  border: none;
+  outline: none;
+  opacity: 0.8;
+  padding: 1%;
+  cursor: pointer;
+  padding-left: 2%;
+  padding-right: 2%;
+  font-size: 16px;
+  font-family: "Montserrat", sans-serif;
+}
+
+#addPasswordButton:hover {
+  opacity: 1;
+  transition: all ease-in-out 0.1s;
+}
+
+.querySection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0% 5% 0% 5%;
+}
+
+.queryItem {
+  display: flex;
+  flex-direction: column;
+  width: 78%;
+  padding: 1rem 1rem 1rem 1rem;
+  border-bottom: 1px solid #585858;
+}
+
+.queryItem:hover {
+  background-color: #2f353d;
+  transition: all 0.2s ease;
+}
+
+.queryName {
+  display: flex;
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.4rem;
+}
+
+.queryEmail {
+  display: flex;
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.2rem;
+  opacity: 0.7;
+}
+
+.queryNameAndEmail {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  align-self: flex-end;
+}
+
+.queryContentWrapper {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
