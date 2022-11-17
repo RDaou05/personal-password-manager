@@ -33,6 +33,7 @@ const UpdateMasterPassword = (props) => {
       <div className={classes.changeMPInputsContainer}>
         <input
           type={showPasswordState ? "text" : "password"}
+          autocomplete="new-password"
           placeholder="Current Master Password"
           className={classes.changeMPCurrentMP}
           ref={currentMpInputBoxRef}
@@ -45,6 +46,7 @@ const UpdateMasterPassword = (props) => {
         />
         <input
           type={showPasswordState ? "text" : "password"}
+          autocomplete="new-password"
           placeholder="New Master Password"
           className={classes.changeMPNewMP}
           ref={newMpInputBoxRef}
@@ -70,6 +72,7 @@ const UpdateMasterPassword = (props) => {
         />
         <input
           type={showPasswordState ? "text" : "password"}
+          autocomplete="new-password"
           placeholder="Confirm New Master Password"
           className={classes.changeMPRenterNewMP}
           ref={confirmNewMpInputBoxRef}

@@ -1,11 +1,9 @@
 import React from "react";
 import classes from "./MfaBox.module.css";
 import { toDataURL } from "qrcode";
-import { authenticator } from "@otplib/preset-browser";
 import { checkIfMFATokenIsCorrect } from "../firebase";
 
 const MfaBox = (props) => {
-  // dev note: const secret = authenticator.generateSecret(); used to make secret
 
   return (
     <div className={classes.mainMfaBox}>

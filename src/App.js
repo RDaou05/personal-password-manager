@@ -24,8 +24,8 @@ function App() {
     // There is a boolean value in the database called "disabled" inside a document called "disableAccount"
     // If the boolean is true, the user will be logged out of the account and they will not be allowed to log in
 
-    /* NOTE: You can do this from the auth console, but if you change it to disable from there, the user still 
-    has access to the account if they are already logged in 
+    /* NOTE: You can do this from the auth console, but if you change it to disable from there, the user still
+    has access to the account if they are already logged in
     */
 
     // Changing this in the database will also disable the auth account using a cloud function for extra security

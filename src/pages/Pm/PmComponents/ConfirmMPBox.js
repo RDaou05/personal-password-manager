@@ -23,6 +23,7 @@ const ConfirmMPBox = (props) => {
         <h2 id={classes.textToConfirmMP}>Confirm your master password</h2>
         <input
           type={showPasswordState ? "text" : "password"}
+          autocomplete="new-password"
           id={classes.confirmMP}
           onChange={(evt) => {
             setMpToCheck(evt.target.value);
