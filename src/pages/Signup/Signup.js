@@ -34,7 +34,6 @@ const Signup = () => {
           type="password"
           id={classes.passwordInput}
           placeholder="Password"
-          autocomplete="new-password"
           onChange={(evt) => {
             setPasswordState(evt.target.value);
           }}

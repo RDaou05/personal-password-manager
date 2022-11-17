@@ -1,8 +1,0 @@
-{
-    "name": "psw",
-    "main": "./index.html",
-    "window": {
-        "title": "PersonalPM"
-    },
-    "domain": "personal-pm-98268.firebaseapp.com"
-}

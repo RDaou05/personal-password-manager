@@ -4,6 +4,7 @@ import { toDataURL } from "qrcode";
 import { checkIfMFATokenIsCorrect } from "../firebase";
 
 const MfaBox = (props) => {
+  // dev note: const secret = authenticator.generateSecret(); used to make secret
 
   return (
     <div className={classes.mainMfaBox}>

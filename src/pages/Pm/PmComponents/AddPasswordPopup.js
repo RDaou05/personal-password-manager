@@ -75,7 +75,6 @@ const AddPasswordPopup = (props) => {
         type={showPasswordState ? "text" : "password"}
         className={classes.addPasswordInputBoxes}
         id={classes.addPasswordInputBox}
-        autocomplete="off"
         placeholder="* Password"
         onChange={(event) => {
           setPasswordInputState(event.target.value);

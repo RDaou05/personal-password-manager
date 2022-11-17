@@ -43,7 +43,6 @@ const ResetMP = (props) => {
         </h1>
         <input
           type="password"
-          autocomplete="new-password"
           style={{
             borderBottom: errorMakingPasswordState
               ? "2px solid #844242"
@@ -72,7 +71,6 @@ const ResetMP = (props) => {
 
         <input
           type="password"
-          autocomplete="new-password"
           style={{
             borderBottom: errorMakingPasswordState
               ? "2px solid #844242"

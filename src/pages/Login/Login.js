@@ -213,7 +213,6 @@ const Login = () => {
             className={classes.inputBox}
             type="password"
             placeholder="Password"
-            autocomplete="new-password"
           />
           <div className={classes.eyeHolder}>
             <i id={classes.eye} className="far fa-eye"></i>

@@ -31,7 +31,6 @@ const PmLogin = (props) => {
           onChange={(event) => {
             setLoginInputState(event.target.value);
           }}
-          autocomplete="new-password"
           placeholder={"Master Password"}
           style={{
             borderBottom: wrongPasswordState
