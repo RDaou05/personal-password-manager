@@ -8,6 +8,7 @@ import {
   givePRole,
   signOutUser,
   FSDB,
+  setAutolock,
 } from "../../firebase";
 import ConfirmMPBox from "./PmComponents/ConfirmMPBox";
 import MfaConfirmationBox from "./PmComponents/MfaConfirmationBox";
@@ -219,6 +220,98 @@ const PmSettingsPage = (props) => {
                 <p className={classes.settingsButtonText}>
                   Change time to automatically lock the app after inactivity
                 </p>
+                <div className={classes.dropdown}>
+                  <button
+                    className={classes.dropbtn}
+                    style={{
+                      // Adjusting the width of the button to stay proportional when the number of characters inside of it changes
+                      width: !props.autolockEnabledState
+                        ? "272%"
+                        : props.autolockTimeState.length == 7
+                        ? "211%"
+                        : props.autolockTimeState.length == 6
+                        ? "246%"
+                        : props.autolockTimeState.length == 5
+                        ? "272%"
+                        : props.autolockTimeState.length == 0
+                        ? "272%"
+                        : null,
+                      minWidth: !props.autolockEnabledState
+                        ? "272%"
+                        : props.autolockTimeState.length == 7
+                        ? "211%"
+                        : props.autolockTimeState.length == 6
+                        ? "246%"
+                        : props.autolockTimeState.length == 5
+                        ? "272%"
+                        : props.autolockTimeState.length == 0
+                        ? "272%"
+                        : null,
+                    }}
+                  >
+                    {props.autolockEnabledState
+                      ? props.autolockTimeState
+                      : "Never"}
+                  </button>
+                  <div className={classes.dropdownContent}>
+                    <a
+                      href="#"
+                      onClick={async () => {
+                        setAutolock("");
+                      }}
+                    >
+                      Never
+                    </a>
+                    <a
+                      href="#"
+                      onClick={async () => {
+                        setAutolock("1 min");
+                      }}
+                    >
+                      1 minute
+                    </a>
+                    <a
+                      href="#"
+                      onClick={async () => {
+                        setAutolock("5 mins");
+                      }}
+                    >
+                      5 minutes
+                    </a>
+                    <a
+                      href="#"
+                      onClick={async () => {
+                        setAutolock("15 mins");
+                      }}
+                    >
+                      15 minutes
+                    </a>
+                    <a
+                      href="#"
+                      onClick={async () => {
+                        setAutolock("30 mins");
+                      }}
+                    >
+                      30 minutes
+                    </a>
+                    <a
+                      href="#"
+                      onClick={async () => {
+                        setAutolock("1 hour");
+                      }}
+                    >
+                      1 hour
+                    </a>
+                    <a
+                      href="#"
+                      onClick={async () => {
+                        setAutolock("2 hours");
+                      }}
+                    >
+                      2 hours
+                    </a>
+                  </div>
+                </div>
               </button>
             </div>
           </div>

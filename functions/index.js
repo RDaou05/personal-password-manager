@@ -4,6 +4,18 @@ const CryptoJS = require("crypto-js");
 const speakeasy = require("speakeasy");
 admin.initializeApp();
 
+exports.setAutolock = functions.https.onCall(async (data, context) => {
+  const usersUID = data.userUID;
+  const db = admin.firestore();
+  const p1 = db
+    .collection("users")
+    .doc("filler")
+    .collection(usersUID)
+    .doc("al")
+    .update({ autotime: data.time });
+  return Promise.all([p1]);
+});
+
 exports.checkIfMFATokenIsCorrect = functions.https.onCall(
   async (data, context) => {
     const db = admin.firestore();
@@ -587,7 +599,13 @@ exports.giveSignUpRoles = functions.auth.user().onCreate((user) => {
     .collection(usersUID)
     .doc("mfa")
     .set({ hex: "" });
-  return Promise.all([p1, p2, p3]);
+  const p4 = db
+    .collection("users")
+    .doc("filler")
+    .collection(usersUID)
+    .doc("al")
+    .set({ time: "" });
+  return Promise.all([p1, p2, p3, p4]);
 });
 
 exports.onAccountDisabled = functions.firestore

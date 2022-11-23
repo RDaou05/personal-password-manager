@@ -87,6 +87,16 @@ const createPersonalPMAccount = async (email, password) => {
 };
 
 // Cloud functions
+
+const setAutolock = async (time) => {
+  const setAlCF = httpsCallable(functions, "setAutolock");
+  const setAlCFReturn = await setAlCF({
+    userUID: auth.currentUser.uid,
+    time: time,
+  });
+  return setAlCFReturn;
+};
+
 const checkIfMFATokenIsCorrect = async (
   hashedSetMasterPassValue,
   enteredMFAToken
@@ -365,6 +375,7 @@ export {
   addUserQuery,
   updateUserQuery,
   givePRole,
+  setAutolock,
 };
 export const firebaseAuth = auth;
 export const FSDB = db;

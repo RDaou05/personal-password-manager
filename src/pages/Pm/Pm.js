@@ -25,6 +25,7 @@ const Pm = (props) => {
     useState(false);
   const [settingsScreenstate, setSettingsScreenstate] = useState(false);
   const [masterPasswordExistsState, setMasterPasswordExistsState] = useState();
+
   let navigate = useNavigate();
   const win = nw.Window.get();
 
@@ -138,6 +139,8 @@ const Pm = (props) => {
               mfaPassedState={props.mfaPassedState}
               setMfaKeyState={props.setMfaKeyState}
               mfaKeyState={props.mfaKeyState}
+              autolockEnabledState={props.autolockEnabledState}
+              autolockTimeState={props.autolockTimeState}
             />
           ) : masterPasswordExistsState &&
             settingsScreenstate == false &&
@@ -164,6 +167,10 @@ const Pm = (props) => {
               mfaIsEnabledState={props.mfaIsEnabledState}
               setRoleState={props.setRoleState}
               roleState={props.roleState}
+              setAutolockEnabledState={props.setAutolockEnabledState}
+              setAutolockTimeState={props.setAutolockTimeState}
+              autolockEnabledState={props.autolockEnabledState}
+              autolockTimeState={props.autolockTimeState}
             />
           ) : null}
         </>

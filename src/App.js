@@ -19,6 +19,78 @@ function App() {
   const [mfaPassedState, setMfaPassedState] = useState(false);
   const [mfaKeyState, setMfaKeyState] = useState();
   const [roleState, setRoleState] = useState("");
+  const [autolockEnabledState, setAutolockEnabledState] = useState();
+  const [autolockTimeState, setAutolockTimeState] = useState("");
+  const [inactiveTimeoutState, setInactiveTimeoutState] = useState();
+
+  useEffect(() => {
+    return onAuthStateChanged(firebaseAuth, (user) => {
+      const rDoc = doc(FSDB, "users", "filler", user.uid, "al");
+      return onSnapshot(rDoc, (snap) => {
+        const recivedAutotime = snap.data().autotime.trim();
+        console.log("Time trimmed: ", recivedAutotime.length);
+        if (recivedAutotime == "") {
+          setAutolockEnabledState(false);
+          console.log("autolock disabled");
+        } else {
+          console.log("autolock enabled");
+          setAutolockEnabledState(true);
+          setAutolockTimeState(recivedAutotime);
+        }
+      });
+    });
+  }, []);
+
+  useLayoutEffect(() => {
+    // This checks if the user has autolock enabled
+    // If they do, it will automatically start a count down to sign the user out and bring them back to the main login page
+    // But this timer gets reset everytime the user interacts with the app
+    let inactiveTimeout;
+    let timeout;
+    const onInteract = () => {
+      clearTimeout(inactiveTimeout);
+      inactiveTimeout = setTimeout(async () => {
+        window.removeEventListener("mousemove", onInteract);
+        window.removeEventListener("keydown", onInteract);
+        window.removeEventListener("click", onInteract);
+        await signOutUser();
+        navigate("/", { replace: true });
+      }, timeout);
+
+      console.log(timeout / 60000, " minute timer has been reset");
+    };
+    if (autolockEnabledState) {
+      if (autolockTimeState == "1 min") {
+        timeout = 60000;
+      } else if (autolockTimeState == "5 mins") {
+        timeout = 300000;
+      } else if (autolockTimeState == "15 mins") {
+        timeout = 900000;
+      } else if (autolockTimeState == "30 mins") {
+        timeout = 1800000;
+      } else if (autolockTimeState == "1 hr") {
+        timeout = 3600000;
+      } else if (autolockTimeState == "2 hrs") {
+        timeout = 7200000;
+      }
+
+      inactiveTimeout = setTimeout(() => {
+        signOutUser();
+        navigate("/", { replace: true });
+      }, timeout);
+
+      window.addEventListener("mousemove", onInteract);
+      window.addEventListener("keydown", onInteract);
+      window.addEventListener("click", onInteract);
+    }
+
+    return () => {
+      clearTimeout(inactiveTimeout);
+      window.removeEventListener("mousemove", onInteract);
+      window.removeEventListener("keydown", onInteract);
+      window.removeEventListener("click", onInteract);
+    };
+  }, [autolockEnabledState, autolockTimeState]);
 
   useEffect(() => {
     // There is a boolean value in the database called "disabled" inside a document called "disableAccount"
@@ -42,8 +114,8 @@ function App() {
         return onSnapshot(disableDoc, (snap) => {
           const disabledBoolean = snap.data().disabled == true;
           if (disabledBoolean) {
-            navigate("/", { replace: true });
             signOutUser();
+            navigate("/", { replace: true });
           }
         });
       });
@@ -105,6 +177,8 @@ function App() {
               mfaKeyState={mfaKeyState}
               setRoleState={setRoleState}
               roleState={roleState}
+              autolockEnabledState={autolockEnabledState}
+              autolockTimeState={autolockTimeState}
             />
           }
         ></Route>
