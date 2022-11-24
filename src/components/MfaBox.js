@@ -47,25 +47,15 @@ const MfaBox = (props) => {
           if (evt.keyCode == 86 && (evt.ctrlKey || evt.metaKey)) {
             // ctrl v
             const textInClipboard = await navigator.clipboard.readText();
-            console.log(textInClipboard.length);
             if (textInClipboard.length == 6) {
               allBoxes.forEach((box) => {
-                // console.log(box);
                 const currentBox = box.current;
-                // console.log(textInClipboard.slice(2) + "fiu");
-                console.log(
-                  textInClipboard.slice(
-                    parseInt(currentBox.id.slice(8) - 1),
-                    parseInt(currentBox.id.slice(8))
-                  )
-                );
                 currentBox.value = textInClipboard.slice(
                   parseInt(currentBox.id.slice(8) - 1),
                   parseInt(currentBox.id.slice(8))
                 );
               });
             }
-            console.log(textInClipboard);
           }
         }}
         onSubmit={async (e) => {

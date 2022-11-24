@@ -29,12 +29,9 @@ function App() {
       const rDoc = doc(FSDB, "users", "filler", user.uid, "al");
       return onSnapshot(rDoc, (snap) => {
         const recivedAutotime = snap.data().autotime.trim();
-        console.log("Time trimmed: ", recivedAutotime.length);
         if (recivedAutotime == "") {
           setAutolockEnabledState(false);
-          console.log("autolock disabled");
         } else {
-          console.log("autolock enabled");
           setAutolockEnabledState(true);
           setAutolockTimeState(recivedAutotime);
         }
@@ -61,8 +58,6 @@ function App() {
         await signOutUser();
         navigate("/", { replace: true });
       }, timeout);
-
-      console.log(timeout / 60000, " minute timer has been reset");
     };
     if (autolockEnabledState) {
       if (autolockTimeState == "1 min") {
