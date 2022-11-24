@@ -75,8 +75,6 @@ function App() {
         timeout = 1800000;
       } else if (autolockTimeState == "1 hr") {
         timeout = 3600000;
-      } else if (autolockTimeState == "2 hrs") {
-        timeout = 7200000;
       }
 
       inactiveTimeout = setTimeout(() => {

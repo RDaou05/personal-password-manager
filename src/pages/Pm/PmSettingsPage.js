@@ -302,14 +302,6 @@ const PmSettingsPage = (props) => {
                     >
                       1 hour
                     </a>
-                    <a
-                      href="#"
-                      onClick={async () => {
-                        setAutolock("2 hours");
-                      }}
-                    >
-                      2 hours
-                    </a>
                   </div>
                 </div>
               </button>
