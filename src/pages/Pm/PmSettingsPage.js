@@ -233,6 +233,8 @@ const PmSettingsPage = (props) => {
                         ? "243%"
                         : props.autolockTimeState.length == 5
                         ? "283%"
+                        : props.autolockTimeState.length == 4
+                        ? "383%"
                         : props.autolockTimeState.length == 0
                         ? "268%"
                         : null,
@@ -244,6 +246,8 @@ const PmSettingsPage = (props) => {
                         ? "243%"
                         : props.autolockTimeState.length == 5
                         ? "283%"
+                        : props.autolockTimeState.length == 4
+                        ? "383%"
                         : props.autolockTimeState.length == 0
                         ? "268%"
                         : null,
@@ -297,7 +301,7 @@ const PmSettingsPage = (props) => {
                     <a
                       href="#"
                       onClick={async () => {
-                        setAutolock("1 hour");
+                        setAutolock("1 hr");
                       }}
                     >
                       1 hour
