@@ -57,7 +57,8 @@ body {
   padding-left: 5%;
   font-size: 1rem;
   font-weight: bold;
-  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+  box-shadow: rgb(50 50 93 / 25%) 0px 50px 100px -20px,
+    rgb(0 0 0 / 30%) 0px 30px 60px -30px;
   transition: all ease-in-out 0.2s;
   font-family: "Montserrat", sans-serif;
 }
@@ -146,7 +147,8 @@ body {
   padding-left: 5%;
   font-size: 1rem;
   font-weight: bold;
-  box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+  box-shadow: rgb(50 50 93 / 25%) 0px 50px 100px -20px,
+    rgb(0 0 0 / 30%) 0px 30px 60px -30px;
   transition: all ease-in-out 0.2s;
   font-family: "Montserrat", sans-serif;
 }
