@@ -49,6 +49,7 @@ function App() {
       if (location.pathname == "/") {
         window.removeEventListener("mousemove", onInteract);
         window.removeEventListener("keydown", onInteract);
+        window.removeEventListener("click", onInteract);
       }
       clearTimeout(inactiveTimeout);
       inactiveTimeout = setTimeout(async () => {
