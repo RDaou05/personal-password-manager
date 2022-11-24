@@ -68,6 +68,6 @@
     "zxcvbn": "^4.4.2"
   },
   "window": {
-    "icon": "src/images/lockIcon.png"
+    "icon": "./build/lockIcon.png"
   }
 }
