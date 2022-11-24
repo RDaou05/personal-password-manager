@@ -226,26 +226,26 @@ const PmSettingsPage = (props) => {
                     style={{
                       // Adjusting the width of the button to stay proportional when the number of characters inside of it changes
                       width: !props.autolockEnabledState
-                        ? "272%"
+                        ? "268%"
                         : props.autolockTimeState.length == 7
-                        ? "211%"
+                        ? "210%"
                         : props.autolockTimeState.length == 6
-                        ? "246%"
+                        ? "243%"
                         : props.autolockTimeState.length == 5
-                        ? "272%"
+                        ? "283%"
                         : props.autolockTimeState.length == 0
-                        ? "272%"
+                        ? "268%"
                         : null,
                       minWidth: !props.autolockEnabledState
-                        ? "272%"
+                        ? "268%"
                         : props.autolockTimeState.length == 7
-                        ? "211%"
+                        ? "210%"
                         : props.autolockTimeState.length == 6
-                        ? "246%"
+                        ? "243%"
                         : props.autolockTimeState.length == 5
-                        ? "272%"
+                        ? "283%"
                         : props.autolockTimeState.length == 0
-                        ? "272%"
+                        ? "268%"
                         : null,
                     }}
                   >
