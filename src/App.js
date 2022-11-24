@@ -1,5 +1,5 @@
 import { React, useEffect, useLayoutEffect } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import SignupPage from "./pages/Signup/Signup.js";
 import LoginPage from "./pages/Login/Login.js";
 import AppSelector from "./pages/AppSelector/AppSelector.js";
@@ -14,6 +14,7 @@ function App() {
   // This makes it so the user can't click the back or forward arrow on the mouse
 
   let navigate = useNavigate();
+  let location = useLocation();
   const [mfaIsEnabledState, setMfaIsEnabledState] = useState();
   const [mfaBoxState, setMfaBoxState] = useState();
   const [mfaPassedState, setMfaPassedState] = useState(false);
@@ -48,6 +49,10 @@ function App() {
     let inactiveTimeout;
     let timeout;
     const onInteract = () => {
+      if (location.pathname == "/") {
+        window.removeEventListener("mousemove", onInteract);
+        window.removeEventListener("keydown", onInteract);
+      }
       clearTimeout(inactiveTimeout);
       inactiveTimeout = setTimeout(async () => {
         window.removeEventListener("mousemove", onInteract);
@@ -75,8 +80,12 @@ function App() {
       }
 
       inactiveTimeout = setTimeout(() => {
-        signOutUser();
-        navigate("/", { replace: true });
+        if (location.pathname == "/appselector") {
+          signOutUser();
+          navigate("/", { replace: true });
+        } else if (location.pathname == "/pm") {
+          navigate("/appselector", { replace: true });
+        }
       }, timeout);
 
       window.addEventListener("mousemove", onInteract);

@@ -1,10 +1,23 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import classes from "./MfaBox.module.css";
 import { toDataURL } from "qrcode";
 import { checkIfMFATokenIsCorrect } from "../firebase";
 
 const MfaBox = (props) => {
-  // dev note: const secret = authenticator.generateSecret(); used to make secret
+  const firstBoxRef = useRef(null);
+  const secondBoxRef = useRef(null);
+  const thirdBoxRef = useRef(null);
+  const fourthBoxRef = useRef(null);
+  const fifthBoxRef = useRef(null);
+  const sixthBoxRef = useRef(null);
+  const allBoxes = [
+    firstBoxRef,
+    secondBoxRef,
+    thirdBoxRef,
+    fourthBoxRef,
+    fifthBoxRef,
+    sixthBoxRef,
+  ];
 
   return (
     <div className={classes.mainMfaBox}>
@@ -28,6 +41,31 @@ const MfaBox = (props) => {
             document
               .getElementById(`mfaInput${parseInt(inputBoxNumber) + 1}`)
               .focus();
+          }
+        }}
+        onKeyDown={async (evt) => {
+          if (evt.keyCode == 86 && (evt.ctrlKey || evt.metaKey)) {
+            // ctrl v
+            const textInClipboard = await navigator.clipboard.readText();
+            console.log(textInClipboard.length);
+            if (textInClipboard.length == 6) {
+              allBoxes.forEach((box) => {
+                // console.log(box);
+                const currentBox = box.current;
+                // console.log(textInClipboard.slice(2) + "fiu");
+                console.log(
+                  textInClipboard.slice(
+                    parseInt(currentBox.id.slice(8) - 1),
+                    parseInt(currentBox.id.slice(8))
+                  )
+                );
+                currentBox.value = textInClipboard.slice(
+                  parseInt(currentBox.id.slice(8) - 1),
+                  parseInt(currentBox.id.slice(8))
+                );
+              });
+            }
+            console.log(textInClipboard);
           }
         }}
         onSubmit={async (e) => {
@@ -68,6 +106,7 @@ const MfaBox = (props) => {
             id="mfaInput1"
             pattern="[0-9]"
             autoComplete="off"
+            ref={firstBoxRef}
           />
           <input
             className={classes.mfaInputComponent}
@@ -76,6 +115,7 @@ const MfaBox = (props) => {
             id="mfaInput2"
             pattern="[0-9]"
             autoComplete="off"
+            ref={secondBoxRef}
           />
           <input
             className={classes.mfaInputComponent}
@@ -84,6 +124,7 @@ const MfaBox = (props) => {
             id="mfaInput3"
             pattern="[0-9]"
             autoComplete="off"
+            ref={thirdBoxRef}
           />
           <input
             className={classes.mfaInputComponent}
@@ -92,6 +133,7 @@ const MfaBox = (props) => {
             id="mfaInput4"
             pattern="[0-9]"
             autoComplete="off"
+            ref={fourthBoxRef}
           />
           <input
             className={classes.mfaInputComponent}
@@ -100,6 +142,7 @@ const MfaBox = (props) => {
             id="mfaInput5"
             pattern="[0-9]"
             autoComplete="off"
+            ref={fifthBoxRef}
           />
           <input
             className={classes.mfaInputComponent}
@@ -108,6 +151,7 @@ const MfaBox = (props) => {
             id="mfaInput6"
             pattern="[0-9]"
             autoComplete="off"
+            ref={sixthBoxRef}
           />
         </div>
 

@@ -50,7 +50,7 @@ const Pm = (props) => {
   useEffect(() => {
     // Signout user out when they press "Control + L"
     const signOutWithKeyPress = async (evt) => {
-      if (evt.ctrlKey && evt.keyCode == 76) {
+      if ((evt.ctrlKey || evt.metaKey) && evt.keyCode == 76) {
         sendToAppSelectorPage();
       }
     };
