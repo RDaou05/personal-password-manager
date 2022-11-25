@@ -153,6 +153,7 @@ const AppSelector = (props) => {
                   }
                 }}
                 replace={true}
+                disabled={props.inPreviewState}
               >
                 Log out • {firebaseEmail}
               </Link>

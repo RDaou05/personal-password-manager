@@ -49,6 +49,7 @@ const MainAppHTML = (props) => {
         <button
           id={props.classes.takeToPMButton}
           className={props.classes.redirectAppButtons}
+          disabled={props.inPreviewState}
           onClick={() => {
             props.navigate("/pm", { replace: true });
           }}
@@ -58,6 +59,7 @@ const MainAppHTML = (props) => {
         </button>
         <button
           id={props.classes.takeToLockerButton}
+          disabled={props.inPreviewState}
           className={props.classes.redirectAppButtons}
           onClick={() => {
             alert("Work in progress");
