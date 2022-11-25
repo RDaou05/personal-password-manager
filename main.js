@@ -1,5 +1,6 @@
-'use strict';
-const url = require('node:url');
+"use strict";
+
+const url = require("node:url");
 
 const baseUri = url.pathToFileURL(__dirname).toString();
 

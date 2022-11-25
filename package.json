@@ -52,7 +52,7 @@
       "name",
       "version",
       "main",
-      "node-remote"
+      "node-remote", "build"
     ],
     "osTypes": [
       "windows"
@@ -78,5 +78,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "window": {
+    "icon": "./build/lockIcon.png"
   }
 }
