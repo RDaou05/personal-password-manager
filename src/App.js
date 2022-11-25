@@ -97,12 +97,12 @@ function App() {
     }
 
     return () => {
-      // clearTimeout(inactiveTimeout);
-      // window.removeEventListener("mousemove", onInteract);
-      // window.removeEventListener("keydown", onInteract);
-      // window.removeEventListener("click", onInteract);
+      clearTimeout(inactiveTimeout);
+      window.removeEventListener("mousemove", onInteract);
+      window.removeEventListener("keydown", onInteract);
+      window.removeEventListener("click", onInteract);
     };
-  }, [autolockEnabledState, autolockTimeState]);
+  }, [autolockEnabledState, autolockTimeState, location]);
 
   useEffect(() => {
     // There is a boolean value in the database called "disabled" inside a document called "disableAccount"
