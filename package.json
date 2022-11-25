@@ -1,36 +1,62 @@
 {
   "name": "personal-password-manager",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "main.js",
   "homepage": ".",
   "node-remote": [
-    "http://127.0.0.1:3042",
+    "http://localhost:3042",
     "file://*"
   ],
   "private": true,
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
-    "@testing-library/user-event": "^13.5.0",
-    "concurrently": "^7.2.2",
-    "nw": "^0.66.0-sdk",
+    "@testing-library/user-event": "^14.4.3",
+    "concurrently": "^7.5.0",
+    "cross-env": "^7.0.3",
+    "nw": "0.70.1-sdk",
+    "nw-builder": "^4.0.1",
     "react": "^18.2.0",
-    "react-devtools": "^4.24.7",
+    "react-devtools": "^4.26.1",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
     "wait-on": "^6.0.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^3.1.0"
   },
   "scripts": {
-    "dev": "concurrently \"npm start\" \"wait-on http://127.0.0.1:3042 && set NWJS_START_URL=http://127.0.0.1:3042 && nw --enable-logging=stderr .\"",
-    "dev-tools": "concurrently \"react-devtools\" \"set REACT_APP_DEVTOOLS=enabled && npm start\" \"wait-on http://127.0.0.1:3042 && set NWJS_START_URL=http://127.0.0.1:3042 && nw --enable-logging=stderr .\"",
-    "dev:linux": "concurrently \"export REACT_APP_DEVTOOLS=enabled; npm start\" \"wait-on http://127.0.0.1:3042 && export NWJS_START_URL=http://127.0.0.1:3042; nw --enable-logging=stderr --remote-debugging-port=3043 .\"",
-    "dev-tools:linux": "concurrently \"react-devtools\" \"npm start\" \"wait-on http://127.0.0.1:3042 && export NWJS_START_URL=http://127.0.0.1:3042; nw --enable-logging=stderr .\"",
+    "dev": "concurrently \"npm start\" \"wait-on http://127.0.0.1:3042 && cross-env NWJS_START_URL=http://127.0.0.1:3042 nw --enable-logging=stderr .\"",
+    "dev-tools": "concurrently \"react-devtools\" \"cross-env REACT_APP_DEVTOOLS=enabled npm start\" \"wait-on http://127.0.0.1:3042 && cross-env NWJS_START_URL=http://127.0.0.1:3042 nw --enable-logging=stderr .\"",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predist": "cross-env GENERATE_SOURCEMAP=false BUILD_PATH=./dist/app/build/ npm run build",
+    "dist": "node dist.mjs"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.1.2",
+    "@fortawesome/free-solid-svg-icons": "^6.1.2",
+    "crypto-browserify": "^3.12.0",
+    "crypto-js": "^4.1.1",
+    "favicongrab": "^1.0.0",
+    "firebase": "^9.14.0",
+    "qrcode": "^1.5.1",
+    "react-firebase-hooks": "^5.0.3",
+    "react-icons": "^4.4.0",
+    "react-router-dom": "^6.4.3",
+    "react-spring": "^9.5.4",
+    "zxcvbn": "^4.4.2"
+  },
+  "build": {
+    "manifestProps": [
+      "name",
+      "version",
+      "main",
+      "node-remote"
+    ],
+    "osTypes": [
+      "windows"
+    ]
   },
   "eslintConfig": {
     "globals": {
@@ -52,22 +78,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "chromium-args": "--enable-logging=stderr",
-  "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.1.2",
-    "@fortawesome/free-solid-svg-icons": "^6.1.2",
-    "crypto-browserify": "^3.12.0",
-    "crypto-js": "^4.1.1",
-    "favicongrab": "^1.0.0",
-    "firebase": "^9.14.0",
-    "qrcode": "^1.5.1",
-    "react-firebase-hooks": "^5.0.3",
-    "react-icons": "^4.4.0",
-    "react-spring": "^9.5.4",
-    "zxcvbn": "^4.4.2"
-  },
-  "window": {
-    "icon": "./build/lockIcon.png"
   }
 }

@@ -3,7 +3,7 @@ import classes from "./Dashboard.module.css";
 import Gear from "../../components/Gear";
 import AddPasswordPopup from "./PmComponents/AddPasswordPopup";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   collection,
   getFirestore,
@@ -22,6 +22,7 @@ import MfaBox from "../../components/MfaBox.js";
 
 const PmDashboard = (props) => {
   let navigate = useNavigate();
+  let location = useLocation();
   const [addPasswordScreenState, setAddPasswordScreenState] = useState(false);
   const [keepOpacityNormalOnPopupState, setKeepOpacityNormalOnPopupState] =
     useState(false);
@@ -31,6 +32,8 @@ const PmDashboard = (props) => {
     firebaseAuth.currentUser.email
   );
   props.makeResizeable();
+
+  console.log(location.pathname);
 
   const refForUserQueries = query(
     // Collection where encrypted user entries are stored
