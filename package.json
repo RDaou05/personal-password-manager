@@ -52,7 +52,8 @@
       "name",
       "version",
       "main",
-      "node-remote", "build"
+      "node-remote",
+      "window"
     ],
     "osTypes": [
       "windows"

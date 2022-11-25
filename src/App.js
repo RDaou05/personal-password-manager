@@ -47,28 +47,20 @@ function App() {
     let timeout;
     const onInteract = () => {
       console.log("Intercat");
-      // if (location.pathname == "/") {
-      //   console.log("D: ", location.pathname);
-      //   window.removeEventListener("mousemove", onInteract);
-      //   window.removeEventListener("keydown", onInteract);
-      //   window.removeEventListener("click", onInteract);
-      // }
       clearTimeout(inactiveTimeout);
       inactiveTimeout = setTimeout(async () => {
-        if (location.pathname == "/appselector") {
-          console.log("Current: ", location.pathname);
-          signOutUser();
-          console.log("A");
-          navigate("/", { replace: true });
-        } else if (location.pathname == "/pm") {
+        if (location.pathname == "/pm") {
           console.log("B");
           console.log("Current: ", location.pathname);
           navigate("/appselector", { replace: true });
         }
-        clearTimeout(inactiveTimeout);
-        window.removeEventListener("mousemove", onInteract);
-        window.removeEventListener("keydown", onInteract);
-        window.removeEventListener("click", onInteract);
+        console.log(location.pathname);
+        console.log(location);
+        // navigate("/appselector", { replace: true });
+        // clearTimeout(inactiveTimeout);
+        // window.removeEventListener("mousemove", onInteract);
+        // window.removeEventListener("keydown", onInteract);
+        // window.removeEventListener("click", onInteract);
       }, timeout);
     };
     if (autolockEnabledState) {
@@ -85,18 +77,18 @@ function App() {
       }
 
       inactiveTimeout = setTimeout(() => {
-        if (location.pathname == "/appselector") {
-          console.log("Current: ", location.pathname);
-          signOutUser();
-          navigate("/", { replace: true });
-        } else if (location.pathname == "/pm") {
+        if (location.pathname == "/pm") {
+          console.log("2B");
           console.log("Current: ", location.pathname);
           navigate("/appselector", { replace: true });
         }
-        clearTimeout(inactiveTimeout);
-        window.removeEventListener("mousemove", onInteract);
-        window.removeEventListener("keydown", onInteract);
-        window.removeEventListener("click", onInteract);
+        console.log("2C" + location.pathname);
+        console.log(location);
+        // navigate("/appselector", { replace: true });
+        // clearTimeout(inactiveTimeout);
+        // window.removeEventListener("mousemove", onInteract);
+        // window.removeEventListener("keydown", onInteract);
+        // window.removeEventListener("click", onInteract);
       }, timeout);
 
       window.addEventListener("mousemove", onInteract);
