@@ -94,6 +94,11 @@ function App() {
       window.addEventListener("mousemove", onInteract);
       window.addEventListener("keydown", onInteract);
       window.addEventListener("click", onInteract);
+    } else {
+      clearTimeout(inactiveTimeout);
+      window.removeEventListener("mousemove", onInteract);
+      window.removeEventListener("keydown", onInteract);
+      window.removeEventListener("click", onInteract);
     }
 
     return () => {

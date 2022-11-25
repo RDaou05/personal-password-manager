@@ -604,7 +604,7 @@ exports.giveSignUpRoles = functions.auth.user().onCreate((user) => {
     .doc("filler")
     .collection(usersUID)
     .doc("al")
-    .set({ time: "" });
+    .set({ autotime: "" });
   return Promise.all([p1, p2, p3, p4]);
 });
 
