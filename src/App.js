@@ -84,11 +84,6 @@ function App() {
         }
         console.log("2C" + location.pathname);
         console.log(location);
-        // navigate("/appselector", { replace: true });
-        // clearTimeout(inactiveTimeout);
-        // window.removeEventListener("mousemove", onInteract);
-        // window.removeEventListener("keydown", onInteract);
-        // window.removeEventListener("click", onInteract);
       }, timeout);
 
       window.addEventListener("mousemove", onInteract);

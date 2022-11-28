@@ -1,0 +1,16 @@
+.mainInstructionBox {
+  border: 2px solid gold;
+  padding: 10%;
+  padding-top: 2%;
+  padding-bottom: 2%;
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+
+#clickToAdd {
+  margin-top: 10%;
+  color: #00ffd0;
+}
