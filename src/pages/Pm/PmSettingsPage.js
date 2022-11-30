@@ -260,7 +260,8 @@ const PmSettingsPage = (props) => {
                   <div className={classes.dropdownContent}>
                     <a
                       href="#"
-                      onClick={async () => {
+                      onClick={async (evt) => {
+                        evt.preventDefault();
                         setAutolock("");
                       }}
                     >
@@ -268,7 +269,8 @@ const PmSettingsPage = (props) => {
                     </a>
                     <a
                       href="#"
-                      onClick={async () => {
+                      onClick={async (evt) => {
+                        evt.preventDefault();
                         setAutolock("1 min");
                       }}
                     >
@@ -276,7 +278,8 @@ const PmSettingsPage = (props) => {
                     </a>
                     <a
                       href="#"
-                      onClick={async () => {
+                      onClick={async (evt) => {
+                        evt.preventDefault();
                         setAutolock("5 mins");
                       }}
                     >
@@ -284,7 +287,8 @@ const PmSettingsPage = (props) => {
                     </a>
                     <a
                       href="#"
-                      onClick={async () => {
+                      onClick={async (evt) => {
+                        evt.preventDefault();
                         setAutolock("15 mins");
                       }}
                     >
@@ -292,7 +296,8 @@ const PmSettingsPage = (props) => {
                     </a>
                     <a
                       href="#"
-                      onClick={async () => {
+                      onClick={async (evt) => {
+                        evt.preventDefault();
                         setAutolock("30 mins");
                       }}
                     >
@@ -300,7 +305,8 @@ const PmSettingsPage = (props) => {
                     </a>
                     <a
                       href="#"
-                      onClick={async () => {
+                      onClick={async (evt) => {
+                        evt.preventDefault();
                         setAutolock("1 hr");
                       }}
                     >
