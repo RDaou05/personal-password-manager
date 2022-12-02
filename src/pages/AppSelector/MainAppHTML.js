@@ -6,7 +6,7 @@ import { givePRole } from "../../firebase";
 const MainAppHTML = (props) => {
   return (
     <div>
-      {props.themeSelectState && props.mfaPassedState ? (
+      {props.themeSelectState ? (
         <ThemeSelectorPopup
           themeSelectState={props.themeSelectState}
           mfaPassedState={props.mfaPassedState}
