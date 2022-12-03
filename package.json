@@ -56,7 +56,7 @@
       "window"
     ],
     "osTypes": [
-      "windows"
+      "osx"
     ]
   },
   "eslintConfig": {
