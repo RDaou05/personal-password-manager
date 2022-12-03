@@ -29,7 +29,6 @@ const QuerySlot = (props) => {
   ];
   let iconSourceLink;
   let iconSourceLinkNoSize;
-
   useEffect(() => {
     const i = async () => {
       const response = await fetch(

@@ -28,7 +28,7 @@ const PmDashboard = (props) => {
   const [keepOpacityNormalOnPopupState, setKeepOpacityNormalOnPopupState] =
     useState(false);
   const [popupActiveState, popupActiveSetState] = useState(false);
-  const [decryptedQueriesState, setDecryptedQueriesState] = useState([]);
+  const [decryptedQueriesState, setDecryptedQueriesState] = useState(undefined);
   // const [instructionState, setInstructionState] = useState(false);
   const [firebaseEmail, setFirebaseEmail] = useState(
     firebaseAuth.currentUser.email
@@ -110,28 +110,45 @@ const PmDashboard = (props) => {
         }}
       >
         {console.log(decryptedQueriesState)}
-        {decryptedQueriesState.length != 0 ? (
-          decryptedQueriesState.map((query) => (
-            <QuerySlot
-              // query[1] is the random id of the document (query)
-              key={query[1]}
-              query={query}
-              setPopupActiveState={popupActiveSetState}
-              popupActiveState={popupActiveState} // We won't let the update tab be opened if this is true
-              setKeepOpacityNormalOnPopupState={
-                setKeepOpacityNormalOnPopupState
-              } /*We want to keep the opacity as normal when we open an update tab
+        <>
+          {decryptedQueriesState != undefined ? (
+            <>
+              {decryptedQueriesState.length > 0 ? (
+                <>
+                  {decryptedQueriesState == [] ? (
+                    <InstructionBox
+                      setAddPasswordScreenState={setAddPasswordScreenState}
+                      popupActiveSetState={popupActiveSetState}
+                    />
+                  ) : (
+                    decryptedQueriesState.map((query) => (
+                      <QuerySlot
+                        // query[1] is the random id of the document (query)
+                        key={query[1]}
+                        query={query}
+                        setPopupActiveState={popupActiveSetState}
+                        popupActiveState={popupActiveState} // We won't let the update tab be opened if this is true
+                        setKeepOpacityNormalOnPopupState={
+                          setKeepOpacityNormalOnPopupState
+                        } /*We want to keep the opacity as normal when we open an update tab
               but it still won't let them open another update tab while another one is open (or while any other popup is open) */
-              hashBeingUsedToEncrypt={
-                props.hashBeingUsedToEncrypt
-              } /* We are passing this to the query slot so we can later pass it into the update tab of the query
+                        hashBeingUsedToEncrypt={
+                          props.hashBeingUsedToEncrypt
+                        } /* We are passing this to the query slot so we can later pass it into the update tab of the query
               slot (it will be used to encrypt the new updated information) */
-            />
-          ))
-        ) : (
-          <InstructionBox />
-        )}
-        {/* {instructionState ? <InstructionBox /> : null} */}
+                      />
+                    ))
+                  )}
+                </>
+              ) : (
+                <InstructionBox
+                  setAddPasswordScreenState={setAddPasswordScreenState}
+                  popupActiveSetState={popupActiveSetState}
+                />
+              )}
+            </>
+          ) : null}
+        </>
       </div>
 
       {addPasswordScreenState ? (
