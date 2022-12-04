@@ -28,13 +28,13 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const application = initializeApp(firebaseConfig);
-const appCheck = initializeAppCheck(application, {
-  provider: new ReCaptchaV3Provider("6LciglofAAAAAD8hjB0f5kYV809r-t30PI8rYAQz"),
+// const appCheck = initializeAppCheck(application, {
+//   provider: new ReCaptchaV3Provider("6LciglofAAAAAD8hjB0f5kYV809r-t30PI8rYAQz"),
 
-  // Optional argument. If true, the SDK automatically refreshes App Check
-  // tokens as needed.
-  isTokenAutoRefreshEnabled: true,
-});
+//   // Optional argument. If true, the SDK automatically refreshes App Check
+//   // tokens as needed.
+//   isTokenAutoRefreshEnabled: true,
+// });
 
 function App() {
   // window.history.pushState(null, window.document.title, window.location.href);

@@ -525,7 +525,7 @@ exports.updateRawData = functions.https.onCall(async (data, context) => {
 });
 
 exports.givePRole = functions.https.onCall((data, context) => {
-  const usersUID = data.uid;
+  const usersUID = context.auth.uid;
   const db = admin.firestore();
   const p1 = db
     .collection("users")

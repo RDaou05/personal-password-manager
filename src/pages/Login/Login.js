@@ -14,7 +14,6 @@ const Login = () => {
   const [accountDisabledBoxState, accountDisabledBoxSetstate] = useState(false);
   const [errorHasOccuredBoxState, errorHasOccuredBoxSetState] = useState(false);
   let navigate = useNavigate();
-
   useEffect(() => {
     document.body.style.background = "rgb(40, 45, 52)";
     // return () => {

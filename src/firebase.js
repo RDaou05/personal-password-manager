@@ -218,7 +218,7 @@ const updateUserQuery = async (
 
 const givePRole = async () => {
   const givePRole = httpsCallable(functions, "givePRole");
-  // return await givePRole({ uid: auth.currentUser.uid });
+  return await givePRole();
 };
 // End of cloud functions
 
