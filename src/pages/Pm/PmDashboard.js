@@ -37,19 +37,6 @@ const PmDashboard = (props) => {
 
   console.log(location.pathname);
 
-  const refForUserQueries = query(
-    // Collection where encrypted user entries are stored
-    collection(
-      FSDB,
-      "users",
-      "filler",
-      firebaseAuth.currentUser.uid,
-      "mpaps",
-      "ps"
-    ),
-    orderBy("nummy", "desc")
-  );
-
   useEffect(() => {
     async function decryptAll() {
       const newDecryptedList = await decryptUserQueries(

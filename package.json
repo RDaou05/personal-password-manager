@@ -12,6 +12,7 @@
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^14.4.3",
+    "appdmg": "^0.6.4",
     "concurrently": "^7.5.0",
     "cross-env": "^7.0.3",
     "nw": "0.70.1-sdk",

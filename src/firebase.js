@@ -22,13 +22,13 @@ import {
 
 import { getFunctions, httpsCallable } from "firebase/functions";
 
-const CryptoJS = require("crypto-js");
+import {
+  initializeAppCheck,
+  ReCaptchaV3Provider,
+  getToken,
+} from "firebase/app-check";
 
-// import {
-//   initializeAppCheck,
-//   ReCaptchaV3Provider,
-//   getToken,
-// } from "firebase/app-check";
+const CryptoJS = require("crypto-js");
 
 const firebaseConfig = {
   apiKey: "AIzaSyA3pL18gW3Ts88QX93bFhwmruuXLYmVKAo",
@@ -43,10 +43,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const functions = getFunctions();
-const db = getFirestore();
-
 // const appCheck = initializeAppCheck(app, {
 //   provider: new ReCaptchaV3Provider("6LciglofAAAAAD8hjB0f5kYV809r-t30PI8rYAQz"),
 
@@ -54,6 +50,11 @@ const db = getFirestore();
 //   // tokens as needed.
 //   isTokenAutoRefreshEnabled: true,
 // });
+
+const auth = getAuth(app);
+const functions = getFunctions();
+const db = getFirestore();
+
 // Firebase functions
 
 const googleSignIn = async () => {
@@ -91,7 +92,7 @@ const createPersonalPMAccount = async (email, password) => {
 const setAutolock = async (time) => {
   const setAlCF = httpsCallable(functions, "setAutolock");
   const setAlCFReturn = await setAlCF({
-    userUID: auth.currentUser.uid,
+    // userUID: auth.currentUser.uid,
     time: time,
   });
   return setAlCFReturn;
@@ -103,7 +104,7 @@ const checkIfMFATokenIsCorrect = async (
 ) => {
   const checkMFACF = httpsCallable(functions, "checkIfMFATokenIsCorrect");
   const checkMFACFReturn = await checkMFACF({
-    userUID: auth.currentUser.uid,
+    // userUID: auth.currentUser.uid,
     hashedSetMasterPassValue: hashedSetMasterPassValue,
     enteredMFAToken: enteredMFAToken,
   });
@@ -130,7 +131,7 @@ const checkIfCodeToEnableMFAIsCorrect = async (
 const disableMFA = async () => {
   const disableMFACF = httpsCallable(functions, "disableMFA");
   const disableMFAReturn = await disableMFACF({
-    userUID: auth.currentUser.uid,
+    // userUID: auth.currentUser.uid,
   });
   return disableMFAReturn;
 };
@@ -140,7 +141,7 @@ const enableMFA = async (mfaSecretHex, hashedSetMasterPassValue) => {
   const enableMFACF = await enableMFA({
     mfaSecretHex: mfaSecretHex,
     hashedSetMasterPassValue: hashedSetMasterPassValue,
-    userUID: auth.currentUser.uid,
+    // userUID: auth.currentUser.uid,
   });
   return enableMFACF;
 };
@@ -163,7 +164,7 @@ const updateMP = async (currentMasterPassword, newMasterPassword) => {
   ).toString();
   const updateMasterPassword = httpsCallable(functions, "updateMasterPassword");
   const updateResult = await updateMasterPassword({
-    userUID: auth.currentUser.uid,
+    // userUID: auth.currentUser.uid,
     currentMPH: hashedCurrentMasterPassword,
     newMPH: hashedNewMasterPassword,
     newRandomStringEncrypted: newRandomStringEncrypted,
@@ -175,7 +176,7 @@ const decryptUserQueries = async (hashedSetMasterPassValue) => {
   const decryptUserQueriesCF = httpsCallable(functions, "decryptUserQueries");
   const finalDecryptedQueryReturn = await decryptUserQueriesCF({
     hashedSetMasterPassValue: hashedSetMasterPassValue,
-    userUID: auth.currentUser.uid,
+    // userUID: auth.currentUser.uid,
   });
   const listOfDecryptedObjectsAndIDs = finalDecryptedQueryReturn.data.finalList;
   return listOfDecryptedObjectsAndIDs;
@@ -191,7 +192,7 @@ const addUserQuery = async (
   const finalEncryptedAddedQueryReturn = await addUserQuery({
     objectToAdd: objectToAdd,
     hashedSetMasterPassValue: hashedSetMasterPassValue,
-    userUID: auth.currentUser.uid,
+    // userUID: auth.currentUser.uid,
     isLink: linkIsThere,
     randomID: id,
   });
@@ -209,7 +210,7 @@ const updateUserQuery = async (
     objectToUpdate: objectToUpdate,
     hashedSetMasterPassValue: hashedSetMasterPassValue,
     sourceRefID: sourceRefID,
-    userUID: auth.currentUser.uid,
+    // userUID: auth.currentUser.uid,
     isLink: objectToUpdate.isLink,
     randomID: objectToUpdate.random,
   });
@@ -217,7 +218,7 @@ const updateUserQuery = async (
 
 const givePRole = async () => {
   const givePRole = httpsCallable(functions, "givePRole");
-  return await givePRole({ uid: auth.currentUser.uid });
+  // return await givePRole({ uid: auth.currentUser.uid });
 };
 // End of cloud functions
 
@@ -226,16 +227,20 @@ const signOutUser = async () => {
 };
 
 const checkForMFA = async () => {
-  const mfaDoc = await getDoc(
-    doc(db, "users", "filler", auth.currentUser.uid, "mfa")
-  );
+  try {
+    const mfaDoc = await getDoc(
+      doc(db, "users", "filler", auth.currentUser.uid, "mfa")
+    );
 
-  const mfaSecretHex = mfaDoc.data().hex;
+    const mfaSecretHex = mfaDoc.data().hex;
 
-  if (mfaSecretHex.trim() == "") {
-    return false;
-  } else if (mfaSecretHex.trim() != "") {
-    return true;
+    if (mfaSecretHex.trim() == "") {
+      return false;
+    } else if (mfaSecretHex.trim() != "") {
+      return true;
+    }
+  } catch (err) {
+    console.log(err);
   }
 };
 
@@ -326,7 +331,7 @@ const checkifMasterPasswordIsCorrect = async (requestedMasterPassword) => {
 
   const response = await checkIfMasterPasswordIsCorrect({
     requestedMasterPasswordHash: await hashString(requestedMasterPassword),
-    userUID: auth.currentUser.uid,
+    // userUID: auth.currentUser.uid,
   });
 
   if (response.data.masterPasswordIsCorrect) {

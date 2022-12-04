@@ -8,6 +8,33 @@ import { signOutUser, FSDB, firebaseAuth } from "./firebase.js";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { useState } from "react";
+import { initializeApp } from "@firebase/app";
+import {
+  initializeAppCheck,
+  ReCaptchaV3Provider,
+  getToken,
+} from "firebase/app-check";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA3pL18gW3Ts88QX93bFhwmruuXLYmVKAo",
+  authDomain: "personal-pm-98268.firebaseapp.com",
+  databaseURL: "https://personal-pm-98268-default-rtdb.firebaseio.com",
+  projectId: "personal-pm-98268",
+  storageBucket: "personal-pm-98268.appspot.com",
+  messagingSenderId: "507153717923",
+  appId: "1:507153717923:web:192d2eff57f54195f4fd16",
+  measurementId: "G-59QL5BNCX4",
+};
+
+// Initialize Firebase
+const application = initializeApp(firebaseConfig);
+const appCheck = initializeAppCheck(application, {
+  provider: new ReCaptchaV3Provider("6LciglofAAAAAD8hjB0f5kYV809r-t30PI8rYAQz"),
+
+  // Optional argument. If true, the SDK automatically refreshes App Check
+  // tokens as needed.
+  isTokenAutoRefreshEnabled: true,
+});
 
 function App() {
   // window.history.pushState(null, window.document.title, window.location.href);
@@ -199,4 +226,5 @@ function App() {
   );
 }
 
+export const app = application;
 export default App;

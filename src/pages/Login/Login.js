@@ -107,6 +107,7 @@ const Login = () => {
       if (googleSignInReturn.slice(0, 5) === "error") {
         document.body.style.opacity = "1";
         const errorCode = googleSignInReturn.substring(7).trim();
+        alert(errorCode);
         if (errorCode == "auth/user-disabled") {
           document.getElementById("ableToDim").style.opacity = "0.3";
           accountDisabledBoxSetstate(true);

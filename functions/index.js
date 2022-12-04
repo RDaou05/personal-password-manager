@@ -5,7 +5,7 @@ const speakeasy = require("speakeasy");
 admin.initializeApp();
 
 exports.setAutolock = functions.https.onCall(async (data, context) => {
-  const usersUID = data.userUID;
+  const usersUID = context.auth.uid;
   const db = admin.firestore();
   const p1 = db
     .collection("users")
@@ -24,13 +24,13 @@ exports.checkIfMFATokenIsCorrect = functions.https.onCall(
     const userSecretPath = db
       .collection("users")
       .doc("filler")
-      .collection(data.userUID)
+      .collection(context.auth.uid)
       .doc("secKey");
     let doc = await userSecretPath.get();
     userSecret = doc.data().secKeyStr;
     const decryptionKey = data.hashedSetMasterPassValue + userSecret;
 
-    const usersUID = data.userUID;
+    const usersUID = context.auth.uid;
     const enteredMFAToken = data.enteredMFAToken;
 
     const refForMFADoc = db
@@ -75,7 +75,7 @@ exports.checkIfCodeToEnableMFAIsCorrect = functions.https.onCall(
 );
 
 exports.disableMFA = functions.https.onCall(async (data, context) => {
-  const usersUID = data.userUID;
+  const usersUID = context.auth.uid;
   const db = admin.firestore();
   const p1 = db
     .collection("users")
@@ -94,7 +94,7 @@ exports.enableMFA = functions.https.onCall(async (data, context) => {
   const userSecretPath = db
     .collection("users")
     .doc("filler")
-    .collection(data.userUID)
+    .collection(context.auth.uid)
     .doc("secKey");
   let doc = await userSecretPath.get();
   userSecret = doc.data().secKeyStr;
@@ -105,7 +105,7 @@ exports.enableMFA = functions.https.onCall(async (data, context) => {
     encryptionKey
   ).toString();
 
-  const usersUID = data.userUID;
+  const usersUID = context.auth.uid;
   const p1 = db
     .collection("users")
     .doc("filler")
@@ -143,7 +143,7 @@ exports.checkIfMasterPasswordIsCorrect = functions.https.onCall(
     const refForMSCheck = db
       .collection("users")
       .doc("filler")
-      .collection(data.userUID)
+      .collection(context.auth.uid)
       .doc("mpaps")
       .collection(
         "ms"
@@ -181,7 +181,7 @@ exports.updateMasterPassword = functions.https.onCall(async (data, context) => {
   const refForUserQueries = db // Collection where encrypted user entries are stored
     .collection("users")
     .doc("filler")
-    .collection(data.userUID)
+    .collection(context.auth.uid)
     .doc("mpaps")
     .collection("ps")
     .orderBy("nummy", "desc");
@@ -194,7 +194,7 @@ exports.updateMasterPassword = functions.https.onCall(async (data, context) => {
   const userSecretPath = db
     .collection("users")
     .doc("filler")
-    .collection(data.userUID)
+    .collection(context.auth.uid)
     .doc("secKey");
   let docOfSecret = await userSecretPath.get();
   const userSecret = docOfSecret.data().secKeyStr;
@@ -210,7 +210,7 @@ exports.updateMasterPassword = functions.https.onCall(async (data, context) => {
     const passCollection = db
       .collection("users")
       .doc("filler")
-      .collection(data.userUID)
+      .collection(context.auth.uid)
       .doc("mpaps")
       .collection("ps");
     allUserQueriesWithOldEncryption.forEach((oldEncryptedUserDoc) => {
@@ -266,7 +266,7 @@ exports.updateMasterPassword = functions.https.onCall(async (data, context) => {
   const refForMFADoc = db
     .collection("users")
     .doc("filler")
-    .collection(data.userUID)
+    .collection(context.auth.uid)
     .doc("mfa");
   const mfaDoc = await refForMFADoc.get();
   if (mfaDoc.data().hex.trim() != "") {
@@ -290,7 +290,7 @@ exports.updateMasterPassword = functions.https.onCall(async (data, context) => {
   const msCollection = db
     .collection("users")
     .doc("filler")
-    .collection(data.userUID)
+    .collection(context.auth.uid)
     .doc("mpaps")
     .collection("ms");
 
@@ -317,7 +317,7 @@ exports.decryptUserQueries = functions.https.onCall(async (data, context) => {
     const refForUserQueries = db // Collection where encrypted user entries are stored
       .collection("users")
       .doc("filler")
-      .collection(data.userUID)
+      .collection(context.auth.uid)
       .doc("mpaps")
       .collection("ps")
       .orderBy("nummy", "desc");
@@ -327,7 +327,7 @@ exports.decryptUserQueries = functions.https.onCall(async (data, context) => {
     const userSecretPath = db // Document of user secret key
       .collection("users")
       .doc("filler")
-      .collection(data.userUID)
+      .collection(context.auth.uid)
       .doc("secKey");
     let doc = await userSecretPath.get();
     userSecret = doc.data().secKeyStr;
@@ -377,7 +377,7 @@ exports.addUserQuery = functions.https.onCall(async (data, context) => {
     const userSecretPath = db
       .collection("users")
       .doc("filler")
-      .collection(data.userUID)
+      .collection(context.auth.uid)
       .doc("secKey");
     let doc = await userSecretPath.get();
     userSecret = doc.data().secKeyStr;
@@ -390,7 +390,7 @@ exports.addUserQuery = functions.https.onCall(async (data, context) => {
     const newQueryPath = db
       .collection("users")
       .doc("filler")
-      .collection(data.userUID)
+      .collection(context.auth.uid)
       .doc("mpaps")
       .collection("ps")
       .doc();
@@ -464,7 +464,7 @@ exports.updateRawData = functions.https.onCall(async (data, context) => {
   const userSecretPath = db
     .collection("users")
     .doc("filler")
-    .collection(data.userUID)
+    .collection(context.auth.uid)
     .doc("secKey");
   let doc = await userSecretPath.get();
   userSecret = doc.data().secKeyStr;
@@ -474,7 +474,7 @@ exports.updateRawData = functions.https.onCall(async (data, context) => {
   const updatePath = db
     .collection("users")
     .doc("filler")
-    .collection(data.userUID)
+    .collection(context.auth.uid)
     .doc("mpaps")
     .collection("ps")
     .doc(data.sourceRefID);
