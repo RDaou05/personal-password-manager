@@ -1,3 +1,5 @@
+// This is only to build the macos dist
+
 {
     "title": "Personal PM",
     "icon": "mainIcon.icns",
