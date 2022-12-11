@@ -14,6 +14,7 @@ import {
   ReCaptchaV3Provider,
   getToken,
 } from "firebase/app-check";
+import Pl from "./pages/Pl/Pl.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA3pL18gW3Ts88QX93bFhwmruuXLYmVKAo",
@@ -64,6 +65,30 @@ function App() {
         }
       });
     });
+  }, []);
+
+  useLayoutEffect(() => {
+    try {
+      return onAuthStateChanged(firebaseAuth, async (user) => {
+        const mfaDoc = doc(FSDB, "users", "filler", user.uid, "mfa");
+        return onSnapshot(mfaDoc, (snap) => {
+          const mfaKey = snap.data().hex.trim();
+          if (mfaKey == "") {
+            setMfaIsEnabledState(false);
+            setMfaBoxState(false);
+            setMfaPassedState(true);
+            setMfaKeyState(mfaKey);
+          } else {
+            setMfaPassedState(false);
+            setMfaIsEnabledState(true);
+            setMfaBoxState(true);
+            setMfaKeyState(mfaKey);
+          }
+        });
+      });
+    } catch (err) {
+      setMfaIsEnabledState("error");
+    }
   }, []);
 
   useLayoutEffect(() => {
@@ -206,6 +231,25 @@ function App() {
           path="/pm"
           element={
             <Pm
+              setMfaIsEnabledState={setMfaIsEnabledState}
+              mfaIsEnabledState={mfaIsEnabledState}
+              setMfaBoxState={setMfaBoxState}
+              mfaBoxState={mfaBoxState}
+              setMfaPassedState={setMfaPassedState}
+              mfaPassedState={mfaPassedState}
+              setMfaKeyState={setMfaKeyState}
+              mfaKeyState={mfaKeyState}
+              setRoleState={setRoleState}
+              roleState={roleState}
+              autolockEnabledState={autolockEnabledState}
+              autolockTimeState={autolockTimeState}
+            />
+          }
+        ></Route>
+        <Route
+          path="/pl"
+          element={
+            <Pl
               setMfaIsEnabledState={setMfaIsEnabledState}
               mfaIsEnabledState={mfaIsEnabledState}
               setMfaBoxState={setMfaBoxState}

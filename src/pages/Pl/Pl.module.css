@@ -1,0 +1,455 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
+
+*:focus {
+  outline: 0 !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #282d34;
+  display: flex;
+  flex-direction: column;
+}
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+  display: none;
+}
+
+meter[value="1"]::-webkit-meter-optimum-value {
+  background: rgb(151, 1, 1);
+  transition: all ease-in-out 0.5s;
+}
+meter[value="2"]::-webkit-meter-optimum-value {
+  background: rgb(228, 82, 25);
+  transition: all ease-in-out 0.5s;
+}
+meter[value="3"]::-webkit-meter-optimum-value {
+  background: rgb(218, 187, 17);
+  transition: all ease-in-out 0.5s;
+}
+meter[value="4"]::-webkit-meter-optimum-value {
+  background: rgb(4, 128, 0);
+  transition: all ease-in-out 0.5s;
+}
+
+meter::-moz-meter-bar {
+  border-radius: 4vh;
+}
+
+meter {
+  align-self: center;
+  width: 56%;
+  height: 12px;
+  overflow: hidden;
+  border-radius: 1vh;
+  margin-top: 1%;
+}
+
+body {
+  --addPlaceHoldersFontSize: 15px;
+  --addPlaceHoldersFontSizeWeight: 500;
+  --addPlaceHoldersFontFamily: sans-serif;
+  --addPlaceHoldersOpacity: 0.7;
+  --addPlaceHoldersFontSizeTextAlign: initial;
+  --addPlaceHoldersPaddingLeft: 2%;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: transparent;
+  border-radius: 8vh;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(71, 71, 71);
+  border-radius: 8vh;
+  margin-left: 2px;
+  opacity: 0.7;
+}
+
+@keyframes fadeSlight {
+  to {
+    opacity: 0.7;
+  }
+}
+
+@keyframes fadeBack {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeAway {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes pushOutUpdateTab {
+  to {
+    width: 40%;
+  }
+}
+
+@keyframes pullInUpdateTab {
+  to {
+    width: 0%;
+  }
+}
+
+@keyframes updateTabToDark {
+  to {
+    background-color: #0b0b0b;
+  }
+}
+
+@keyframes updateTabToNormal {
+  to {
+    background-color: #0c1213;
+  }
+}
+
+@keyframes updateInputBoxesGlow {
+  to {
+    box-shadow: rgb(255, 255, 255) 0px 0px 12px 1px;
+  }
+}
+
+@keyframes updateInputBoxesNormal {
+  to {
+    box-shadow: 0px 10px 30px 5px rgba(0, 0, 0.15);
+  }
+}
+
+@keyframes pushOutMPTab {
+  to {
+    width: 37%;
+  }
+}
+
+@keyframes pullInMPTab {
+  to {
+    width: 0%;
+  }
+}
+
+@keyframes shake {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(1em);
+  }
+  40% {
+    transform: translate(-1em);
+  }
+  60% {
+    transform: translate(1em);
+  }
+  80% {
+    transform: translate(-1em);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+.setupMPScreenContainer {
+  padding-bottom: 7%;
+  display: flex;
+  flex-direction: column;
+}
+
+.createMasterPasswordHeader {
+  color: white;
+  font-weight: 700;
+  font-size: 1.65rem;
+  text-align: center;
+  margin-top: 8%;
+  font-family: "Montserrat", sans-serif;
+}
+
+.newMasterPasswordField {
+  background-color: transparent;
+  outline: none;
+  border: none;
+  border-bottom: 2px solid #8e2de2;
+  margin-top: 8.5%;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: "Montserrat", sans-serif;
+  padding: 3%;
+  /* margin-left: 8%; */
+  height: 8%;
+  /* text-align: center; */
+  padding-left: 2%;
+  padding-right: 14%;
+  align-self: center;
+  width: 40%;
+  margin-top: 4%;
+}
+
+.newMasterPasswordField:focus {
+  width: 51%;
+  transition: all ease-in-out 0.1s;
+}
+
+.newMasterPasswordField:focus ~ .passwordStrengthBar {
+  width: 67%;
+  transition: all ease-in-out 0.1s;
+}
+
+.renterMP {
+  background-color: transparent;
+  outline: none;
+  border: none;
+  border-bottom: 2px solid #8e2de2;
+  margin-top: 3%;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: "Montserrat", sans-serif;
+  padding: 3%;
+  height: 8%;
+  padding-left: 2%;
+  padding-right: 14%;
+  align-self: center;
+  width: 40%;
+}
+
+.renterMP:focus {
+  width: 51%;
+  transition: all ease-in-out 0.2s;
+}
+
+.renterMP:focus ~ .reenterPasswordStrengthBar {
+  width: 67%;
+  transition: all ease-in-out 0.2s;
+}
+
+.confirmMasterPasswordButton {
+  width: 54%;
+  padding: 3%;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  background-color: #8e2de2;
+  border-radius: 10vh;
+  opacity: 0.8;
+  margin-top: 6%;
+  display: flex;
+  border: none;
+  padding: 2%;
+  align-self: center;
+  flex-direction: row;
+  justify-content: center;
+  font-weight: 900;
+  font-family: "Montserrat", sans-serif;
+}
+
+.confirmMasterPasswordButton:hover {
+  opacity: 1;
+  transition: ease-in-out 0.1s;
+}
+
+.back {
+  color: #8e2de2;
+  text-decoration: none;
+  font-weight: 700;
+  font-family: "Montserrat", sans-serif;
+  font-size: 17px;
+  align-self: center;
+  margin: 0;
+  margin-top: 28.5%;
+}
+
+.back:hover {
+  opacity: 0.7;
+  margin-top: 28%;
+  transition: all ease-in-out 0.1s;
+}
+
+.backFromSignup {
+  color: #8e2de2;
+  text-decoration: none;
+  font-weight: 700;
+  font-family: "Montserrat", sans-serif;
+  font-size: 17px;
+  align-self: center;
+  margin: 0;
+  margin-top: 20.5%;
+}
+
+.backFromSignup:hover {
+  opacity: 0.7;
+  margin-top: 20%;
+  transition: all ease-in-out 0.1s;
+}
+
+.forgotPassword {
+  color: #00ffd0;
+  text-decoration: none;
+  font-weight: 700;
+  font-family: "Montserrat", sans-serif;
+  font-size: 17px;
+  align-self: center;
+  margin: 0;
+  margin-top: 16.5%;
+}
+
+.forgotPassword:hover {
+  opacity: 0.7;
+  margin-top: 17%;
+  transition: all ease-in-out 0.1s;
+}
+
+#passwordErrorMessage {
+  margin: 0;
+  padding: 0;
+  font-family: "Montserrat", sans-serif;
+  color: red;
+  font-size: 1.2rem;
+  text-align: center;
+  position: absolute;
+  right: 37%;
+  top: 60%;
+}
+
+.confirmBackupButton {
+  width: 56%;
+  padding: 3%;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  background-color: #8e2de2;
+  border-radius: 10vh;
+  opacity: 0.8;
+  margin-top: 5%;
+  display: flex;
+  border: none;
+  padding: 2%;
+  align-self: center;
+  flex-direction: row;
+  justify-content: center;
+  font-weight: 900;
+  font-family: "Montserrat", sans-serif;
+  transition: all ease-in-out 0.1s;
+}
+
+.confirmBackupButton:hover {
+  opacity: 1;
+  transition: ease-in-out 0.1s;
+}
+
+.backToLogin {
+  color: #00ffd0;
+  text-decoration: none;
+  font-weight: 700;
+  font-family: "Montserrat", sans-serif;
+  font-size: 21px;
+  align-self: center;
+  margin: 0;
+  margin-top: 24.5%;
+}
+
+.backToLogin:hover {
+  opacity: 0.7;
+  margin-top: 25%;
+  transition: all ease-in-out 0.1s;
+}
+
+.backupCodeField {
+  background-color: transparent;
+  outline: none;
+  border: none;
+  border-bottom: 2px solid #8e2de2;
+  margin-top: 8.5%;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: "Montserrat", sans-serif;
+  padding: 3%;
+  height: 8%;
+  text-align: center;
+  align-self: center;
+  width: 40%;
+  font-size: 1.3rem;
+  margin-top: 11%;
+  transition: all ease-in-out 0.1s;
+}
+
+.backupCodeField:focus {
+  width: 51%;
+  transition: all ease-in-out 0.1s;
+}
+
+.accountRecoveryHeader {
+  color: white;
+  font-weight: 700;
+  font-size: 1.65rem;
+  text-align: center;
+  margin-top: 8%;
+  font-family: "Montserrat", sans-serif;
+}
+
+.mainBackupContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.backupCodesContainter {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 60px;
+  font-size: 1.4rem;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 900;
+  letter-spacing: 2.4px;
+  color: #00a3a3;
+  margin-bottom: 6%;
+}
+
+.confirmSavedBackupCodesButton {
+  width: 100%;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  background-color: #13817c;
+  border-radius: 10vh;
+  opacity: 0.8;
+  margin-top: 2%;
+  border: none;
+  padding: 2%;
+  font-weight: 900;
+  font-family: "Montserrat", sans-serif;
+}
+
+.confirmSavedBackupCodesButton:hover {
+  opacity: 1;
+  transition: ease-in-out 0.1s;
+}
+
+#codeUsedMessage {
+  color: red;
+  font-family: "Montserrat", sans-serif;
+  font-size: 24px;
+  margin: 0;
+}
+
+.inputArea {
+  display: flex;
+  width: 50%;
+  align-self: center;
+}

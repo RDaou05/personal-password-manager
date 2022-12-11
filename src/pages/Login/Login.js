@@ -16,9 +16,6 @@ const Login = () => {
   let navigate = useNavigate();
   useEffect(() => {
     document.body.style.background = "rgb(40, 45, 52)";
-    // return () => {
-    //   cleanup
-    // };
   }, []);
 
   // This might be changed in the app selector page, so if they go back to the login, the color could be different
