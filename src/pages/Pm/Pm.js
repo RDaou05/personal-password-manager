@@ -9,7 +9,6 @@ import {
 import PmSignup from "./PmSignup";
 import PmLogin from "./PmLogin";
 import classes from "./Pm.module.css";
-import ResetMP from "./ResetMP";
 import PmDashboard from "./PmDashboard";
 import PmSettingsPage from "./PmSettingsPage";
 import { onAuthStateChanged } from "firebase/auth";
@@ -21,8 +20,6 @@ const Pm = (props) => {
 
   const [loginPassedState, setLoginPassedState] = useState(false);
   const [hashBeingUsedToEncrypt, setHashBeingUsedToEncrypt] = useState();
-  const [resetMasterPassScreenstate, setResetMasterPassScreenstate] =
-    useState(false);
   const [settingsScreenstate, setSettingsScreenstate] = useState(false);
   const [masterPasswordExistsState, setMasterPasswordExistsState] = useState();
 
@@ -61,30 +58,6 @@ const Pm = (props) => {
     };
   }, []);
 
-  useLayoutEffect(() => {
-    try {
-      return onAuthStateChanged(firebaseAuth, async (user) => {
-        const mfaDoc = doc(FSDB, "users", "filler", user.uid, "mfa");
-        return onSnapshot(mfaDoc, (snap) => {
-          const mfaKey = snap.data().hex.trim();
-          if (mfaKey == "") {
-            props.setMfaIsEnabledState(false);
-            props.setMfaBoxState(false);
-            props.setMfaPassedState(true);
-            props.setMfaKeyState(mfaKey);
-          } else {
-            props.setMfaPassedState(false);
-            props.setMfaIsEnabledState(true);
-            props.setMfaBoxState(true);
-            props.setMfaKeyState(mfaKey);
-          }
-        });
-      });
-    } catch (err) {
-      props.setMfaIsEnabledState("error");
-    }
-  }, []);
-
   return (
     <div>
       {loginPassedState == false ? (
@@ -115,9 +88,7 @@ const Pm = (props) => {
         </>
       ) : loginPassedState ? (
         <>
-          {masterPasswordExistsState &&
-          settingsScreenstate == false &&
-          resetMasterPassScreenstate == false ? (
+          {masterPasswordExistsState && settingsScreenstate == false ? (
             <PmDashboard
               makeResizeable={() => {
                 // Making page resizeable
@@ -142,18 +113,7 @@ const Pm = (props) => {
               autolockEnabledState={props.autolockEnabledState}
               autolockTimeState={props.autolockTimeState}
             />
-          ) : masterPasswordExistsState &&
-            settingsScreenstate == false &&
-            resetMasterPassScreenstate ? (
-            <ResetMP
-              passwordHasBeenReset={async (newMasterPasswordHash) => {
-                setHashBeingUsedToEncrypt(newMasterPasswordHash);
-                setResetMasterPassScreenstate(false);
-              }}
-            />
-          ) : masterPasswordExistsState &&
-            settingsScreenstate &&
-            resetMasterPassScreenstate == false ? (
+          ) : masterPasswordExistsState && settingsScreenstate ? (
             <PmSettingsPage
               logOut={async () => {
                 sendToLoginPage();
