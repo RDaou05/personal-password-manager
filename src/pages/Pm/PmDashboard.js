@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import classes from "./Dashboard.module.css";
 import Gear from "../../components/Gear";
 import AddPasswordPopup from "./PmComponents/AddPasswordPopup";
@@ -33,7 +33,9 @@ const PmDashboard = (props) => {
   const [firebaseEmail, setFirebaseEmail] = useState(
     firebaseAuth.currentUser.email
   );
-  props.makeResizeable();
+  useLayoutEffect(() => {
+    props.makeResizeable();
+  }, []);
 
   console.log(location.pathname);
 
@@ -51,7 +53,7 @@ const PmDashboard = (props) => {
     navigate("/", { replace: true });
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.body.style.opacity = "1";
     document.body.style.background = "rgb(40, 45, 52)";
     document.body.style.margin = "0";
