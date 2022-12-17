@@ -220,6 +220,22 @@ const givePRole = async () => {
   const givePRole = httpsCallable(functions, "givePRole");
   return await givePRole();
 };
+
+const deleteUser = async () => {
+  const roleDoc = await getDoc(
+    doc(db, "users", "filler", auth.currentUser.uid, "r")
+  );
+  const role = roleDoc.data().memb;
+  if (role == "p") {
+    return { status: "pError" }; // This will not delete the account and let the user know that they have to unsubscribe from premium to delete it
+  } else if (role == "a" || role == "ft") {
+    const deleteUser = httpsCallable(functions, "deleteUser");
+    return await deleteUser();
+  } else {
+    return { status: "support" };
+    // Tells the user to email support
+  }
+};
 // End of cloud functions
 
 const signOutUser = async () => {
@@ -381,6 +397,7 @@ export {
   updateUserQuery,
   givePRole,
   setAutolock,
+  deleteUser,
 };
 export const firebaseAuth = auth;
 export const FSDB = db;

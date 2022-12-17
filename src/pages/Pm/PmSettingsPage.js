@@ -9,6 +9,7 @@ import {
   signOutUser,
   FSDB,
   setAutolock,
+  deleteUser,
 } from "../../firebase";
 import ConfirmMPBox from "./PmComponents/ConfirmMPBox";
 import MfaConfirmationBox from "./PmComponents/MfaConfirmationBox";
@@ -32,6 +33,13 @@ const PmSettingsPage = (props) => {
   ] = useState(false);
   const [updateMasterPasswordTabState, setUpdateMasterPasswordTabState] =
     useState(false);
+
+  useEffect(() => {
+    document.body.style.overflowY = "scroll";
+    return () => {
+      document.body.style.overflowY = "hidden";
+    };
+  }, []);
 
   return (
     <div className={classes.settingsScreen} id={classes.settingsScreen}>
@@ -154,7 +162,7 @@ const PmSettingsPage = (props) => {
             <div className={classes.securitySettings}>
               <div className={(classes.securitySettingsButtons, classes.mfa)}>
                 <p className={classes.settingsButtonText}>
-                  Multi - Factor Authentication(MFA)
+                  Multi Factor Authentication (MFA)
                 </p>
                 <button
                   disabled={disableButtonToEnableOrDisableState}
@@ -318,7 +326,26 @@ const PmSettingsPage = (props) => {
           <div className={classes.deleteAccountSection}>
             <div className={classes.disableAccountSettingsButton}>
               Disable Account
-              <button className={classes.realDeleteAccount}>Disable</button>
+              <button
+                className={classes.realDeleteAccount}
+                onClick={async () => {
+                  const deleteUserResult = await deleteUser();
+                  console.log(deleteUserResult);
+                  const deleteUserStatus = deleteUserResult.status;
+
+                  if (deleteUserStatus == "pError") {
+                    console.log(
+                      "Please cancel your premium status before deleting your account!"
+                    );
+                  } else if (deleteUserStatus == "done") {
+                    console.log("Account successfully deleted");
+                  } else if (deleteUserStatus == "support") {
+                    console.log("Please contact support");
+                  }
+                }}
+              >
+                Disable
+              </button>
             </div>
           </div>
         </div>

@@ -58,6 +58,31 @@ exports.checkIfMFATokenIsCorrect = functions.https.onCall(
   }
 );
 
+exports.deleteUser = functions.https.onCall(async (data, context) => {
+  try {
+    const db = admin.firestore();
+    const userUID = context.auth.uid;
+    const refForMFADoc = db
+      .collection("users")
+      .doc("filler")
+      .collection(userUID)
+      .doc("r");
+    const roleDoc = await refForMFADoc.get();
+    const role = roleDoc.data().memb;
+    if (role == "p") {
+      return { status: "pError" }; // Thisk will not delete the account and let the user know that they have to unsubscribe from premium to delete it
+    } else if (role == "a" || role == "ft") {
+      admin.auth().deleteUser(userUID);
+      return { status: "done" };
+    } else {
+      return { status: "support" };
+      // Tells the user to email support
+    }
+  } catch (err) {
+    return { status: err };
+  }
+});
+
 exports.checkIfCodeToEnableMFAIsCorrect = functions.https.onCall(
   async (data, context) => {
     // We are doing this with a cloud function because the library speakeasy is NOT compatible with reactjs frontend.
