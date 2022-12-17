@@ -380,3 +380,46 @@
   border-radius: 0vh;
   transition: 0.2s;
 }
+
+.disableAccountSettingsButton {
+  background-color: #3a3f4a;
+  border: none;
+  color: white;
+  font-family: "Open Sans", sans-serif;
+  padding: 2%;
+  cursor: pointer;
+  display: flex;
+  padding: 3%;
+  border-radius: 1vh;
+  align-items: center;
+  justify-content: space-between;
+  color: red;
+}
+
+.deleteAccountSection {
+  margin-top: 15%;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-self: center;
+  flex-direction: column;
+}
+
+.realDeleteAccount {
+  border-radius: 8vh;
+  background-color: #1a1c20;
+  width: 19%;
+  border: 2px solid #363b45;
+  padding: 1.5%;
+  align-self: center;
+  color: white;
+  cursor: pointer;
+  float: right;
+  font-weight: bold;
+  font-family: "Open Sans", sans-serif;
+}
+
+.realDeleteAccount:hover {
+  background-color: #4f5562;
+  transition: 0.2s;
+}

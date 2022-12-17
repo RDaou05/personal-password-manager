@@ -38,7 +38,7 @@ const PmSettingsPage = (props) => {
       {confirmBoxState ? (
         // When a user tries to do something like turn MFA on or off, they need to confirm their password using this popup
         /* After they confirm the password, the confirmPass state will be set to true. So that way they can do other things that
-        need them to confirm their password without having to confirm it more than once */
+                need them to confirm their password without having to confirm it more than once */
         <ConfirmMPBox
           confirmed={() => {
             setPasswordConfirmedState(true);
@@ -98,10 +98,9 @@ const PmSettingsPage = (props) => {
         >
           &#x2715;
         </button>
-
         <div className={classes.mainSettings}>
           <div className={classes.accountSettingsSection}>
-            <h3 className={classes.accountSettingsHeader}>Account</h3>
+            <h3 className={classes.accountSettingsHeader}> Account </h3>
             <div className={classes.accountSettings}>
               {props.roleState == "ft" ? (
                 <button
@@ -111,12 +110,11 @@ const PmSettingsPage = (props) => {
                   }}
                 >
                   <p className={classes.settingsButtonText}>
-                    Upgrade to premium{" "}
-                    <span style={{ color: "gold" }}>(CURRENTLY FREE)</span>
+                    Upgrade to premium
+                    <span style={{ color: "gold" }}> (CURRENTLY FREE) </span>
                   </p>
                 </button>
               ) : null}
-
               <button
                 className={
                   (classes.changeMasterPassword, classes.accountSettingsButtons)
@@ -147,16 +145,16 @@ const PmSettingsPage = (props) => {
                   borderTopRightRadius: "0",
                 }}
               >
-                <p className={classes.settingsButtonTextLogOut}>Log Out</p>
+                <p className={classes.settingsButtonTextLogOut}> Log Out </p>
               </button>
             </div>
           </div>
           <div className={classes.securitySettingsSection}>
-            <h3 className={classes.securitySettingsHeader}>Security</h3>
+            <h3 className={classes.securitySettingsHeader}> Security </h3>
             <div className={classes.securitySettings}>
               <div className={(classes.securitySettingsButtons, classes.mfa)}>
                 <p className={classes.settingsButtonText}>
-                  Multi-Factor Authentication (MFA)
+                  Multi - Factor Authentication(MFA)
                 </p>
                 <button
                   disabled={disableButtonToEnableOrDisableState}
@@ -315,6 +313,12 @@ const PmSettingsPage = (props) => {
                   </div>
                 </div>
               </button>
+            </div>
+          </div>
+          <div className={classes.deleteAccountSection}>
+            <div className={classes.disableAccountSettingsButton}>
+              Disable Account
+              <button className={classes.realDeleteAccount}>Disable</button>
             </div>
           </div>
         </div>

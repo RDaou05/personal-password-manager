@@ -5,6 +5,7 @@ import classes from "./Locker.module.css";
 import { signOutUser, firebaseAuth } from "../../firebase";
 import Gear from "../../components/Gear";
 import aminClasses from "./styles/AminPurple.module.css";
+import { AiFillFolderAdd } from "react-icons/ai";
 
 const PlDashboard = (props) => {
   const navigate = useNavigate();
@@ -84,7 +85,7 @@ const PlDashboard = (props) => {
               popupActiveSetState(true);
             }}
           >
-            Add Password
+            Add Folder/File
           </button>
         </div>
       </div>

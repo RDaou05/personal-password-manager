@@ -33,6 +33,17 @@ const PmDashboard = (props) => {
   const [firebaseEmail, setFirebaseEmail] = useState(
     firebaseAuth.currentUser.email
   );
+  const [premiumClassesState, setPremiumClassesState] = useState();
+  useLayoutEffect(() => {
+    if (localStorage.getItem("pmBool") == null) {
+      localStorage.setItem("pmBool", "true");
+      setPremiumClassesState(true);
+    } else if (localStorage.getItem("pmBool") == "false") {
+      setPremiumClassesState(false);
+    } else if (localStorage.getItem("pmBool") == "true") {
+      setPremiumClassesState(true);
+    }
+  }, []);
   useLayoutEffect(() => {
     props.makeResizeable();
   }, []);
@@ -79,7 +90,23 @@ const PmDashboard = (props) => {
       >
         <div className={classes.headerContainer}>
           <Gear setSettingsScreenstate={props.setSettingsScreenstate} />
-          <h1 id={classes.pmTitle}>PM Dashboard</h1>
+          <h1
+            id={classes.pmTitle}
+            onClick={() => {
+              const currentLocal = localStorage.getItem("pmBool");
+              console.log(premiumClassesState);
+              console.log("Cur loc: ", currentLocal);
+              if (currentLocal == "false") {
+                localStorage.setItem("pmBool", "true");
+                setPremiumClassesState(true);
+              } else if (currentLocal == "true") {
+                localStorage.setItem("pmBool", "false");
+                setPremiumClassesState(false);
+              }
+            }}
+          >
+            PM Dashboard
+          </h1>
           <button
             id={classes.addPasswordButton}
             onClick={() => {
