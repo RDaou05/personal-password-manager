@@ -10,6 +10,7 @@ import {
   FSDB,
   setAutolock,
   deleteUser,
+  giveFTRole,
 } from "../../firebase";
 import ConfirmMPBox from "./PmComponents/ConfirmMPBox";
 import MfaConfirmationBox from "./PmComponents/MfaConfirmationBox";
@@ -17,9 +18,15 @@ import UpdateMasterPassword from "./PmComponents/updateMasterPassword";
 import classes from "./Settings.module.css";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+import PErrorBox from "./PmComponents/PErrorBox";
+import Support from "./PmComponents/Support";
+import ConfirmDowngrade from "./PmComponents/ConfirmDowngrade";
+import DeleteAccountWarning from "./PmComponents/DeleteAccountWarning";
 const qrcode = require("qrcode");
 
 const PmSettingsPage = (props) => {
+  let navigate = useNavigate();
   const [passwordConfirmedState, setPasswordConfirmedState] = useState(false);
   const [confirmBoxState, setConfirmBoxState] = useState(false);
   const [openMfaConfirmationBox, setOpenMfaConfirmationBox] = useState(false);
@@ -33,13 +40,22 @@ const PmSettingsPage = (props) => {
   ] = useState(false);
   const [updateMasterPasswordTabState, setUpdateMasterPasswordTabState] =
     useState(false);
-
+  const [pErrorBoxState, setPErrorBoxState] = useState(false);
+  const [supportBoxState, setSupportBoxState] = useState(false);
+  const [confirmDowngradeState, setConfirmDowngradeState] = useState(false);
+  const [deleteAccountWarningState, setDeleteAccountWarningState] =
+    useState(false);
   useEffect(() => {
     document.body.style.overflowY = "scroll";
     return () => {
       document.body.style.overflowY = "hidden";
     };
   }, []);
+
+  const sendToLoginPage = () => {
+    console.log("sent!");
+    navigate("/", { replace: true });
+  };
 
   return (
     <div className={classes.settingsScreen} id={classes.settingsScreen}>
@@ -88,12 +104,70 @@ const PmSettingsPage = (props) => {
           />
         ) : null
       }
+      {
+        // This is the popup that tells the user they have to cancel their premium subscription if they want to delete their account
+        pErrorBoxState ? (
+          <PErrorBox
+            close={() => {
+              setPErrorBoxState(false);
+            }}
+          />
+        ) : null
+      }
+      {
+        // This is the popup that tells the user they should email support since they are having trouble deleting their account
+        supportBoxState ? (
+          <Support
+            close={() => {
+              setSupportBoxState(false);
+            }}
+          />
+        ) : null
+      }
+      {
+        // This is the popup to confirm that the user wants to deactivate their premium subscribtion
+        confirmDowngradeState ? (
+          <ConfirmDowngrade
+            close={() => {
+              setConfirmDowngradeState(false);
+            }}
+            cancel={async () => {
+              await giveFTRole();
+              setConfirmDowngradeState(false);
+            }}
+          />
+        ) : null
+      }
+      {deleteAccountWarningState ? (
+        // This is the popup to delete the users whole account
+        <DeleteAccountWarning
+          delete={async () => {
+            const deleteUserResult = await deleteUser();
+            const deleteUserStatus = deleteUserResult.status;
+
+            if (deleteUserStatus == "pError") {
+              setPErrorBoxState(true);
+            } else if (deleteUserStatus == "done") {
+              signOutUser();
+            } else if (deleteUserStatus == "support") {
+              setSupportBoxState(true);
+            }
+          }}
+          close={() => {
+            setDeleteAccountWarningState(false);
+          }}
+        />
+      ) : null}
+
       <div
         style={{
           opacity:
             confirmBoxState ||
             openMfaConfirmationBox ||
-            updateMasterPasswordTabState
+            updateMasterPasswordTabState ||
+            pErrorBoxState ||
+            supportBoxState ||
+            confirmDowngradeState
               ? ".3"
               : "1",
         }}
@@ -114,12 +188,36 @@ const PmSettingsPage = (props) => {
                 <button
                   className={classes.upgradeToPremium}
                   onClick={async () => {
-                    await givePRole();
+                    if (!passwordConfirmedState) {
+                      setConfirmBoxState(true);
+                    } else if (passwordConfirmedState) {
+                      // If the user successfully completed the ConfirmMPBox, then this will execute.
+                      await givePRole();
+                    }
                   }}
                 >
                   <p className={classes.settingsButtonText}>
                     Upgrade to premium
                     <span style={{ color: "gold" }}> (CURRENTLY FREE) </span>
+                  </p>
+                </button>
+              ) : props.roleState == "p" ? (
+                <button
+                  className={classes.cancelPremium}
+                  onClick={async () => {
+                    if (!passwordConfirmedState) {
+                      setConfirmBoxState(true);
+                    } else if (passwordConfirmedState) {
+                      console.log("else if!");
+                      setConfirmDowngradeState(true);
+                    } else {
+                      console.log("ELSE!");
+                    }
+                  }}
+                >
+                  <p className={classes.settingsButtonText}>
+                    Cancel premium subscription
+                    {/* <span style={{ color: "purple" }}> (CURRENTLY FREE) </span> */}
                   </p>
                 </button>
               ) : null}
@@ -131,8 +229,7 @@ const PmSettingsPage = (props) => {
                   setUpdateMasterPasswordTabState(true);
                 }}
                 style={{
-                  borderTopLeftRadius: props.roleState != "ft" ? "1vh" : "0",
-                  borderTopRightRadius: props.roleState != "ft" ? "1vh" : "0",
+                  borderRadius: "0",
                 }}
               >
                 <p className={classes.settingsButtonText}>
@@ -173,7 +270,7 @@ const PmSettingsPage = (props) => {
                       // This will execute if MFA is currently enabled (meaning the user wants to disable it)
                       if (!passwordConfirmedState) {
                         setConfirmBoxState(true);
-                        setDisableButtonToEnableOrDisableState(false);
+                        setDisableButtonToEnableOrDisableState(false); // This will enable the button to enable/disable mfa
                       } else if (passwordConfirmedState) {
                         // If the user successfully completed the ConfirmMPBox, then this will execute. If not, this will not execute
                         await disableMFA();
@@ -325,26 +422,18 @@ const PmSettingsPage = (props) => {
           </div>
           <div className={classes.deleteAccountSection}>
             <div className={classes.disableAccountSettingsButton}>
-              Disable Account
+              Delete Account
               <button
                 className={classes.realDeleteAccount}
                 onClick={async () => {
-                  const deleteUserResult = await deleteUser();
-                  console.log(deleteUserResult);
-                  const deleteUserStatus = deleteUserResult.status;
-
-                  if (deleteUserStatus == "pError") {
-                    console.log(
-                      "Please cancel your premium status before deleting your account!"
-                    );
-                  } else if (deleteUserStatus == "done") {
-                    console.log("Account successfully deleted");
-                  } else if (deleteUserStatus == "support") {
-                    console.log("Please contact support");
+                  if (passwordConfirmedState) {
+                    setDeleteAccountWarningState(true);
+                  } else if (!passwordConfirmedState) {
+                    setConfirmBoxState(true);
                   }
                 }}
               >
-                Disable
+                Delete
               </button>
             </div>
           </div>

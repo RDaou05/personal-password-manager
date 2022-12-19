@@ -70,7 +70,7 @@ exports.deleteUser = functions.https.onCall(async (data, context) => {
     const roleDoc = await refForMFADoc.get();
     const role = roleDoc.data().memb;
     if (role == "p") {
-      return { status: "pError" }; // Thisk will not delete the account and let the user know that they have to unsubscribe from premium to delete it
+      return { status: "pError" }; // This will not delete the account and let the user know that they have to unsubscribe from premium to delete it
     } else if (role == "a" || role == "ft") {
       admin.auth().deleteUser(userUID);
       return { status: "done" };
@@ -571,6 +571,36 @@ exports.givePRole = functions.https.onCall((data, context) => {
     .then(() => {
       return {
         message: `Success! User with UID: ${usersUID}, has been registered with p`,
+      };
+    })
+    .catch((err) => {
+      return err;
+    });
+  return Promise.all([p1, p2]);
+});
+
+exports.giveFTRole = functions.https.onCall((data, context) => {
+  const usersUID = context.auth.uid;
+  const db = admin.firestore();
+  const p1 = db
+    .collection("users")
+    .doc("filler")
+    .collection(usersUID)
+    .doc("r")
+    .set({ memb: "ft" });
+  const p2 = admin
+    .auth()
+    .getUser(usersUID)
+    .then(() => {
+      return admin.auth().setCustomUserClaims(usersUID, {
+        ft: true,
+        p: false,
+        a: false,
+      });
+    })
+    .then(() => {
+      return {
+        message: `Success! User with UID: ${usersUID}, has been registered with ft`,
       };
     })
     .catch((err) => {

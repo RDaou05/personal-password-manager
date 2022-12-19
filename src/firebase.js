@@ -130,9 +130,7 @@ const checkIfCodeToEnableMFAIsCorrect = async (
 
 const disableMFA = async () => {
   const disableMFACF = httpsCallable(functions, "disableMFA");
-  const disableMFAReturn = await disableMFACF({
-    // userUID: auth.currentUser.uid,
-  });
+  const disableMFAReturn = await disableMFACF();
   return disableMFAReturn;
 };
 
@@ -219,6 +217,11 @@ const updateUserQuery = async (
 const givePRole = async () => {
   const givePRole = httpsCallable(functions, "givePRole");
   return await givePRole();
+};
+
+const giveFTRole = async () => {
+  const giveFTRole = httpsCallable(functions, "giveFTRole");
+  return await giveFTRole();
 };
 
 const deleteUser = async () => {
@@ -396,6 +399,7 @@ export {
   addUserQuery,
   updateUserQuery,
   givePRole,
+  giveFTRole,
   setAutolock,
   deleteUser,
 };

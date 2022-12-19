@@ -167,6 +167,18 @@
   cursor: pointer;
 }
 
+.cancelPremium {
+  border-top-left-radius: 1vh;
+  border-top-right-radius: 1vh;
+  border: none;
+  border-bottom: 1px solid #746e6e;
+  color: white;
+  background-color: #3a3f4a;
+  font-family: "Open Sans", sans-serif;
+  padding: 2%;
+  cursor: pointer;
+}
+
 .accountSettingsButtons {
   background-color: #3a3f4a;
   border: none;

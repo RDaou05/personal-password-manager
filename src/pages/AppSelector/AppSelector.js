@@ -23,7 +23,7 @@ const AppSelector = (props) => {
   const [firebaseEmail, setFirebaseEmail] = useState(
     firebaseAuth.currentUser.email
   );
-
+  console.log("Hey: ", firebaseAuth);
   useLayoutEffect(() => {
     // If the user is role "p" or "a", we are checking local storage to see if they already have a set theme
     if (props.roleState == "a" || props.roleState == "p") {
