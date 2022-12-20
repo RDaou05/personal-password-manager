@@ -57,8 +57,7 @@ body {
   padding-left: 5%;
   font-size: 1rem;
   font-weight: bold;
-  box-shadow: rgb(50 50 93 / 25%) 0px 50px 100px -20px,
-    rgb(0 0 0 / 30%) 0px 30px 60px -30px;
+  box-shadow: rgb(0 0 0 / 35%) 0px 5px 6px;
   transition: all ease-in-out 0.2s;
   font-family: "Montserrat", sans-serif;
 }
@@ -93,7 +92,7 @@ body {
   border-radius: 0.5vh;
   opacity: 0.8;
   border: none;
-  box-shadow: 0 7px 7px rgb(0 0 0 / 80%);
+  box-shadow: rgb(0 0 0 / 35%) 0px 5px 6px;
 }
 
 .unlockButton:hover {
@@ -147,8 +146,7 @@ body {
   padding-left: 5%;
   font-size: 1rem;
   font-weight: bold;
-  box-shadow: rgb(50 50 93 / 25%) 0px 50px 100px -20px,
-    rgb(0 0 0 / 30%) 0px 30px 60px -30px;
+  box-shadow: rgb(0 0 0 / 35%) 0px 5px 6px;
   transition: all ease-in-out 0.2s;
   font-family: "Montserrat", sans-serif;
 }
@@ -188,7 +186,7 @@ body {
   cursor: pointer;
   padding-right: 5%;
   border-radius: 0.5vh;
-  box-shadow: 0 7px 7px rgba(0, 0, 0, 0.8);
+  box-shadow: rgb(0 0 0 / 35%) 0px 5px 6px;
   padding-top: 1.5%;
 }
 
@@ -301,14 +299,3 @@ h4#lgwg {
 #ifYouWerentAwareText {
   margin-top: 0;
 }
-
-/* #googleSignInText {
-  color: white;
-  font-size: 1rem;
-  margin-top: 4.7%;
-  font-family: "Montserrat", sans-serif;
-}
-
-#googleIconForButton {
-  position: absolute;
-} */
