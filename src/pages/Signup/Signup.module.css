@@ -11,6 +11,7 @@ body {
   font-style: 20px;
   font-weight: 400;
   line-height: 29px;
+  margin: 0;
   margin-top: 21%;
 }
 
@@ -45,35 +46,7 @@ body {
 }
 
 #emailInput {
-  background-color: #151922;
-  border-radius: 1vh;
-  width: 80%;
-  height: 40%;
-  outline: none;
-  border: none;
-  padding: 3.7%;
-  margin-top: 5%;
-  color: white;
-  padding-right: 15%;
-  padding-left: 5%;
-  font-size: 1rem;
-  font-weight: bold;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  transition: all ease-in-out 0.2s;
-  font-family: "Montserrat", sans-serif;
-}
-
-#emailInput:focus {
-  border: 2px solid rgb(41, 130, 125);
-}
-
-#passwordInput:focus {
-  border: 2px solid rgb(41, 130, 125);
-}
-
-#passwordInput {
-  background-color: #151922;
-  border-radius: 1vh;
+  background-color: transparent;
   width: 80%;
   height: 40%;
   outline: none;
@@ -82,10 +55,38 @@ body {
   margin-top: 2%;
   color: white;
   padding-right: 15%;
+  border-bottom: 2px solid white;
   padding-left: 5%;
   font-size: 1rem;
   font-weight: bold;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  transition: all ease-in-out 0.2s;
+  font-family: "Montserrat", sans-serif;
+}
+
+#emailInput:focus {
+  border-bottom: 2px solid #13817c;
+  transition: 0.4s;
+}
+
+#passwordInput:focus {
+  border-bottom: 2px solid #13817c;
+  transition: 0.4s;
+}
+
+#passwordInput {
+  background-color: transparent;
+  width: 80%;
+  height: 40%;
+  outline: none;
+  border: none;
+  border-bottom: 2px solid white;
+  padding: 3.7%;
+  margin-top: 6%;
+  color: white;
+  padding-right: 15%;
+  padding-left: 5%;
+  font-size: 1rem;
+  font-weight: bold;
   transition: all ease-in-out 0.2s;
   font-family: "Montserrat", sans-serif;
 }
@@ -100,13 +101,13 @@ body {
   height: 9vh;
   cursor: pointer;
   background-color: #13817c;
-  border-radius: 4vh;
+  border-radius: 0.5vh;
   margin: auto;
   opacity: 0.8;
   border: none;
   font-family: "Montserrat", sans-serif;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  background-image: linear-gradient(to bottom right, #053f45, #0b817b);
+  box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
+  background-color: teal;
 }
 
 .signUpButton:hover {
@@ -137,7 +138,7 @@ body {
   text-decoration: none;
   bottom: 6%;
   left: 18.5%;
-  font-weight: 700;
+  font-family: "Montserrat", sans-serif;
 }
 
 #sendToLogin:hover {

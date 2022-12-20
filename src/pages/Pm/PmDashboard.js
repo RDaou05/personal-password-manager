@@ -75,8 +75,8 @@ const PmDashboard = (props) => {
       document.body.style.margin = "auto";
       document.body.style.maxWidth = "38rem";
       document.body.style.overflow = "hidden";
-      document.body.style.marginTop = "4%";
-      document.body.style.padding = "1rem";
+      document.body.style.marginTop = "0";
+      document.body.style.padding = "2rem";
     };
   }, []);
 

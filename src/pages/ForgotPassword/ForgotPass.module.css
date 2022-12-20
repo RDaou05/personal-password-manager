@@ -1,0 +1,99 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap");
+
+#conatiner {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+#form {
+  display: flex;
+  flex-direction: column;
+}
+
+#resetHeader {
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  text-align: center;
+  margin-bottom: 0;
+}
+
+#emailInput {
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  margin-bottom: 13%;
+  background: transparent;
+  border: none;
+  padding: 5%;
+  font-size: 1.2rem;
+  text-align: center;
+  border-bottom: 2px solid white;
+  opacity: 0.4;
+  margin-top: 5%;
+}
+
+#emailInput:focus {
+  opacity: 1;
+  transition: 0.4s;
+}
+
+#confirmButton {
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  background: teal;
+  border: none;
+  padding: 4%;
+  font-size: 1.3rem;
+  box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
+  cursor: pointer;
+}
+
+#backToLoginLink {
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  text-decoration: none;
+  font-size: 1.1rem;
+  color: #00ffd0;
+  text-underline-offset: 0.5rem;
+  text-align: center;
+}
+
+#backToLoginLink:hover {
+  text-decoration: underline;
+}
+
+#errorMessage {
+  color: #e72828;
+  font-size: 1.5rem;
+  text-align: center;
+  font-family: "Montserrat", sans-serif;
+  margin-bottom: 0;
+}
+
+#popup {
+  font-family: "Montserrat", sans-serif;
+  text-align: center;
+  background-color: rgb(65, 64, 64);
+  box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
+  position: absolute;
+  top: 20%;
+  left: 17.5%;
+  border-radius: 0.5vh;
+  margin: -50px 0 0 -50px;
+  z-index: 2;
+  padding: 5%;
+  width: 80%;
+}
+
+#done {
+  cursor: pointer;
+  padding: 5%;
+  width: 51%;
+  background-color: teal;
+  color: white;
+  border: none;
+  box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
+  border-radius: 0.5vh;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.2rem;
+}

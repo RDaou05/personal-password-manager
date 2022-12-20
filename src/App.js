@@ -15,6 +15,7 @@ import {
   getToken,
 } from "firebase/app-check";
 import Pl from "./pages/Pl/Pl.js";
+import ForgotPass from "./pages/ForgotPassword/ForgotPass.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA3pL18gW3Ts88QX93bFhwmruuXLYmVKAo",
@@ -265,6 +266,7 @@ function App() {
             />
           }
         ></Route>
+        <Route path="/forgotpass" element={<ForgotPass />}></Route>
       </Routes>
     </div>
   );

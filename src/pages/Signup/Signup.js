@@ -27,6 +27,7 @@ const Signup = () => {
             setEmailState(evt.target.value);
           }}
           placeholder="Email"
+          autoComplete="off"
         />
       </div>
       <div className={classes.passwordContainer}>
@@ -34,6 +35,7 @@ const Signup = () => {
           type="password"
           id={classes.passwordInput}
           placeholder="Password"
+          autoComplete="off"
           onChange={(evt) => {
             setPasswordState(evt.target.value);
           }}
@@ -60,19 +62,35 @@ const Signup = () => {
               ); /* Here we are disabling the sign up button only while we are
               trying to create the account. So the user can't spam the button and send multiple requests */
               if (emailState.includes("@") || emailState.length >= 3) {
-                await createPersonalPMAccount(emailState, passwordState);
-                navigate("/appselector", { replace: true });
+                const createReturn = await createPersonalPMAccount(
+                  emailState,
+                  passwordState
+                );
+                if (createReturn == undefined) {
+                  navigate("/appselector", { replace: true });
+                } else if (createReturn.substring(0, 5) == "error") {
+                  const errorCode = createReturn.substring(7);
+                  const errorCodeCleaned =
+                    errorCode
+                      .substring(5, 6)
+                      .split("-")
+                      .join(" ")
+                      .toUpperCase() +
+                    errorCode.substring(6).split("-").join(" ");
+                  setErrorMessageState(errorCodeCleaned);
+                  setDisableSignUpButtonState(false);
+                }
               } else {
                 setDisableSignUpButtonState(false);
                 setErrorMessageState("Invalid Email");
               }
             } catch (err) {
               const errorCode = err.code;
-              if (errorCode == "auth/invalid-email") {
-                setErrorMessageState("Invalid Email");
-              } else {
-                setErrorMessageState("An error has occurred");
-              }
+              console.log(errorCode);
+              const errorCodeCleaned =
+                errorCode.substring(5, 6).split("-").join(" ").toUpperCase() +
+                errorCode.substring(6).split("-").join(" ");
+              setErrorMessageState(errorCodeCleaned);
               setDisableSignUpButtonState(false);
             }
           }}

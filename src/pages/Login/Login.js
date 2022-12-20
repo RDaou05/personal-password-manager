@@ -29,54 +29,45 @@ const Login = () => {
     document.body.style.opacity = "0.3";
     // First check if the user left any fields empty
     // If so, don't send sign in request
-    if (email.trim() === "") {
+    if (email.trim() == "") {
       let emailBox = document.getElementById("emailInpBox");
-      emailBox.style.backgroundColor = "#3d333c";
-      emailBox.style.border = "2px solid #844242";
-      emailBox.style.boxShadow = "none";
+      emailBox.style.borderBottom = "2px solid #844242";
       emailBox.style.transitionDuration = "0.2s";
       document.body.style.opacity = "1";
-    } else if (password.trim() === "") {
+    } else if (password.trim() == "") {
       let passwordBox = document.getElementById("inpBox");
-      passwordBox.style.backgroundColor = "#3d333c";
-      passwordBox.style.border = "2px solid #844242";
+      passwordBox.style.borderBottom = "2px solid #844242";
       passwordBox.style.boxShadow = "none";
       passwordBox.style.transitionDuration = "0.2s";
       document.body.style.opacity = "1";
     } else {
       const signInReturn = await signInToPersonalPMAccount(email, password);
-      if (typeof signInReturn === "string") {
-        if (signInReturn.slice(0, 5) === "error") {
+      if (typeof signInReturn == "string") {
+        if (signInReturn.slice(0, 5) == "error") {
           // Error has occured
           document.body.style.opacity = "1";
           const errorCode = signInReturn.substring(7).trim();
           if (
-            errorCode === "auth/invalid-email" ||
-            errorCode === "auth/user-not-found"
+            errorCode == "auth/invalid-email" ||
+            errorCode == "auth/user-not-found"
           ) {
             let emailBox = document.getElementById("emailInpBox");
             let passwordBox = document.getElementById("inpBox");
 
-            emailBox.style.backgroundColor = "#3d333c";
-            passwordBox.style.backgroundColor = "#3d333c";
-            passwordBox.style.border = "2px solid #844242";
-            emailBox.style.border = "2px solid #844242";
-            emailBox.style.boxShadow = "none";
-            passwordBox.style.boxShadow = "none";
+            passwordBox.style.borderBottom = "2px solid #844242";
+            emailBox.style.borderBottom = "2px solid #844242";
             passwordBox.style.transitionDuration = "0.2s";
             emailBox.style.transitionDuration = "0.2s";
             document.getElementById("googleIcon").style.bottom = "17.5%";
           } else if (
-            errorCode === "auth/wrong-password" ||
-            errorCode === "auth/invalid-password"
+            errorCode == "auth/wrong-password" ||
+            errorCode == "auth/invalid-password"
           ) {
             let passwordBox = document.getElementById("inpBox");
-            passwordBox.style.backgroundColor = "#3d333c";
-            passwordBox.style.border = "2px solid #844242";
-            passwordBox.style.boxShadow = "none";
+            passwordBox.style.borderBottom = "2px solid #844242";
             passwordBox.style.transitionDuration = "0.2s";
             document.getElementById("googleIcon").style.bottom = "18.5%";
-          } else if (errorCode === "auth/user-disabled") {
+          } else if (errorCode == "auth/user-disabled") {
             accountDisabledBoxSetstate(true);
           } else {
             document.getElementById("ableToDim").style.opacity = "0.1";
@@ -99,8 +90,8 @@ const Login = () => {
   const signInUserWithGoogle = async () => {
     document.body.style.opacity = "0.3";
     const googleSignInReturn = await googleSignIn();
-    if (typeof googleSignInReturn === "string") {
-      if (googleSignInReturn.slice(0, 5) === "error") {
+    if (typeof googleSignInReturn == "string") {
+      if (googleSignInReturn.slice(0, 5) == "error") {
         document.body.style.opacity = "1";
         const errorCode = googleSignInReturn.substring(7).trim();
         alert(errorCode);
@@ -174,7 +165,7 @@ const Login = () => {
 
   useEffect(() => {
     async function signInWithEnter(e) {
-      if (e.key === "Enter") {
+      if (e.key == "Enter") {
         await signInUser(
           document.getElementById("emailInpBox").value,
           document.getElementById("inpBox").value
@@ -202,6 +193,7 @@ const Login = () => {
             className={classes.emailInputBox}
             type="text"
             placeholder="Email"
+            autoComplete="off"
           />
         </div>
         <div className={classes.inputBoxContainer}>
@@ -210,6 +202,7 @@ const Login = () => {
             className={classes.inputBox}
             type="password"
             placeholder="Password"
+            autoComplete="off"
           />
           <div className={classes.eyeHolder}>
             <i id={classes.eye} className="far fa-eye"></i>
@@ -242,9 +235,14 @@ const Login = () => {
           {/* </a> */}
         </div>
         <div className={classes.forgotContainer}>
-          <a href="#" className={classes.forgotPass} id={classes.forgotPass}>
+          <Link
+            to="/forgotpass"
+            className={classes.forgotPass}
+            id={classes.forgotPass}
+            replace={true}
+          >
             Forgot Master Password
-          </a>
+          </Link>
         </div>
         <Link to="/signup" id={classes.sendToSignUp} replace={true}>
           Don't have an account? Sign Up

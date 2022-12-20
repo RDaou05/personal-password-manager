@@ -7,6 +7,7 @@ import {
   signInWithPopup,
   signOut,
   sendEmailVerification,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 
 import {
@@ -76,12 +77,20 @@ const signInToPersonalPMAccount = async (email, password) => {
 
 const createPersonalPMAccount = async (email, password) => {
   try {
-    return createUserWithEmailAndPassword(auth, email, password).then(
+    return await createUserWithEmailAndPassword(auth, email, password).then(
       async (userCredentials) => {
         const user = userCredentials.user;
         return await sendEmailVerification(user);
       }
     );
+  } catch (err) {
+    return `error: ${err.code}`;
+  }
+};
+
+const forgotPassword = async (email) => {
+  try {
+    return await sendPasswordResetEmail(auth, email);
   } catch (err) {
     return `error: ${err.code}`;
   }
@@ -233,7 +242,14 @@ const deleteUser = async () => {
     return { status: "pError" }; // This will not delete the account and let the user know that they have to unsubscribe from premium to delete it
   } else if (role == "a" || role == "ft") {
     const deleteUser = httpsCallable(functions, "deleteUser");
-    return await deleteUser();
+    const returnVal = await deleteUser();
+    if (returnVal.data.status == "support") {
+      return { status: "support" };
+    } else if (returnVal.data.status == "done") {
+      return { status: "done" };
+    } else if (returnVal.data.status == "pError") {
+      return { status: "pError" };
+    }
   } else {
     return { status: "support" };
     // Tells the user to email support
@@ -385,6 +401,7 @@ export {
   hashString,
   checkifMasterPasswordIsCorrect,
   deleteUserQuery,
+  forgotPassword,
 };
 
 export {

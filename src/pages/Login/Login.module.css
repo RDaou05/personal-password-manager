@@ -44,9 +44,8 @@ body {
 }
 
 .inputBox {
-  background-color: #151922;
-  border-radius: 1vh;
-  width: 80%;
+  background-color: transparent;
+  width: 62%;
   height: 40%;
   outline: none;
   border: none;
@@ -54,16 +53,17 @@ body {
   margin-top: 2%;
   color: white;
   padding-right: 15%;
-  padding-left: 5%;
+  padding-left: 2%;
   font-size: 1rem;
+  border-bottom: 2px solid teal;
   font-weight: bold;
-  box-shadow: rgb(0 0 0 / 35%) 0px 5px 6px;
   transition: all ease-in-out 0.2s;
   font-family: "Montserrat", sans-serif;
 }
 
 .inputBox:focus {
-  border: 2px solid rgb(41, 130, 125);
+  width: 80%;
+  transition: 0.4s;
 }
 
 .inputBoxContainer {
@@ -133,9 +133,8 @@ body {
 }
 
 .emailInputBox {
-  background-color: #151922;
-  border-radius: 1vh;
-  width: 80%;
+  background-color: transparent;
+  width: 62%;
   height: 40%;
   outline: none;
   border: none;
@@ -143,16 +142,17 @@ body {
   margin-top: 3%;
   color: white;
   padding-right: 15%;
-  padding-left: 5%;
+  padding-left: 2%;
   font-size: 1rem;
   font-weight: bold;
-  box-shadow: rgb(0 0 0 / 35%) 0px 5px 6px;
+  border-bottom: 2px solid teal;
   transition: all ease-in-out 0.2s;
   font-family: "Montserrat", sans-serif;
 }
 
 .emailInputBox:focus {
-  border: 2px solid rgb(41, 130, 125);
+  width: 80%;
+  transition: 0.4s;
 }
 
 #sendToSignUp {

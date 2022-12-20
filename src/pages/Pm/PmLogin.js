@@ -28,6 +28,7 @@ const PmLogin = (props) => {
         <input
           type={showPasswordState ? "text" : "password"}
           className={classes.newMasterPasswordField}
+          autoComplete="off"
           onChange={(event) => {
             setLoginInputState(event.target.value);
           }}

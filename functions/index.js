@@ -680,3 +680,5 @@ exports.onAccountDisabled = functions.firestore
       change: change,
     };
   });
+
+// exports.onAccountDelete = functions.auth.user().onDelete

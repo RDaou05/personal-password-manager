@@ -57,6 +57,18 @@ const ConfirmMPBox = (props) => {
             const mpIsCorrect = await checkifMasterPasswordIsCorrect(mpToCheck);
             if (mpIsCorrect) {
               props.confirmed();
+              if (props.postConfirmBoxState == "mfaEnable") {
+                props.mfaEnable();
+              } else if (props.postConfirmBoxState == "mfaDisable") {
+                props.mfaDisable();
+              } else if (props.postConfirmBoxState == "giveFT") {
+                props.giveFT();
+              } else if (props.postConfirmBoxState == "giveP") {
+                props.giveP();
+              } else if (props.postConfirmBoxState == "deleteWarning") {
+                props.deleteWarning();
+              }
+              props.close();
             } else {
               setEnableRedStyles(true);
               setEnableConfirmButton(true);
