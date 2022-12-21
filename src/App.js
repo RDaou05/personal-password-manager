@@ -6,7 +6,7 @@ import AppSelector from "./pages/AppSelector/AppSelector.js";
 import Pm from "./pages/Pm/Pm.js";
 import { signOutUser, FSDB, firebaseAuth } from "./firebase.js";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, reload } from "firebase/auth";
 import { useState } from "react";
 import { initializeApp } from "@firebase/app";
 import {
@@ -51,7 +51,10 @@ function App() {
   const [roleState, setRoleState] = useState("");
   const [autolockEnabledState, setAutolockEnabledState] = useState();
   const [autolockTimeState, setAutolockTimeState] = useState("");
-  const [inactiveTimeoutState, setInactiveTimeoutState] = useState();
+  const [emailVerifiedState, setEmailVerifiedState] = useState(false);
+  const [loginDoneState, setLoginDoneState] = useState(false);
+  const [refresh, setRefresh] = useState();
+  let intervalId = null;
 
   useEffect(() => {
     return onAuthStateChanged(firebaseAuth, (user) => {
@@ -91,6 +94,42 @@ function App() {
       setMfaIsEnabledState("error");
     }
   }, []);
+
+  // useLayoutEffect(() => {
+  //   try {
+  //     return onAuthStateChanged(firebaseAuth, async (user) => {
+  //       const mfaDoc = doc(FSDB, "users", "filler", user.uid, "ev");
+  //       return onSnapshot(mfaDoc, (snap) => {
+  //         const emailVerified = snap.data().verified;
+  //         console.log("Ver res: ", emailVerified);
+  //         if (emailVerified) {
+  //           if (firebaseAuth.currentUser.emailVerified) {
+  //             setEmailVerifiedState(true);
+  //           } else if (!emailVerified) {
+  //             setEmailVerifiedState(false);
+  //           }
+  //         } else if (!emailVerified) {
+  //           setEmailVerifiedState(false);
+  //         }
+  //         console.log("But the state: ", emailVerifiedState);
+  //       });
+  //     });
+  //   } catch (err) {
+  //     setMfaIsEnabledState("error");
+  //   }
+  // }, []);
+
+  useEffect(() => {
+    // Checks if email is verified
+    if (loginDoneState) {
+      if (firebaseAuth.currentUser.emailVerified) {
+        setEmailVerifiedState(true);
+        intervalId && clearInterval(intervalId);
+      } else {
+        setEmailVerifiedState(false);
+      }
+    }
+  }, [loginDoneState]);
 
   useLayoutEffect(() => {
     // This checks if the user has autolock enabled
@@ -209,7 +248,16 @@ function App() {
   return (
     <div>
       <Routes>
-        <Route path="/" element={<LoginPage />}></Route>
+        <Route
+          path="/"
+          element={
+            <LoginPage
+              loginDone={() => {
+                setLoginDoneState(true);
+              }}
+            />
+          }
+        ></Route>
         <Route path="/signup" element={<SignupPage />}></Route>
         <Route
           path="/appselector"
@@ -225,6 +273,7 @@ function App() {
               mfaKeyState={mfaKeyState}
               setRoleState={setRoleState}
               roleState={roleState}
+              emailVerifiedState={emailVerifiedState}
             />
           }
         ></Route>
@@ -244,6 +293,7 @@ function App() {
               roleState={roleState}
               autolockEnabledState={autolockEnabledState}
               autolockTimeState={autolockTimeState}
+              emailVerifiedState={emailVerifiedState}
             />
           }
         ></Route>
@@ -263,6 +313,7 @@ function App() {
               roleState={roleState}
               autolockEnabledState={autolockEnabledState}
               autolockTimeState={autolockTimeState}
+              emailVerifiedState={emailVerifiedState}
             />
           }
         ></Route>

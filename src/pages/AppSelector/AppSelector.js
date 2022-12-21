@@ -14,6 +14,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import ErrorHasOccuredBox from "./ErrorHasOccuredBox.js";
 import MainAppHTML from "./MainAppHTML.js";
 import { givePRole } from "../../firebase";
+import PleaseVerify from "./PleaseVerify";
 
 const AppSelector = (props) => {
   let navigate = useNavigate();
@@ -126,48 +127,54 @@ const AppSelector = (props) => {
 
   return (
     <div>
-      {props.roleState != false && props.roleState != "" ? (
+      {props.emailVerifiedState ? (
         <>
-          <div id="appSelectorMain">
-            <MainAppHTML
-              navigate={navigate}
-              themeSelectState={themeSelectState}
-              mfaPassedState={props.mfaPassedState}
-              roleState={props.roleState}
+          {props.roleState != false && props.roleState != "" ? (
+            <>
+              <div id="appSelectorMain">
+                <MainAppHTML
+                  navigate={navigate}
+                  themeSelectState={themeSelectState}
+                  mfaPassedState={props.mfaPassedState}
+                  roleState={props.roleState}
+                  classes={classes}
+                  setClassesState={setClassesState}
+                  setThemeSelectState={setThemeSelectState}
+                  setInPreviewState={setInPreviewState}
+                  inPreviewState={inPreviewState}
+                />
+                {inPreviewState ? exitPreviewButton : null}
+                <div id={classes.backToLoginLinkContainer}>
+                  <Link
+                    className={classes.backToLoginLink}
+                    to=""
+                    onClick={async (event) => {
+                      if (!inPreviewState) {
+                        event.preventDefault();
+                        await signOutUser();
+                        sendToLoginPage();
+                      }
+                    }}
+                    replace={true}
+                    disabled={props.inPreviewState}
+                  >
+                    Log out • {firebaseEmail}
+                  </Link>
+                </div>
+              </div>
+            </>
+          ) : props.roleState == false ? (
+            <ErrorHasOccuredBox
               classes={classes}
-              setClassesState={setClassesState}
-              setThemeSelectState={setThemeSelectState}
-              setInPreviewState={setInPreviewState}
-              inPreviewState={inPreviewState}
+              sendToLoginPage={sendToLoginPage}
+              signOutUser={signOutUser}
+              firebaseEmail={firebaseEmail}
             />
-            {inPreviewState ? exitPreviewButton : null}
-            <div id={classes.backToLoginLinkContainer}>
-              <Link
-                className={classes.backToLoginLink}
-                to=""
-                onClick={async (event) => {
-                  if (!inPreviewState) {
-                    event.preventDefault();
-                    await signOutUser();
-                    sendToLoginPage();
-                  }
-                }}
-                replace={true}
-                disabled={props.inPreviewState}
-              >
-                Log out • {firebaseEmail}
-              </Link>
-            </div>
-          </div>
+          ) : null}
         </>
-      ) : props.roleState == false ? (
-        <ErrorHasOccuredBox
-          classes={classes}
-          sendToLoginPage={sendToLoginPage}
-          signOutUser={signOutUser}
-          firebaseEmail={firebaseEmail}
-        />
-      ) : null}
+      ) : (
+        <PleaseVerify />
+      )}
     </div>
   );
 };

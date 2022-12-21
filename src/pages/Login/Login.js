@@ -7,7 +7,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { signOutUser, firebaseAuth } from "../../firebase.js";
 import { signInToPersonalPMAccount, googleSignIn } from "../../firebase.js";
 
-const Login = () => {
+const Login = (props) => {
   // window.history.pushState(null, window.document.title, window.location.href);
   // This makes it so the user can't click the back or forward arrow on the mouse
 
@@ -79,10 +79,12 @@ const Login = () => {
           // But just incase something happens that I don't know about
 
           // No errors
+          props.loginDone();
           sendToAppSelectorPage();
         }
       } else {
         // No errors
+        props.loginDone();
         sendToAppSelectorPage();
       }
     }
@@ -109,9 +111,11 @@ const Login = () => {
         // But just incase something happens that I don't know about
 
         // No errors
+        props.loginDone();
         sendToAppSelectorPage();
       }
     } else {
+      props.loginDone();
       sendToAppSelectorPage();
     }
   };
