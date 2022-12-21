@@ -6,7 +6,7 @@ import AppSelector from "./pages/AppSelector/AppSelector.js";
 import Pm from "./pages/Pm/Pm.js";
 import { signOutUser, FSDB, firebaseAuth } from "./firebase.js";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
-import { onAuthStateChanged, reload } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { useState } from "react";
 import { initializeApp } from "@firebase/app";
 import {
@@ -121,6 +121,7 @@ function App() {
 
   useEffect(() => {
     // Checks if email is verified
+    console.log(loginDoneState);
     if (loginDoneState) {
       if (firebaseAuth.currentUser.emailVerified) {
         setEmailVerifiedState(true);
@@ -255,10 +256,22 @@ function App() {
               loginDone={() => {
                 setLoginDoneState(true);
               }}
+              resetEmailVerifiedState={() => {
+                setLoginDoneState(false);
+              }}
             />
           }
         ></Route>
-        <Route path="/signup" element={<SignupPage />}></Route>
+        <Route
+          path="/signup"
+          element={
+            <SignupPage
+              loginDone={() => {
+                setLoginDoneState(true);
+              }}
+            />
+          }
+        ></Route>
         <Route
           path="/appselector"
           element={
@@ -274,6 +287,7 @@ function App() {
               setRoleState={setRoleState}
               roleState={roleState}
               emailVerifiedState={emailVerifiedState}
+              setEmailVerifiedState={setEmailVerifiedState}
             />
           }
         ></Route>

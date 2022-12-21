@@ -56,6 +56,21 @@ const auth = getAuth(app);
 const functions = getFunctions();
 const db = getFirestore();
 
+console.log(auth);
+
+const hashString = async (str) => {
+  // Couldn't resolve a polyfill error with the CryptoJS module so I used this instead
+  // Hashes string with sha-512
+  // From stackoverflow: https://stackoverflow.com/questions/55926281/how-do-i-hash-a-string-using-javascript-with-sha512-algorithm
+  const buf = await crypto.subtle.digest(
+    "SHA-512",
+    new TextEncoder("utf-8").encode(str)
+  );
+  return Array.prototype.map
+    .call(new Uint8Array(buf), (x) => ("00" + x.toString(16)).slice(-2))
+    .join("");
+};
+
 // Firebase functions
 
 const googleSignIn = async () => {
@@ -70,6 +85,14 @@ const googleSignIn = async () => {
 const signInToPersonalPMAccount = async (email, password) => {
   try {
     return await signInWithEmailAndPassword(auth, email, password);
+  } catch (err) {
+    return `error: ${err.code}`;
+  }
+};
+
+const resendLink = async () => {
+  try {
+    return await sendEmailVerification(auth.currentUser);
   } catch (err) {
     return `error: ${err.code}`;
   }
@@ -157,6 +180,17 @@ const generateMFA = async () => {
   const generateMFA = httpsCallable(functions, "generateMFA");
   const generateMFACF = await generateMFA();
   return generateMFACF;
+};
+
+const checkIfMasterPasswordExists = async () => {
+  const checkForMP = httpsCallable(functions, "checkIfMasterPasswordExists");
+  const checkForMPCF = await checkForMP();
+  const tempSnapExists = checkForMPCF.data.exists;
+  if (tempSnapExists) {
+    return true;
+  } else if (!tempSnapExists) {
+    return false;
+  }
 };
 
 const updateMP = async (currentMasterPassword, newMasterPassword) => {
@@ -279,17 +313,6 @@ const checkForMFA = async () => {
   }
 };
 
-const checkIfMasterPasswordExists = async () => {
-  let refForMainUID = doc(db, "users", "filler", auth.currentUser.uid, "mpaps");
-  const tempSnap = await getDoc(refForMainUID);
-  const tempSnapExists = tempSnap.exists();
-  if (tempSnapExists) {
-    return true;
-  } else if (!tempSnapExists) {
-    return false;
-  }
-};
-
 const generateRandomString = (length) => {
   let result = "";
   let characters =
@@ -301,61 +324,15 @@ const generateRandomString = (length) => {
   return result; // Returns a VERY long random id
 };
 
-const hashString = async (str) => {
-  // Couldn't resolve a polyfill error with the CryptoJS module so I used this instead
-  // Hashes string with sha-512
-  // From stackoverflow: https://stackoverflow.com/questions/55926281/how-do-i-hash-a-string-using-javascript-with-sha512-algorithm
-  const buf = await crypto.subtle.digest(
-    "SHA-512",
-    new TextEncoder("utf-8").encode(str)
-  );
-  return Array.prototype.map
-    .call(new Uint8Array(buf), (x) => ("00" + x.toString(16)).slice(-2))
-    .join("");
-};
-
 const uploadMasterPassword = async (requestedMasterPassword) => {
-  const refForMSCheck = collection(
-    /* This collection stores a string that is encrypted with the
-  master pass. When the user logs in, it checks to see if the hash of the master password
-  the user entered can be used to decrypt the string that is stored here. If it can,
-  that means the master pass they entered is correct. If the decryption returns
-  a blank string or an error, that means it is the wrong master password */
-    db,
-    "users",
-    "filler",
-    auth.currentUser.uid,
-    "mpaps",
-    "ms"
-  );
-  const refForMainUID = doc(
-    db,
-    "users",
-    "filler",
-    auth.currentUser.uid,
-    "mpaps"
-  );
-
   const masterPassHash = await hashString(requestedMasterPassword);
-
-  const randomStringToBeEncrypted = generateRandomString(250); // See line 220 for details
-  const randomEncryptedString = CryptoJS.AES.encrypt(
-    // Encrypting the random string with the master pass hash as the key
-    randomStringToBeEncrypted,
-    masterPassHash
-  ).toString();
-
-  const batch = writeBatch(db);
-  batch.set(doc(refForMSCheck), {
-    mph: randomEncryptedString, // See line 220 for details
+  const uploadMasterPassword = httpsCallable(functions, "uploadMasterPassword");
+  const uploadMasterPasswordCF = await uploadMasterPassword({
+    requestedHashMasterPassword: masterPassHash,
   });
-
-  batch.set(refForMainUID, {
-    // We are using the .exists() method to check if the user already has a master pass setup or not. Adding this will make the .exists() method return true
-    fillData: "--",
-  });
-  await batch.commit();
-  return { masterPasswordHash: masterPassHash };
+  return {
+    masterPasswordHash: uploadMasterPasswordCF.data.masterPassHashReturn,
+  };
 };
 
 const checkifMasterPasswordIsCorrect = async (requestedMasterPassword) => {
@@ -402,6 +379,7 @@ export {
   checkifMasterPasswordIsCorrect,
   deleteUserQuery,
   forgotPassword,
+  resendLink,
 };
 
 export {

@@ -14,8 +14,16 @@ const Login = (props) => {
   const [accountDisabledBoxState, accountDisabledBoxSetstate] = useState(false);
   const [errorHasOccuredBoxState, errorHasOccuredBoxSetState] = useState(false);
   let navigate = useNavigate();
-  useEffect(() => {
+
+  useLayoutEffect(() => {
     document.body.style.background = "rgb(40, 45, 52)";
+  }, []);
+
+  useLayoutEffect(() => {
+    props.resetEmailVerifiedState(); /* There was an issue where if the user that logged in had done their verification, another
+    user that has NOT done the verification could login right after and could be flagged as having done the 
+    verification (But either way, they wouldn't be able to run any of the cloud functions, this is just for UI purposes)*/
+    // resetEmailVerifiedState() fixes this issue because it resets the status of the state that says the user finished the verification every time the login page is loaded
   }, []);
 
   // This might be changed in the app selector page, so if they go back to the login, the color could be different

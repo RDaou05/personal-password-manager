@@ -173,7 +173,7 @@ const AppSelector = (props) => {
           ) : null}
         </>
       ) : (
-        <PleaseVerify />
+        <PleaseVerify setEmailVerifiedState={props.setEmailVerifiedState} />
       )}
     </div>
   );

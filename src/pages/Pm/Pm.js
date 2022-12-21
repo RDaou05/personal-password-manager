@@ -57,7 +57,24 @@ const Pm = (props) => {
       document.removeEventListener("keydown", signOutWithKeyPress);
     };
   }, []);
-
+  console.log(
+    "hashBeingUsedToEncrypt: ",
+    hashBeingUsedToEncrypt,
+    "\nmfaIsEnabledState: ",
+    props.mfaIsEnabledState,
+    "\nmfaBoxState: ",
+    props.mfaBoxState,
+    "\nmfaPassedState: ",
+    props.mfaPassedState,
+    "\nmfaKeyState: ",
+    props.mfaKeyState,
+    "\nautolockEnabledState: ",
+    props.autolockEnabledState,
+    "\nautolockTimeState: ",
+    props.autolockTimeState,
+    "\nemailVerifiedState: ",
+    props.emailVerifiedState
+  );
   return (
     <div>
       {props.emailVerifiedState ? (

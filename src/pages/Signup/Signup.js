@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { createPersonalPMAccount } from "../../firebase.js";
 import ConfirmEmail from "./ConfirmEmail";
 
-const Signup = () => {
+const Signup = (props) => {
   const [emailState, setEmailState] = useState("");
   const [passwordState, setPasswordState] = useState("");
   const [disableSignUpButtonState, setDisableSignUpButtonState] =
@@ -24,6 +24,7 @@ const Signup = () => {
           email={emailState}
           close={() => {
             setConfirmEmailPopupState(false);
+            props.loginDone();
             navigate("/appselector", { replace: true });
           }}
         />

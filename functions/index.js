@@ -205,6 +205,31 @@ exports.generateMFA = functions.https.onCall(async (data, context) => {
   }
 });
 
+exports.checkIfMasterPasswordExists = functions.https.onCall(
+  async (data, context) => {
+    if (context.auth.token.email_verified) {
+      const db = admin.firestore();
+      const refForMainUID = db
+        .collection("users")
+        .doc("filler")
+        .collection(context.auth.uid)
+        .doc("mpaps");
+      const tempSnap = await refForMainUID.get();
+      const tempSnapExists = tempSnap.exists;
+      if (tempSnapExists) {
+        return { exists: true };
+      } else if (!tempSnapExists) {
+        return { exists: false };
+      }
+    } else {
+      throw new functions.https.HttpsError(
+        "permission-denied",
+        "Only users with a verified email can do this"
+      );
+    }
+  }
+);
+
 exports.checkIfMasterPasswordIsCorrect = functions.https.onCall(
   async (data, context) => {
     if (context.auth.token.email_verified) {
@@ -455,6 +480,69 @@ exports.decryptUserQueries = functions.https.onCall(async (data, context) => {
       };
     }
   } else {
+    throw new functions.https.HttpsError(
+      "permission-denied",
+      "Only users with a verified email can do this"
+    );
+  }
+});
+
+exports.uploadMasterPassword = functions.https.onCall(async (data, context) => {
+  if (context.auth.token.email_verified) {
+    const db = admin.firestore();
+    const batch = db.batch();
+    /* This collection stores a string that is encrypted with the
+    master pass. When the user logs in, it checks to see if the hash of the master password
+    the user entered can be used to decrypt the string that is stored here. If it can,
+    that means the master pass they entered is correct. If the decryption returns
+    a blank string or an error, that means it is the wrong master password */
+    const refForMSCheck = db
+      .collection("users")
+      .doc("filler")
+      .collection(context.auth.uid)
+      .doc("mpaps")
+      .collection("ms");
+
+    const refForMainUID = db
+      .collection("users")
+      .doc("filler")
+      .collection(context.auth.uid)
+      .doc("mpaps");
+
+    const masterPassHash = data.requestedHashMasterPassword;
+
+    const generateRandomString = (length) => {
+      let result = "";
+      let characters =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      let charactersLength = characters.length;
+      for (let i = 0; i < length; i++) {
+        result += characters.charAt(
+          Math.floor(Math.random() * charactersLength)
+        );
+      }
+      return result; // Returns a VERY long random id
+    };
+
+    const randomStringToBeEncrypted = generateRandomString(250); // See line 220 for details
+    const randomEncryptedString = CryptoJS.AES.encrypt(
+      // Encrypting the random string with the master pass hash as the key
+      randomStringToBeEncrypted,
+      masterPassHash
+    ).toString();
+
+    batch.set(refForMSCheck.doc(), {
+      mph: randomEncryptedString, // See line 220 for details
+    });
+
+    batch.set(refForMainUID, {
+      // We are using the .exists() method to check if the user already has a master pass setup or not. Adding this will make the .exists() method return true
+      fillData: "--",
+    });
+    await batch.commit();
+    return { masterPassHashReturn: masterPassHash };
+  } else {
+    console.log("email ver: ", context.auth.token.email_verified);
     throw new functions.https.HttpsError(
       "permission-denied",
       "Only users with a verified email can do this"
@@ -758,13 +846,7 @@ exports.giveSignUpRoles = functions.auth.user().onCreate((user) => {
     .collection(usersUID)
     .doc("al")
     .set({ autotime: "" });
-  const p5 = db
-    .collection("users")
-    .doc("filler")
-    .collection(usersUID)
-    .doc("ev")
-    .set({ verified: false });
-  return Promise.all([p1, p2, p3, p4, p5]);
+  return Promise.all([p1, p2, p3, p4]);
 });
 
 exports.onAccountDisabled = functions.firestore
