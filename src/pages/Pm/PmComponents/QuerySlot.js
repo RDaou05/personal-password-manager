@@ -116,7 +116,7 @@ const QuerySlot = (props) => {
               if (!props.popupActiveState) {
                 setShowUpdateTabState(true);
                 props.setKeepOpacityNormalOnPopupState(true);
-                props.setPopupActiveState(true);
+                props.setPopupActiveState(true); // This won't allow another popup to be opened (until it's closed)
               }
             }}
           >

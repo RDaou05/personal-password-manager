@@ -321,7 +321,7 @@ const UpdateTab = (props) => {
                   false
                 ); /* If a different popup (such as the add password popup) is
               opened after this is canceled, the opacity of the background will dim */
-                props.setPopupActiveState(false); // This will allow other popups to be opened since this one will be closed
+                props.setPopupActiveState(false); // This will allow other popups to be opened since this one will be closed. Because while this is true, no other popup can open
                 setFinalDeleteButtonDisabledState(true);
                 setConfirmDeletePopupState(false);
               }}
@@ -342,6 +342,7 @@ const UpdateTab = (props) => {
                   await deleteUserQuery(props.queryDocumentID);
                   props.setPopupActiveState(false);
                   props.sethaveQueryExistingState(false);
+                  setFinalDeleteButtonDisabledState(false);
                 } catch (err) {
                   setFinalDeleteButtonDisabledState(false);
                 }

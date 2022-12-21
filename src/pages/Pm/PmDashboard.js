@@ -110,8 +110,10 @@ const PmDashboard = (props) => {
           <button
             id={classes.addPasswordButton}
             onClick={() => {
-              setAddPasswordScreenState(true);
-              popupActiveSetState(true);
+              if (!popupActiveState) {
+                setAddPasswordScreenState(true);
+                popupActiveSetState(true);
+              }
             }}
           >
             Add Password
