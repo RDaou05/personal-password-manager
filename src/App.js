@@ -95,30 +95,6 @@ function App() {
     }
   }, []);
 
-  // useLayoutEffect(() => {
-  //   try {
-  //     return onAuthStateChanged(firebaseAuth, async (user) => {
-  //       const mfaDoc = doc(FSDB, "users", "filler", user.uid, "ev");
-  //       return onSnapshot(mfaDoc, (snap) => {
-  //         const emailVerified = snap.data().verified;
-  //         console.log("Ver res: ", emailVerified);
-  //         if (emailVerified) {
-  //           if (firebaseAuth.currentUser.emailVerified) {
-  //             setEmailVerifiedState(true);
-  //           } else if (!emailVerified) {
-  //             setEmailVerifiedState(false);
-  //           }
-  //         } else if (!emailVerified) {
-  //           setEmailVerifiedState(false);
-  //         }
-  //         console.log("But the state: ", emailVerifiedState);
-  //       });
-  //     });
-  //   } catch (err) {
-  //     setMfaIsEnabledState("error");
-  //   }
-  // }, []);
-
   useEffect(() => {
     // Checks if email is verified
     console.log(loginDoneState);

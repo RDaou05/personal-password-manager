@@ -89,7 +89,10 @@ const PmDashboard = (props) => {
         }}
       >
         <div className={classes.headerContainer}>
-          <Gear setSettingsScreenstate={props.setSettingsScreenstate} />
+          <Gear
+            setSettingsScreenstate={props.setSettingsScreenstate}
+            popupActiveSetState={popupActiveSetState}
+          />
           <h1
             id={classes.pmTitle}
             onClick={() => {
