@@ -92,6 +92,7 @@ const PmDashboard = (props) => {
           <Gear
             setSettingsScreenstate={props.setSettingsScreenstate}
             popupActiveSetState={popupActiveSetState}
+            popupActiveState={popupActiveState}
           />
           <h1
             id={classes.pmTitle}

@@ -7,8 +7,10 @@ const Gear = (props) => {
       id={classes.gear}
       src={settingIcon}
       onClick={() => {
-        if (!props.popupActiveSetState) {
+        console.log("popact: ", props.popupActiveSetState);
+        if (!props.popupActiveState) {
           props.setSettingsScreenstate(true);
+          props.popupActiveSetState(true);
         }
       }}
     />
