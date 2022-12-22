@@ -4,6 +4,8 @@ import Gear from "../../components/Gear";
 import AddPasswordPopup from "./PmComponents/AddPasswordPopup";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import LoadingScreen from "../../components/LoadingScreen";
+
 import {
   collection,
   getFirestore,
@@ -34,6 +36,7 @@ const PmDashboard = (props) => {
     firebaseAuth.currentUser.email
   );
   const [premiumClassesState, setPremiumClassesState] = useState();
+  const [loadingScreenState, setLoadingScreenState] = useState(false);
   useLayoutEffect(() => {
     if (localStorage.getItem("pmBool") == null) {
       localStorage.setItem("pmBool", "true");
@@ -52,9 +55,11 @@ const PmDashboard = (props) => {
 
   useEffect(() => {
     async function decryptAll() {
+      setLoadingScreenState(true);
       const newDecryptedList = await decryptUserQueries(
         props.hashBeingUsedToEncrypt
       );
+      setLoadingScreenState(false);
       setDecryptedQueriesState(newDecryptedList);
     }
     decryptAll();
@@ -81,7 +86,7 @@ const PmDashboard = (props) => {
   }, []);
 
   const mainDash = (
-    <div>
+    <div style={{ opacity: loadingScreenState ? "0.4" : "1" }}>
       <div
         style={{
           opacity:
@@ -204,23 +209,29 @@ const PmDashboard = (props) => {
 
   return (
     <div>
-      {props.mfaIsEnabledState && !props.mfaPassedState ? (
-        <MfaBox
-          email={firebaseEmail}
-          onMfaCorrect={() => {
-            props.setMfaPassedState(true);
-            props.setMfaBoxState(false);
-          }}
-          hashBeingUsedToEncrypt={props.hashBeingUsedToEncrypt}
-          logOut={async () => {
-            await signOutUser();
-            sendToLoginPage();
-          }}
-          authenticatorKey={props.mfaKeyState}
-        />
-      ) : props.mfaPassedState ? (
-        mainDash
-      ) : null}
+      {loadingScreenState ? (
+        <LoadingScreen />
+      ) : (
+        <>
+          {props.mfaIsEnabledState && !props.mfaPassedState ? (
+            <MfaBox
+              email={firebaseEmail}
+              onMfaCorrect={() => {
+                props.setMfaPassedState(true);
+                props.setMfaBoxState(false);
+              }}
+              hashBeingUsedToEncrypt={props.hashBeingUsedToEncrypt}
+              logOut={async () => {
+                await signOutUser();
+                sendToLoginPage();
+              }}
+              authenticatorKey={props.mfaKeyState}
+            />
+          ) : props.mfaPassedState ? (
+            mainDash
+          ) : null}
+        </>
+      )}
     </div>
   );
 };

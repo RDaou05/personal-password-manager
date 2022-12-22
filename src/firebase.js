@@ -233,7 +233,6 @@ const addUserQuery = async (
   const finalEncryptedAddedQueryReturn = await addUserQuery({
     objectToAdd: objectToAdd,
     hashedSetMasterPassValue: hashedSetMasterPassValue,
-    // userUID: auth.currentUser.uid,
     isLink: linkIsThere,
     randomID: id,
   });
