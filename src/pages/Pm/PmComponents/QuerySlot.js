@@ -105,7 +105,7 @@ const QuerySlot = (props) => {
             }}
             hashBeingUsedToEncrypt={
               props.hashBeingUsedToEncrypt
-            } /* This prop has been passed down all the way from
+            } /* This prop (hashBeingUsedToEncrypt) has been passed down all the way from
           Pm.js to PmDashboad.js to QuerySlot.js (this file) and will be passed down to UpdateTab.js (This will be sent
           to the cloud function that encrypts and updates all the new updated user data. It will be used to encrypt all the new info) */
           />
