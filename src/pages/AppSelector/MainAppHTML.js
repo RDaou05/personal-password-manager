@@ -62,7 +62,8 @@ const MainAppHTML = (props) => {
           disabled={props.inPreviewState}
           className={props.classes.redirectAppButtons}
           onClick={() => {
-            props.navigate("/pl", { replace: true });
+            alert("This feature is a work in progress");
+            // props.navigate("/pl", { replace: true });
           }}
         >
           <i className="fas fa-folder" id={props.classes.docLockerIcon}></i>
