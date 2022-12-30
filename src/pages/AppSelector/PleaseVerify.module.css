@@ -1,0 +1,51 @@
+.pleaseVerifyScreen {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  background: grey;
+  box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
+  padding: 5vw;
+}
+.pleaseVerifyPopup {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.backToLoginContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.buttonsContainer {
+  display: flex;
+  flex-direction: column;
+  row-gap: 1vw;
+}
+
+#message {
+  font-family: "Montserrat", sans-serif;
+  color: #fedb37;
+  font-weight: 900;
+}
+
+.controlButtons {
+  padding: 1vw;
+  border: 2px solid black;
+}
+
+#backToLogin {
+  text-decoration: none;
+  color: #155757;
+  cursor: pointer;
+  margin-top: 2vw;
+}
+
+#backToLogin:hover {
+  text-decoration: underline;
+  transition: 0.3s;
+  text-underline-offset: 0.5em;
+}
