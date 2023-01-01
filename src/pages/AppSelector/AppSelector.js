@@ -116,6 +116,7 @@ const AppSelector = (props) => {
   const sendToLoginPage = () => {
     navigate("/", { replace: true });
   };
+
   // Making app selector page resizeable
   let win = nw.Window.get();
   win.setResizable(true);
