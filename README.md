@@ -1,70 +1,34 @@
-# Getting Started with Create NW.js React App
+![What is this](Sample.png)
+# Personal PM
 
-This project was bootstrapped with [Create NW.js React App](https://github.com/naviapps/create-nw-react-app).
+A secure password manager created with firebase, reactjs, and nwjs
 
-## Available Scripts
+# Environment Setup
 
-In the project directory, you can run:
+1. First, run `git clone "https://github.com/gchaotic9/personal-password-manager.git"` to clone this repository
+2. If you are using windows, run `npm i` in the main directory to install all necessary packages. If you are using mac, see step 4.
+3. If you are using mac, run `npm_config_nwjs_process_arch=x64 npm i` to install all necessary packages.
+4. To open the password manager in dev mode, run `npm run dev`
+5. To create a build dmg file on MACOS, run `appdmg appdmg.json "path to save file"`
+    - So if you want to save the setup dmg file on your desktop, run `appdmg appdmg.json ~/Desktop/PM.dmg`
 
-### `npm start`
+# Features and Usage Process
+- Follow the steps below to create a Personal PM account
+    1. Click "Sign in with google" to automatically create an account linked with your google account,
+    or click on "Don't have an account? Sign up" to create an account
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+    2. If you chose not to create an account with google, but created an account manually instead, you will have to check your email for an email verification link (This will most likely be in your spam folder)
+    
+    3. After verifying your email if you didn't create you account with google, click the "Retry" button, or log out and log back in if that doesn't work
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+    4. Next, you will be shown two options, Personal PM and Personal Locker. Personal PM is the password manager, and Personal Locker is a place where you can store any files you want onto the cloud. However, Personal Locker is currently not available YET. So click Personal PM to go to the password manager
 
-### `npm test`
+    5. Next, you will have to create ANOTHER password. This is seperate from your password for your account.
+    This is called a master password. It is used to access your stored passwords. When creating your
+    master password, you will see a password strength bar under the input field. Please note that the bar
+    does NOT have to be full for you to choose that master password, but the color of the bar HAS to be yellow.
+    So as long as it's not empty, red, or orange, you can choose that master password.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    6. Now to log out, you can go to settings and click "Log Out" at the top, or to just "Lock", (meaning to NOT sign out of your whole account, but just to go back to the main screen where you select "Personal PM" or "Personal Locker") you can press "Control + L"
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- 

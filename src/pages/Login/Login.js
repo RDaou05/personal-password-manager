@@ -253,7 +253,7 @@ const Login = (props) => {
             id={classes.forgotPass}
             replace={true}
           >
-            Forgot Master Password
+            Forgot Password
           </Link>
         </div>
         <Link to="/signup" id={classes.sendToSignUp} replace={true}>

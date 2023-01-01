@@ -120,6 +120,7 @@ body {
   right: 27%;
   bottom: 10%;
   font-family: "Montserrat", sans-serif;
+  margin-right: 1.5rem;
 }
 
 .forgotPass:hover {
