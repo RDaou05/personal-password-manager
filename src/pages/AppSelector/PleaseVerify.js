@@ -2,7 +2,7 @@ import React from "react";
 import { firebaseAuth, resendLink } from "../../firebase";
 import classes from "./PleaseVerify.module.css";
 import { Link } from "react-router-dom";
-import { reload } from "firebase/auth";
+import { getIdToken, reload } from "firebase/auth";
 
 const PleaseVerify = (props) => {
   return (
@@ -16,8 +16,9 @@ const PleaseVerify = (props) => {
           <button
             id={classes.sendLinkButton}
             className={classes.controlButtons}
+            style={{ cursor: "pointer" }}
             onClick={async () => {
-              await resendLink();
+              await resendLink(); // Resends verification email
             }}
           >
             Resend Verification Link
@@ -25,6 +26,7 @@ const PleaseVerify = (props) => {
           <button
             id={classes.refreshButton}
             className={classes.controlButtons}
+            style={{ cursor: "pointer" }}
             onClick={async () => {
               // Getting the updated version of the auth token
               await reload(firebaseAuth.currentUser);
