@@ -6,4 +6,4 @@
       { "x": 448, "y": 344, "type": "link", "path": "/Applications" },
       { "x": 192, "y": 344, "type": "file", "path": "dist/personal-password-manager-0.1.1-osx/personal-password-manager.app" }
     ]
-  }
+}
