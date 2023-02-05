@@ -47,7 +47,6 @@
     "react-loading": "^2.0.3",
     "react-router-dom": "^6.4.3",
     "react-spring": "^9.5.4",
-    "appdmg": "^0.6.4",
     "zxcvbn": "^4.4.2"
   },
   "build": {
