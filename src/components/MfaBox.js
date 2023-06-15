@@ -34,13 +34,19 @@ const MfaBox = (props) => {
           // The ID can be "mfaInput1", "mfaInput2", "mfaInput3"...
           if (keyPressed === null) {
             // Backspace was pressed
-            document
-              .getElementById(`mfaInput${parseInt(inputBoxNumber) - 1}`)
-              .focus();
+            console.log("uno: ", `mfaInput${parseInt(inputBoxNumber) - 1}`);
+            if (parseInt(inputBoxNumber) > 1) {
+              document
+                .getElementById(`mfaInput${parseInt(inputBoxNumber) - 1}`)
+                .focus();
+            }
           } else {
-            document
-              .getElementById(`mfaInput${parseInt(inputBoxNumber) + 1}`)
-              .focus();
+            console.log("dos: ", `mfaInput${parseInt(inputBoxNumber) + 1}`);
+            if (parseInt(inputBoxNumber) < 6) {
+              document
+                .getElementById(`mfaInput${parseInt(inputBoxNumber) + 1}`)
+                .focus();
+            }
           }
         }}
         onKeyDown={async (evt) => {

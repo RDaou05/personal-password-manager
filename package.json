@@ -37,7 +37,6 @@
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.1.2",
     "@fortawesome/free-solid-svg-icons": "^6.1.2",
-    "appdmg": "^0.6.6",
     "crypto-browserify": "^3.12.0",
     "crypto-js": "^4.1.1",
     "favicongrab": "^1.0.0",

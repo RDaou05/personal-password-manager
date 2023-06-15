@@ -58,42 +58,46 @@ function App() {
 
   useEffect(() => {
     return onAuthStateChanged(firebaseAuth, (user) => {
-      const rDoc = doc(FSDB, "users", "filler", user.uid, "al");
-      return onSnapshot(rDoc, (snap) => {
-        const recivedAutotime = snap.data().autotime.trim();
-        if (recivedAutotime == "") {
-          setAutolockEnabledState(false);
-        } else {
-          setAutolockEnabledState(true);
-          setAutolockTimeState(recivedAutotime);
-        }
-      });
+      if (user) {
+        const rDoc = doc(FSDB, "users", "filler", user.uid, "al");
+        return onSnapshot(rDoc, (snap) => {
+          const recivedAutotime = snap.data().autotime.trim();
+          if (recivedAutotime == "") {
+            setAutolockEnabledState(false);
+          } else {
+            setAutolockEnabledState(true);
+            setAutolockTimeState(recivedAutotime);
+          }
+        });
+      }
     });
-  }, []);
+  }, [firebaseAuth]);
 
   useLayoutEffect(() => {
     try {
       return onAuthStateChanged(firebaseAuth, async (user) => {
-        const mfaDoc = doc(FSDB, "users", "filler", user.uid, "mfa");
-        return onSnapshot(mfaDoc, (snap) => {
-          const mfaKey = snap.data().hex.trim();
-          if (mfaKey == "") {
-            setMfaIsEnabledState(false);
-            setMfaBoxState(false);
-            setMfaPassedState(true);
-            setMfaKeyState(mfaKey);
-          } else {
-            setMfaPassedState(false);
-            setMfaIsEnabledState(true);
-            setMfaBoxState(true);
-            setMfaKeyState(mfaKey);
-          }
-        });
+        if (user) {
+          const mfaDoc = doc(FSDB, "users", "filler", user.uid, "mfa");
+          return onSnapshot(mfaDoc, (snap) => {
+            const mfaKey = snap.data().hex.trim();
+            if (mfaKey == "") {
+              setMfaIsEnabledState(false);
+              setMfaBoxState(false);
+              setMfaPassedState(true);
+              setMfaKeyState(mfaKey);
+            } else {
+              setMfaPassedState(false);
+              setMfaIsEnabledState(true);
+              setMfaBoxState(true);
+              setMfaKeyState(mfaKey);
+            }
+          });
+        }
       });
     } catch (err) {
       setMfaIsEnabledState("error");
     }
-  }, []);
+  }, [firebaseAuth]);
 
   useEffect(() => {
     // Checks if email is verified
@@ -185,20 +189,22 @@ function App() {
 
     if (firebaseAuth) {
       let disableCheck = onAuthStateChanged(firebaseAuth, (user) => {
-        const disableDoc = doc(
-          FSDB,
-          "users",
-          "filler",
-          user.uid,
-          "disableAccount"
-        );
-        return onSnapshot(disableDoc, (snap) => {
-          const disabledBoolean = snap.data().disabled == true;
-          if (disabledBoolean) {
-            signOutUser();
-            navigate("/", { replace: true });
-          }
-        });
+        if (user) {
+          const disableDoc = doc(
+            FSDB,
+            "users",
+            "filler",
+            user.uid,
+            "disableAccount"
+          );
+          return onSnapshot(disableDoc, (snap) => {
+            const disabledBoolean = snap.data().disabled == true;
+            if (disabledBoolean) {
+              signOutUser();
+              navigate("/", { replace: true });
+            }
+          });
+        }
       });
       return disableCheck;
     }
@@ -206,21 +212,23 @@ function App() {
 
   useLayoutEffect(() => {
     return onAuthStateChanged(firebaseAuth, (user) => {
-      const rDoc = doc(FSDB, "users", "filler", user.uid, "r");
-      return onSnapshot(rDoc, (snap) => {
-        if (
-          snap.data().memb == "ft" ||
-          snap.data().memb == "p" ||
-          snap.data().memb == "a"
-        ) {
-          setRoleState(snap.data().memb);
-        } else {
-          // Wont render anything except an error message
-          setRoleState(false);
-        }
-      });
+      if (user) {
+        const rDoc = doc(FSDB, "users", "filler", user.uid, "r");
+        return onSnapshot(rDoc, (snap) => {
+          if (
+            snap.data().memb == "ft" ||
+            snap.data().memb == "p" ||
+            snap.data().memb == "a"
+          ) {
+            setRoleState(snap.data().memb);
+          } else {
+            // Wont render anything except an error message
+            setRoleState(false);
+          }
+        });
+      }
     });
-  }, []);
+  }, [firebaseAuth]);
 
   return (
     <div>
