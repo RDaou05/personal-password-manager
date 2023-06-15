@@ -6,7 +6,7 @@ A secure password manager created with firebase, reactjs, and nwjs
 # Environment Setup
 
 1. First, run `git clone "https://github.com/gchaotic9/personal-password-manager.git"` to clone this repository
-2. If you are using windows, run `npm i` in the main directory to install all necessary packages. If you are using mac, see step 4.
+2. If you are using WINDOWS ONLY, run `npm i` in the main directory to install all necessary packages. If you are using mac, see step 3.
 3. If you are using mac, run `npm_config_nwjs_process_arch=x64 npm i` to install all necessary packages. (If you already tried `npm i` or `npm install` by accident, you may have to delete the `node_modules` folder and `package-lock.json` before doing `npm_config_nwjs_process_arch=x64 npm i`)
 4. To open the password manager in dev mode, run `npm run dev`
 5. To create a build dmg file on MACOS, run `npm install appdmg`, then run `appdmg appdmg.json "path to save file"`
