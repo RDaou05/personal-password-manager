@@ -58,22 +58,23 @@ const AppSelector = (props) => {
       }
     }
   }, [props.roleState]);
-  useEffect(() => {
-    // Signout user out when they press "Control + L"
-    const signOutWithKeyPress = async (evt) => {
-      if ((evt.ctrlKey || evt.metaKey) && evt.keyCode == 76) {
-        if (!inPreviewState) {
-          await signOutUser();
-          sendToLoginPage();
-        }
-      }
-    };
-    document.addEventListener("keydown", signOutWithKeyPress);
-    return () => {
-      // The listener will remove itself when the user navigates to another page
-      document.removeEventListener("keydown", signOutWithKeyPress);
-    };
-  }, [inPreviewState]);
+  // useEffect(() => {
+  //   // Signout user out when they press "Control + L"
+  //   const signOutWithKeyPress = async (evt) => {
+  //     if ((evt.ctrlKey || evt.metaKey) && evt.keyCode == 76) {
+  //       if (!inPreviewState) {
+  //         props.clearLocal();
+  //         await signOutUser();
+  //         sendToLoginPage();
+  //       }
+  //     }
+  //   };
+  //   // document.addEventListener("keydown", signOutWithKeyPress);
+  //   return () => {
+  //     // The listener will remove itself when the user navigates to another page
+  //     document.removeEventListener("keydown", signOutWithKeyPress);
+  //   };
+  // }, [inPreviewState]);
 
   useEffect(() => {
     if (props.roleState == "ft") {
@@ -152,6 +153,7 @@ const AppSelector = (props) => {
                     onClick={async (event) => {
                       if (!inPreviewState) {
                         event.preventDefault();
+                        await props.clearLocal();
                         await signOutUser();
                         sendToLoginPage();
                       }

@@ -245,12 +245,32 @@ function App() {
           path="/"
           element={
             <LoginPage
-              loginDone={async (staySignedInVar) => {
-                console.log(await staySignedIn(staySignedInVar));
+              loginDone={async (email, password, staySignedInVar) => {
+                const clearLocal = async () => {
+                  localStorage.removeItem("a");
+                  localStorage.removeItem("e");
+                  localStorage.removeItem("p");
+                };
+                const rememberLocal = async (email, password) => {
+                  localStorage.setItem("a", "true");
+                  localStorage.setItem("e", email);
+                  localStorage.setItem("p", password);
+                };
+                if (!staySignedInVar) {
+                  await clearLocal();
+                } else if (staySignedInVar) {
+                  await rememberLocal(email, password);
+                }
+                await staySignedIn(staySignedInVar);
                 setLoginDoneState(true);
               }}
               resetEmailVerifiedState={() => {
                 setLoginDoneState(false);
+              }}
+              clearLocal={() => {
+                localStorage.removeItem("a");
+                localStorage.removeItem("e");
+                localStorage.removeItem("p");
               }}
             />
           }
@@ -281,6 +301,11 @@ function App() {
               roleState={roleState}
               emailVerifiedState={emailVerifiedState}
               setEmailVerifiedState={setEmailVerifiedState}
+              clearLocal={async () => {
+                localStorage.removeItem("a");
+                localStorage.removeItem("e");
+                localStorage.removeItem("p");
+              }}
             />
           }
         ></Route>

@@ -13,8 +13,32 @@ const Login = (props) => {
 
   const [accountDisabledBoxState, accountDisabledBoxSetstate] = useState(false);
   const [errorHasOccuredBoxState, errorHasOccuredBoxSetState] = useState(false);
+  const [autoLogState, setAutoLogState] = useState(null);
   const checkBoxRef = useRef();
   let navigate = useNavigate();
+
+  useEffect(() => {
+    const i = async () => {
+      const a = localStorage.getItem("a");
+      if (a == null) {
+        console.log("NULLLLLLLLLLLLL");
+        setAutoLogState(false);
+      } else if (a == "true") {
+        console.log("TTTTTTTTTT");
+        try {
+          const email = localStorage.getItem("e");
+          const password = localStorage.getItem("p");
+          await signInToPersonalPMAccount(email, password);
+          props.loginDone(email, password, true);
+          sendToAppSelectorPage();
+        } catch (err) {
+          console.log("CLEADRRRRDDD");
+          props.clearLocal();
+        }
+      }
+    };
+    i();
+  }, []);
 
   useLayoutEffect(() => {
     document.body.style.background = "rgb(40, 45, 52)";
@@ -34,6 +58,7 @@ const Login = (props) => {
     document.body.style.opacity = "1";
     navigate("/appselector", { replace: true });
   };
+
   const signInUser = async (email, password, staySignedIn) => {
     document.body.style.opacity = "0.3";
     // First check if the user left any fields empty
@@ -88,46 +113,18 @@ const Login = (props) => {
           // But just incase something happens that I don't know about
 
           // No errors
-          props.loginDone(staySignedIn);
+          console.log("Cheked? : ", staySignedIn);
+          props.loginDone(email, password, staySignedIn);
           sendToAppSelectorPage();
         }
       } else {
         // No errors
-        props.loginDone(staySignedIn);
+        console.log("Cheked? : ", staySignedIn);
+        props.loginDone(email, password, staySignedIn);
         sendToAppSelectorPage();
       }
     }
   };
-  // const signInUserWithGoogle = async () => {
-  //   document.body.style.opacity = "0.3";
-  //   const googleSignInReturn = await googleSignIn();
-  //   if (typeof googleSignInReturn == "string") {
-  //     if (googleSignInReturn.slice(0, 5) == "error") {
-  //       document.body.style.opacity = "1";
-  //       const errorCode = googleSignInReturn.substring(7).trim();
-  //       alert(errorCode);
-  //       if (errorCode == "auth/user-disabled") {
-  //         document.getElementById("ableToDim").style.opacity = "0.3";
-  //         accountDisabledBoxSetstate(true);
-  //       } else if (errorCode == "auth/popup-closed-by-user") {
-  //         document.getElementById("ableToDim").style.opacity = "1";
-  //       } else {
-  //         document.getElementById("ableToDim").style.opacity = "0.3";
-  //         errorHasOccuredBoxSetState(true);
-  //       }
-  //     } else {
-  //       // This probably won't run (since "signInReturn" only returns a string if it's an error)
-  //       // But just incase something happens that I don't know about
-
-  //       // No errors
-  //       props.loginDone();
-  //       sendToAppSelectorPage();
-  //     }
-  //   } else {
-  //     props.loginDone();
-  //     sendToAppSelectorPage();
-  //   }
-  // };
 
   const keepMeSignedInFunction = async () => {
     console.log(1);
@@ -197,84 +194,88 @@ const Login = (props) => {
   });
 
   return (
-    <div className={classes.mainBodyContainer}>
-      <span id="ableToDim">
-        <div className={classes.keyImage}>
-          <img id={classes.realIcon} src={logo} alt="not found" />
+    <>
+      {autoLogState == false ? (
+        <div className={classes.mainBodyContainer}>
+          <span id="ableToDim">
+            <div className={classes.keyImage}>
+              <img id={classes.realIcon} src={logo} alt="not found" />
+            </div>
+            <h1 className={classes.enterMasterPassword}>
+              Enter Email and Password
+            </h1>
+            <div className={classes.emailInputBoxContainer}>
+              <input
+                id="emailInpBox"
+                className={classes.emailInputBox}
+                type="text"
+                placeholder="Email"
+                autoComplete="off"
+              />
+            </div>
+            <div className={classes.inputBoxContainer}>
+              <input
+                id="inpBox"
+                className={classes.inputBox}
+                type="password"
+                placeholder="Password"
+                autoComplete="off"
+              />
+              <div className={classes.eyeHolder}>
+                <i id={classes.eye} className="far fa-eye"></i>
+              </div>
+            </div>
+            <div className={classes.unlockContainer}>
+              <button
+                className={classes.unlockButton}
+                id={classes.unlockButton}
+                onClick={async () => {
+                  await signInUser(
+                    // The third argument is if the user wants to stay signed in or not
+                    document.getElementById("emailInpBox").value,
+                    document.getElementById("inpBox").value,
+                    checkBoxRef.current.checked
+                  );
+                }}
+              >
+                <h4 id={classes.unlockText}>Unlock Password Manager</h4>
+              </button>
+            </div>
+            <div className={classes.keepMeSignedInContainer}>
+              <input type="checkbox" id={classes.checkBox} ref={checkBoxRef} />
+              <p
+                id={classes.staySignedInText}
+                onClick={() => {
+                  // Check Box when the text is clicked, then add all stay signed in functionallity
+                  if (checkBoxRef.current.checked == true) {
+                    checkBoxRef.current.checked = false;
+                  } else if (checkBoxRef.current.checked == false) {
+                    checkBoxRef.current.checked = true;
+                  }
+                }}
+              >
+                Keep Me Signed In
+              </p>
+            </div>
+            <div className={classes.forgotContainer}>
+              <Link
+                to="/forgotpass"
+                className={classes.forgotPass}
+                id={classes.forgotPass}
+                replace={true}
+              >
+                Forgot Password
+              </Link>
+            </div>
+            <Link to="/signup" id={classes.sendToSignUp} replace={true}>
+              Don't have an account? Sign Up
+            </Link>
+          </span>
+          {accountDisabledBoxState ? accountDisabledBox : null}
+          {errorHasOccuredBoxState ? errorHasOccuredBox : null}
         </div>
-        <h1 className={classes.enterMasterPassword}>
-          Enter Email and Password
-        </h1>
-        <div className={classes.emailInputBoxContainer}>
-          <input
-            id="emailInpBox"
-            className={classes.emailInputBox}
-            type="text"
-            placeholder="Email"
-            autoComplete="off"
-          />
-        </div>
-        <div className={classes.inputBoxContainer}>
-          <input
-            id="inpBox"
-            className={classes.inputBox}
-            type="password"
-            placeholder="Password"
-            autoComplete="off"
-          />
-          <div className={classes.eyeHolder}>
-            <i id={classes.eye} className="far fa-eye"></i>
-          </div>
-        </div>
-        <div className={classes.unlockContainer}>
-          <button
-            className={classes.unlockButton}
-            id={classes.unlockButton}
-            onClick={async () => {
-              await signInUser(
-                // The third argument is if the user wants to stay signed in or not
-                document.getElementById("emailInpBox").value,
-                document.getElementById("inpBox").value,
-                checkBoxRef.current.checked
-              );
-            }}
-          >
-            <h4 id={classes.unlockText}>Unlock Password Manager</h4>
-          </button>
-        </div>
-        <div className={classes.keepMeSignedInContainer}>
-          <input type="checkbox" id={classes.checkBox} ref={checkBoxRef} />
-          <p
-            id={classes.staySignedInText}
-            onClick={() => {
-              // Check Box when the text is clicked, then add all stay signed in functionallity
-              if (checkBoxRef.current.checked == true) {
-                checkBoxRef.current.checked = false;
-              } else if (checkBoxRef.current.checked == false) {
-                checkBoxRef.current.checked = true;
-              }
-            }}
-          >
-            Keep Me Signed In
-          </p>
-        </div>
-        <div className={classes.forgotContainer}>
-          <Link
-            to="/forgotpass"
-            className={classes.forgotPass}
-            id={classes.forgotPass}
-            replace={true}
-          >
-            Forgot Password
-          </Link>
-        </div>
-        <Link to="/signup" id={classes.sendToSignUp} replace={true}>
-          Don't have an account? Sign Up
-        </Link>
-      </span>
-      {accountDisabledBoxState ? accountDisabledBox : null}
-      {errorHasOccuredBoxState ? errorHasOccuredBox : null}
-    </div>
+      ) : null}
+    </>
   );
 };
 
