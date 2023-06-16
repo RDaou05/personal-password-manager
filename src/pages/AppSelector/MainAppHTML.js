@@ -43,7 +43,11 @@ const MainAppHTML = (props) => {
           </div>
         ) : null}
         <div className={props.classes.keyImage}>
-          <img id={props.classes.realIcon} src={logo} />
+          <img
+            id={props.classes.realIcon}
+            src={logo}
+            style={{ userSelect: "none" }}
+          />
         </div>
         <h1 id={props.classes.nameHeader}>Personal PM</h1>
         <button
