@@ -288,6 +288,12 @@ const deleteUser = async () => {
     // Tells the user to email support
   }
 };
+
+const staySignedIn = async (staySignedInVar) => {
+  const staySignedIn = httpsCallable(functions, "staySignedIn");
+  return await staySignedIn({ staySignedIn: staySignedInVar });
+};
+
 // End of cloud functions
 
 const signOutUser = async () => {
@@ -396,6 +402,7 @@ export {
   giveFTRole,
   setAutolock,
   deleteUser,
+  staySignedIn,
 };
 export const firebaseAuth = auth;
 export const FSDB = db;

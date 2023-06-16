@@ -4,7 +4,7 @@ import SignupPage from "./pages/Signup/Signup.js";
 import LoginPage from "./pages/Login/Login.js";
 import AppSelector from "./pages/AppSelector/AppSelector.js";
 import Pm from "./pages/Pm/Pm.js";
-import { signOutUser, FSDB, firebaseAuth } from "./firebase.js";
+import { signOutUser, FSDB, firebaseAuth, staySignedIn } from "./firebase.js";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { useState } from "react";
@@ -61,12 +61,14 @@ function App() {
       if (user) {
         const rDoc = doc(FSDB, "users", "filler", user.uid, "al");
         return onSnapshot(rDoc, (snap) => {
-          const recivedAutotime = snap.data().autotime.trim();
-          if (recivedAutotime == "") {
-            setAutolockEnabledState(false);
-          } else {
-            setAutolockEnabledState(true);
-            setAutolockTimeState(recivedAutotime);
+          if (snap.data() != undefined) {
+            const recivedAutotime = snap.data().autotime.trim();
+            if (recivedAutotime == "") {
+              setAutolockEnabledState(false);
+            } else {
+              setAutolockEnabledState(true);
+              setAutolockTimeState(recivedAutotime);
+            }
           }
         });
       }
@@ -79,17 +81,19 @@ function App() {
         if (user) {
           const mfaDoc = doc(FSDB, "users", "filler", user.uid, "mfa");
           return onSnapshot(mfaDoc, (snap) => {
-            const mfaKey = snap.data().hex.trim();
-            if (mfaKey == "") {
-              setMfaIsEnabledState(false);
-              setMfaBoxState(false);
-              setMfaPassedState(true);
-              setMfaKeyState(mfaKey);
-            } else {
-              setMfaPassedState(false);
-              setMfaIsEnabledState(true);
-              setMfaBoxState(true);
-              setMfaKeyState(mfaKey);
+            if (snap.data() != undefined) {
+              const mfaKey = snap.data().hex.trim();
+              if (mfaKey == "") {
+                setMfaIsEnabledState(false);
+                setMfaBoxState(false);
+                setMfaPassedState(true);
+                setMfaKeyState(mfaKey);
+              } else {
+                setMfaPassedState(false);
+                setMfaIsEnabledState(true);
+                setMfaBoxState(true);
+                setMfaKeyState(mfaKey);
+              }
             }
           });
         }
@@ -198,10 +202,12 @@ function App() {
             "disableAccount"
           );
           return onSnapshot(disableDoc, (snap) => {
-            const disabledBoolean = snap.data().disabled == true;
-            if (disabledBoolean) {
-              signOutUser();
-              navigate("/", { replace: true });
+            if (snap.data() != undefined) {
+              const disabledBoolean = snap.data().disabled;
+              if (disabledBoolean) {
+                signOutUser();
+                navigate("/", { replace: true });
+              }
             }
           });
         }
@@ -215,15 +221,17 @@ function App() {
       if (user) {
         const rDoc = doc(FSDB, "users", "filler", user.uid, "r");
         return onSnapshot(rDoc, (snap) => {
-          if (
-            snap.data().memb == "ft" ||
-            snap.data().memb == "p" ||
-            snap.data().memb == "a"
-          ) {
-            setRoleState(snap.data().memb);
-          } else {
-            // Wont render anything except an error message
-            setRoleState(false);
+          if (snap.data() != undefined) {
+            if (
+              snap.data().memb == "ft" ||
+              snap.data().memb == "p" ||
+              snap.data().memb == "a"
+            ) {
+              setRoleState(snap.data().memb);
+            } else {
+              // Wont render anything except an error message
+              setRoleState(false);
+            }
           }
         });
       }
@@ -237,7 +245,8 @@ function App() {
           path="/"
           element={
             <LoginPage
-              loginDone={() => {
+              loginDone={async (staySignedInVar) => {
+                console.log(await staySignedIn(staySignedInVar));
                 setLoginDoneState(true);
               }}
               resetEmailVerifiedState={() => {

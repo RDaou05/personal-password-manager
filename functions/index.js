@@ -758,6 +758,20 @@ exports.givePRole = functions.https.onCall((data, context) => {
   }
 });
 
+exports.staySignedIn = functions.https.onCall(async (data, context) => {
+  const staySignedIn = data.staySignedIn;
+  const usersUID = context.auth.uid;
+  const db = admin.firestore();
+  const stayRef = db
+    .collection("users")
+    .doc("filler")
+    .collection(usersUID)
+    .doc("ssi")
+    .update({ stay: staySignedIn });
+
+  return { status: "done" };
+});
+
 exports.giveFTRole = functions.https.onCall((data, context) => {
   if (context.auth.token.email_verified) {
     const usersUID = context.auth.uid;
@@ -846,7 +860,13 @@ exports.giveSignUpRoles = functions.auth.user().onCreate((user) => {
     .collection(usersUID)
     .doc("al")
     .set({ autotime: "" });
-  return Promise.all([p1, p2, p3, p4]);
+  const p5 = db
+    .collection("users")
+    .doc("filler")
+    .collection(usersUID)
+    .doc("ssi")
+    .set({ stay: false });
+  return Promise.all([p1, p2, p3, p4, p5]);
 });
 
 exports.onAccountDisabled = functions.firestore

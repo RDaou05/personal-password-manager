@@ -1,4 +1,4 @@
-import { React, useState, useEffect, useLayoutEffect } from "react";
+import { React, useState, useEffect, useLayoutEffect, useRef } from "react";
 import classes from "./Login.module.css";
 import logo from "../../images/lockIcon.png";
 import googleLogo from "../../images/google.png";
@@ -13,6 +13,7 @@ const Login = (props) => {
 
   const [accountDisabledBoxState, accountDisabledBoxSetstate] = useState(false);
   const [errorHasOccuredBoxState, errorHasOccuredBoxSetState] = useState(false);
+  const checkBoxRef = useRef();
   let navigate = useNavigate();
 
   useLayoutEffect(() => {
@@ -33,7 +34,7 @@ const Login = (props) => {
     document.body.style.opacity = "1";
     navigate("/appselector", { replace: true });
   };
-  const signInUser = async (email, password) => {
+  const signInUser = async (email, password, staySignedIn) => {
     document.body.style.opacity = "0.3";
     // First check if the user left any fields empty
     // If so, don't send sign in request
@@ -66,7 +67,7 @@ const Login = (props) => {
             emailBox.style.borderBottom = "2px solid #844242";
             passwordBox.style.transitionDuration = "0.2s";
             emailBox.style.transitionDuration = "0.2s";
-            document.getElementById("googleIcon").style.bottom = "17.5%";
+            // document.getElementById("googleIcon").style.bottom = "17.5%";
           } else if (
             errorCode == "auth/wrong-password" ||
             errorCode == "auth/invalid-password"
@@ -74,7 +75,7 @@ const Login = (props) => {
             let passwordBox = document.getElementById("inpBox");
             passwordBox.style.borderBottom = "2px solid #844242";
             passwordBox.style.transitionDuration = "0.2s";
-            document.getElementById("googleIcon").style.bottom = "18.5%";
+            // document.getElementById("googleIcon").style.bottom = "18.5%";
           } else if (errorCode == "auth/user-disabled") {
             accountDisabledBoxSetstate(true);
           } else {
@@ -87,45 +88,49 @@ const Login = (props) => {
           // But just incase something happens that I don't know about
 
           // No errors
-          props.loginDone();
+          props.loginDone(staySignedIn);
           sendToAppSelectorPage();
         }
       } else {
         // No errors
-        props.loginDone();
+        props.loginDone(staySignedIn);
         sendToAppSelectorPage();
       }
     }
   };
-  const signInUserWithGoogle = async () => {
-    document.body.style.opacity = "0.3";
-    const googleSignInReturn = await googleSignIn();
-    if (typeof googleSignInReturn == "string") {
-      if (googleSignInReturn.slice(0, 5) == "error") {
-        document.body.style.opacity = "1";
-        const errorCode = googleSignInReturn.substring(7).trim();
-        alert(errorCode);
-        if (errorCode == "auth/user-disabled") {
-          document.getElementById("ableToDim").style.opacity = "0.3";
-          accountDisabledBoxSetstate(true);
-        } else if (errorCode == "auth/popup-closed-by-user") {
-          document.getElementById("ableToDim").style.opacity = "1";
-        } else {
-          document.getElementById("ableToDim").style.opacity = "0.3";
-          errorHasOccuredBoxSetState(true);
-        }
-      } else {
-        // This probably won't run (since "signInReturn" only returns a string if it's an error)
-        // But just incase something happens that I don't know about
+  // const signInUserWithGoogle = async () => {
+  //   document.body.style.opacity = "0.3";
+  //   const googleSignInReturn = await googleSignIn();
+  //   if (typeof googleSignInReturn == "string") {
+  //     if (googleSignInReturn.slice(0, 5) == "error") {
+  //       document.body.style.opacity = "1";
+  //       const errorCode = googleSignInReturn.substring(7).trim();
+  //       alert(errorCode);
+  //       if (errorCode == "auth/user-disabled") {
+  //         document.getElementById("ableToDim").style.opacity = "0.3";
+  //         accountDisabledBoxSetstate(true);
+  //       } else if (errorCode == "auth/popup-closed-by-user") {
+  //         document.getElementById("ableToDim").style.opacity = "1";
+  //       } else {
+  //         document.getElementById("ableToDim").style.opacity = "0.3";
+  //         errorHasOccuredBoxSetState(true);
+  //       }
+  //     } else {
+  //       // This probably won't run (since "signInReturn" only returns a string if it's an error)
+  //       // But just incase something happens that I don't know about
 
-        // No errors
-        props.loginDone();
-        sendToAppSelectorPage();
-      }
-    } else {
-      props.loginDone();
-      sendToAppSelectorPage();
-    }
+  //       // No errors
+  //       props.loginDone();
+  //       sendToAppSelectorPage();
+  //     }
+  //   } else {
+  //     props.loginDone();
+  //     sendToAppSelectorPage();
+  //   }
+  // };
+
+  const keepMeSignedInFunction = async () => {
+    console.log(1);
   };
 
   // Making login page unresizeable
@@ -180,7 +185,8 @@ const Login = (props) => {
       if (e.key == "Enter") {
         await signInUser(
           document.getElementById("emailInpBox").value,
-          document.getElementById("inpBox").value
+          document.getElementById("inpBox").value,
+          checkBoxRef.current.checked
         );
       }
     }
@@ -226,25 +232,31 @@ const Login = (props) => {
             id={classes.unlockButton}
             onClick={async () => {
               await signInUser(
+                // The third argument is if the user wants to stay signed in or not
                 document.getElementById("emailInpBox").value,
-                document.getElementById("inpBox").value
+                document.getElementById("inpBox").value,
+                checkBoxRef.current.checked
               );
             }}
           >
             <h4 id={classes.unlockText}>Unlock Password Manager</h4>
           </button>
         </div>
-        <div className={classes.googleSignInContainer}>
-          {/* <a className={classes.googleSignInButtonHref} href="#"> */}
-          <button
-            id={classes.googleSignInButton}
-            type="button"
-            onClick={signInUserWithGoogle}
+        <div className={classes.keepMeSignedInContainer}>
+          <input type="checkbox" id={classes.checkBox} ref={checkBoxRef} />
+          <p
+            id={classes.staySignedInText}
+            onClick={() => {
+              // Check Box when the text is clicked, then add all stay signed in functionallity
+              if (checkBoxRef.current.checked == true) {
+                checkBoxRef.current.checked = false;
+              } else if (checkBoxRef.current.checked == false) {
+                checkBoxRef.current.checked = true;
+              }
+            }}
           >
-            <img src={googleLogo} id={classes.googleIcon} />
-            <h4 id={classes.lgwg}>Login with google</h4>
-          </button>
-          {/* </a> */}
+            Keep Me Signed In
+          </p>
         </div>
         <div className={classes.forgotContainer}>
           <Link

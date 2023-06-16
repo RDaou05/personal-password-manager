@@ -7,6 +7,7 @@
   background: grey;
   box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
   padding: 5vw;
+  margin-top: 14vh;
 }
 .pleaseVerifyPopup {
   display: flex;
@@ -33,8 +34,14 @@
 }
 
 .controlButtons {
-  padding: 1vw;
-  border: 2px solid black;
+  border: none;
+  box-shadow: rgb(0 0 0 / 35%) 0px 5px 10px;
+  font-family: Montserrat, sans-serif;
+  font-weight: 900;
+  background-color: #13817c;
+  padding: 20px;
+  color: white;
+  letter-spacing: 1px;
 }
 
 #backToLogin {
@@ -42,6 +49,7 @@
   color: #155757;
   cursor: pointer;
   margin-top: 2vw;
+  font-weight: 500;
 }
 
 #backToLogin:hover {

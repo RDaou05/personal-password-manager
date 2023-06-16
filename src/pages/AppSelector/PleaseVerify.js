@@ -2,7 +2,7 @@ import React from "react";
 import { firebaseAuth, resendLink } from "../../firebase";
 import classes from "./PleaseVerify.module.css";
 import { Link } from "react-router-dom";
-import { getIdToken, reload } from "firebase/auth";
+import { getIdToken, reload, updateCurrentUser } from "firebase/auth";
 
 const PleaseVerify = (props) => {
   return (
@@ -30,6 +30,8 @@ const PleaseVerify = (props) => {
             onClick={async () => {
               // Getting the updated version of the auth token
               await reload(firebaseAuth.currentUser);
+              await updateCurrentUser(firebaseAuth, firebaseAuth.currentUser);
+              firebaseAuth.currentUser.getIdToken(true);
               if (firebaseAuth.currentUser.emailVerified) {
                 props.setEmailVerifiedState(true);
               } else {

@@ -177,6 +177,60 @@ body {
   margin-top: 6%;
 }
 
+.keepMeSignedInContainer {
+  text-align: center;
+  margin-top: 6%;
+}
+
+#keepMeSignedInButton {
+  background: white;
+  color: #4285f4;
+  border: none;
+  width: 81%;
+  height: 8.4vh;
+  opacity: 0.8;
+  cursor: pointer;
+  padding-right: 5%;
+  border-radius: 0.5vh;
+  box-shadow: rgb(0 0 0 / 35%) 0px 5px 6px;
+  padding-top: 1.5%;
+}
+
+#keepMeSignedInButton:hover {
+  opacity: 1;
+  background-color: #0b817b;
+  transition: ease-in-out 0.3s;
+}
+
+input[type="checkbox"] {
+  width: 25px;
+  height: 25px;
+  accent-color: teal;
+  box-shadow: rgb(0 0 0 / 35%) 0px 5px 6px;
+  float: left;
+  margin-left: 8vw;
+}
+
+#checkBox:checked ~ #staySignedInText {
+  opacity: 1;
+  transition: 0.1s;
+}
+
+#staySignedInText {
+  color: white;
+  font-family: Montserrat, sans-serif;
+  font-weight: bold;
+  position: absolute;
+  top: 358px;
+  left: 100px;
+  opacity: 0.5;
+  user-select: none;
+}
+
+input[type="checkbox"]:checked #staySignedInText {
+  opacity: 1;
+}
+
 #googleSignInButton {
   background: white;
   color: #4285f4;
