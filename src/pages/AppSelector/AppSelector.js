@@ -175,9 +175,9 @@ const AppSelector = (props) => {
             />
           ) : null}
         </>
-      ) : (
+      ) : props.emailVerifiedState == false ? (
         <PleaseVerify setEmailVerifiedState={props.setEmailVerifiedState} />
-      )}
+      ) : null}
     </div>
   );
 };
