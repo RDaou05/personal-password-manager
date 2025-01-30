@@ -51,8 +51,6 @@ const PmDashboard = (props) => {
     props.makeResizeable();
   }, []);
 
-  console.log(location.pathname);
-
   useEffect(() => {
     async function decryptAll() {
       setLoadingScreenState(true);
@@ -103,8 +101,6 @@ const PmDashboard = (props) => {
             id={classes.pmTitle}
             onClick={() => {
               const currentLocal = localStorage.getItem("pmBool");
-              console.log(premiumClassesState);
-              console.log("Cur loc: ", currentLocal);
               if (currentLocal == "false") {
                 localStorage.setItem("pmBool", "true");
                 setPremiumClassesState(true);
@@ -136,7 +132,6 @@ const PmDashboard = (props) => {
             popupActiveState && !keepOpacityNormalOnPopupState ? "0.5" : "1",
         }}
       >
-        {console.log(decryptedQueriesState)}
         <>
           {decryptedQueriesState != undefined ? (
             <>
