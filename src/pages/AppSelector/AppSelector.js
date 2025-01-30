@@ -15,6 +15,7 @@ import ErrorHasOccuredBox from "./ErrorHasOccuredBox.js";
 import MainAppHTML from "./MainAppHTML.js";
 import { givePRole } from "../../firebase";
 import PleaseVerify from "./PleaseVerify";
+import LoadingScreen from "../../components/LoadingScreen.js";
 
 const AppSelector = (props) => {
   let navigate = useNavigate();
@@ -177,7 +178,9 @@ const AppSelector = (props) => {
         </>
       ) : props.emailVerifiedState == false ? (
         <PleaseVerify setEmailVerifiedState={props.setEmailVerifiedState} />
-      ) : null}
+      ) : (
+        <LoadingScreen />
+      )}
     </div>
   );
 };

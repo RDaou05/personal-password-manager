@@ -59,7 +59,7 @@ const Login = (props) => {
     navigate("/appselector", { replace: true });
   };
 
-  const signInUser = async (email, password, staySignedIn) => {
+  const signInUser = async (email, password) => {
     document.body.style.opacity = "0.3";
     // First check if the user left any fields empty
     // If so, don't send sign in request
@@ -113,14 +113,14 @@ const Login = (props) => {
           // But just incase something happens that I don't know about
 
           // No errors
-          console.log("Cheked? : ", staySignedIn);
-          props.loginDone(email, password, staySignedIn);
+          // console.log("Cheked? : ", staySignedIn);
+          props.loginDone(email, password);
           sendToAppSelectorPage();
         }
       } else {
         // No errors
-        console.log("Cheked? : ", staySignedIn);
-        props.loginDone(email, password, staySignedIn);
+        // console.log("Cheked? : ", staySignedIn);
+        props.loginDone(email, password);
         sendToAppSelectorPage();
       }
     }
@@ -182,8 +182,7 @@ const Login = (props) => {
       if (e.key == "Enter") {
         await signInUser(
           document.getElementById("emailInpBox").value,
-          document.getElementById("inpBox").value,
-          checkBoxRef.current.checked
+          document.getElementById("inpBox").value
         );
       }
     }
@@ -233,15 +232,14 @@ const Login = (props) => {
                   await signInUser(
                     // The third argument is if the user wants to stay signed in or not
                     document.getElementById("emailInpBox").value,
-                    document.getElementById("inpBox").value,
-                    checkBoxRef.current.checked
+                    document.getElementById("inpBox").value
                   );
                 }}
               >
                 <h4 id={classes.unlockText}>Unlock Password Manager</h4>
               </button>
             </div>
-            <div className={classes.keepMeSignedInContainer}>
+            {/* <div className={classes.keepMeSignedInContainer}>
               <input type="checkbox" id={classes.checkBox} ref={checkBoxRef} />
               <p
                 id={classes.staySignedInText}
@@ -256,7 +254,7 @@ const Login = (props) => {
               >
                 Keep Me Signed In
               </p>
-            </div>
+            </div> */}
             <div className={classes.forgotContainer}>
               <Link
                 to="/forgotpass"

@@ -51,7 +51,7 @@ function App() {
   const [roleState, setRoleState] = useState("");
   const [autolockEnabledState, setAutolockEnabledState] = useState();
   const [autolockTimeState, setAutolockTimeState] = useState("");
-  const [emailVerifiedState, setEmailVerifiedState] = useState(false);
+  const [emailVerifiedState, setEmailVerifiedState] = useState(null);
   const [loginDoneState, setLoginDoneState] = useState(false);
   const [refresh, setRefresh] = useState();
   let intervalId = null;
