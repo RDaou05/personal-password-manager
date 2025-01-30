@@ -128,6 +128,10 @@ const AppSelector = (props) => {
   win.resizeTo(1020, 596);
   win.setResizable(false);
 
+  useEffect(() => {
+    console.log(props.emailVerifiedState);
+  }, [props.emailVerifiedState]);
+
   return (
     <div>
       {props.emailVerifiedState ? (
